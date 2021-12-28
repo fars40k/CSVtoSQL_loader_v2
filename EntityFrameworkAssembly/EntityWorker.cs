@@ -29,6 +29,7 @@ namespace EntityAssembly
                     pC.Database.Connection.Open();
                     if (pC.Database.Exists()) { return true; }
                     return false;
+
                 }
             }
             catch (Exception ex)
