@@ -61,14 +61,14 @@
     <Compile Include="Interfaces\INameGeneratior.cs" />
     <Compile Include="Interfaces\IRowPrecatchRules.cs" />
     <Compile Include="Interfaces\ISaveFile.cs" />
-    <Compile Include="Classes\PersonsContext.cs" />
     <Compile Include="Operations\DBOperation.cs" />
-    <Compile Include="Classes\Person.cs" />
     <Compile Include="EntityWorker.cs" />
+    <Compile Include="Person.cs" />
+    <Compile Include="PersonsContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.Config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

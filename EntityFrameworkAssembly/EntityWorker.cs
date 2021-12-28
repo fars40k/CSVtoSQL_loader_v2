@@ -26,6 +26,7 @@ namespace EntityAssembly
             {
                 using (PersonsContext pC = new PersonsContext())
                 {
+                    pC.Database.Connection.Open();
                     if (pC.Database.Exists()) { return true; }
                     return false;
                 }
