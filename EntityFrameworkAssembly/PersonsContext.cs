@@ -8,7 +8,7 @@ namespace EntityAssembly
     public partial class PersonsContext : DbContext
     {
         public PersonsContext()
-            : base("name=Persons")
+            : base("PersonsContext")
         {
         }
 

@@ -108,10 +108,10 @@ namespace CSVtoSQL.ViewModels
         /// </summary>
         private void CommandBinding_Database(object sender, ExecutedRoutedEventArgs e)
         {
-            var dialog = new StringInput(Model.ExstractDBStringFromFile());
+            /*var dialog = new StringInput(Model.ExstractDBStringFromFile());
             dialog.ShowDialog();
-            string returnedString = dialog.CurrentConnString.Replace(" ", string.Empty);
-            Model.ConnectionStringAcquired(returnedString);
+            string returnedString = dialog.CurrentConnString.Replace(" ", string.Empty);*/
+            Model.ConnectionStringAcquired("");
         }
 
         /// <summary>
