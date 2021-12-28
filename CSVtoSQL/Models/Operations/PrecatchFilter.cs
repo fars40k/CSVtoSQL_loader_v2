@@ -1,0 +1,14 @@
+﻿using CSVtoSQL.Models.Operations.Converters.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSVtoSQL.Models.Operations.Converters
+{
+    public class PrecatchFilter : IRowPrecatchRules
+    {
+
+    }
+}
