@@ -16,7 +16,6 @@ namespace CSVtoSQL.Models.Operations
     public class DBSaveToFile : Operation, ISaveFile
     {
         private string targetFormat;
-        private IRowPrecatchRules rowPrecatchRules;
         private ICreateFile createFile;
         private NameGenerator nameGenerator;
 
@@ -36,7 +35,6 @@ namespace CSVtoSQL.Models.Operations
             {
                 case "xml":
                     {
-                        rowPrecatchRules = new PrecatchFilter();
                         createFile = new CreateXMLFile();
                         break;
                     }
@@ -44,7 +42,6 @@ namespace CSVtoSQL.Models.Operations
                 case "xlsx":
                 default:
                     {
-                        rowPrecatchRules = new PrecatchFilter();
                         createFile = new CreateExcelFile();
                         break;
                     }

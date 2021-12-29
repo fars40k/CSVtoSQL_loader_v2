@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSVtoSQL.Models.Operations.Converters
+namespace EntityAssembly.Classes
 {
-    internal interface ISaveFile
+    public abstract class EntityToExcel
     {
-        string GetSavePath(string targetFormat);
-
+        public abstract bool Run();
     }
 }

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSVtoSQL.Models.Operations
+namespace EntityAssembly.Classes
 {
-    public class IRowPrecatchRules
+    public abstract class EntityToXML
     {
+        public abstract bool Run();
     }
 }

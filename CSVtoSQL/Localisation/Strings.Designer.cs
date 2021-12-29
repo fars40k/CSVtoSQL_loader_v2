@@ -205,6 +205,105 @@ namespace CSVtoSQL.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Столбец.
+        /// </summary>
+        public static string FilterColumn1 {
+            get {
+                return ResourceManager.GetString("FilterColumn1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Действие.
+        /// </summary>
+        public static string FilterColumn2 {
+            get {
+                return ResourceManager.GetString("FilterColumn2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Параметры.
+        /// </summary>
+        public static string FilterColumn3 {
+            get {
+                return ResourceManager.GetString("FilterColumn3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выбрать все.
+        /// </summary>
+        public static string FilterOptionSelectAll {
+            get {
+                return ResourceManager.GetString("FilterOptionSelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Дата.
+        /// </summary>
+        public static string FilterRow1 {
+            get {
+                return ResourceManager.GetString("FilterRow1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Имя.
+        /// </summary>
+        public static string FilterRow2 {
+            get {
+                return ResourceManager.GetString("FilterRow2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Фамилия.
+        /// </summary>
+        public static string FilterRow3 {
+            get {
+                return ResourceManager.GetString("FilterRow3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Отчество.
+        /// </summary>
+        public static string FilterRow4 {
+            get {
+                return ResourceManager.GetString("FilterRow4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Город.
+        /// </summary>
+        public static string FilterRow5 {
+            get {
+                return ResourceManager.GetString("FilterRow5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Страна.
+        /// </summary>
+        public static string FilterRow6 {
+            get {
+                return ResourceManager.GetString("FilterRow6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Настройки выборки данных.
+        /// </summary>
+        public static string FilterTitle {
+            get {
+                return ResourceManager.GetString("FilterTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Запуск операции.
         /// </summary>
         public static string Go {

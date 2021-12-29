@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityAssembly.Classes;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -9,12 +10,22 @@ namespace EntityAssembly
 { 
     public class EntityWorker
     {
-        public string filePath;
+        private FileCSVtoSQL fileCSVtoSQL;
+        private EntityToExcel entityToEXL;
+        private EntityToXML entityToXML;
 
+        public string filePath;
 
         public EntityWorker()
         {
+            SetDefaultDataProcessingMethods();
+        }
 
+        private void SetDefaultDataProcessingMethods()
+        {
+            fileCSVtoSQL = new CSVHelperLoader(filePath);
+            entityToEXL = new EPPLusSaver(filePath);
+            entityToXML = new XMLSerializeSaver(filePath, new Person());
         }
 
         /// <summary>

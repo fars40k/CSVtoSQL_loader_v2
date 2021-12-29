@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSVtoSQL.Models.Operations.Converters.Interfaces
+namespace CSVtoSQL.Models
 {
-    public interface INameGeneratior
+    public class LinqBuilder
     {
-        string GenerateName();
+        public LinqBuilder()
+        {
+
+        }
+
+
     }
 }

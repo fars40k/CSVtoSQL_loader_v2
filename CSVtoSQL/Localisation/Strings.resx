@@ -165,6 +165,39 @@
   <data name="Filter" xml:space="preserve">
     <value>Фильтр</value>
   </data>
+  <data name="FilterColumn1" xml:space="preserve">
+    <value>Столбец</value>
+  </data>
+  <data name="FilterColumn2" xml:space="preserve">
+    <value>Действие</value>
+  </data>
+  <data name="FilterColumn3" xml:space="preserve">
+    <value>Параметры</value>
+  </data>
+  <data name="FilterOptionSelectAll" xml:space="preserve">
+    <value>Выбрать все</value>
+  </data>
+  <data name="FilterRow1" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="FilterRow2" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="FilterRow3" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="FilterRow4" xml:space="preserve">
+    <value>Отчество</value>
+  </data>
+  <data name="FilterRow5" xml:space="preserve">
+    <value>Город</value>
+  </data>
+  <data name="FilterRow6" xml:space="preserve">
+    <value>Страна</value>
+  </data>
+  <data name="FilterTitle" xml:space="preserve">
+    <value>Настройки выборки данных</value>
+  </data>
   <data name="Go" xml:space="preserve">
     <value>Запуск операции</value>
   </data>

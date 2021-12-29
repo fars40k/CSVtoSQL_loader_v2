@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSVtoSQL.Models.Operations
+namespace EntityAssembly.Classes
 {
-    public interface IConvertRow
+    public abstract class FileCSVtoSQL 
     {
-        string ConvertRule(string tablerow);
+        public abstract bool Run();
     }
 }
