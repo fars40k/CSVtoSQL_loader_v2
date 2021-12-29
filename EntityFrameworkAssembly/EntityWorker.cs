@@ -49,10 +49,5 @@ namespace EntityAssembly
 
         }
 
-        public void SetDataBaseOperationSettings()
-        {
-
-        }
-
     }
 }
