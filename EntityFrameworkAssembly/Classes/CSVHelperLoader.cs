@@ -15,9 +15,10 @@ namespace EntityAssembly.Classes
             this.filePath = newfilePath;
         }
 
-        public override bool Run()
+        public override bool Run(int maxRecords)
         {
-            throw new NotImplementedException();
+
+            return false;
         }
     }
 }

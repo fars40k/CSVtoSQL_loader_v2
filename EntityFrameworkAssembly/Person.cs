@@ -9,33 +9,29 @@ namespace EntityAssembly
     [Table("Persons")]
     public partial class Person
     {
-        [Key]
-        [Column(Order = 0)]
+        [Column(TypeName = "date")]
         public DateTime Date { get; set; }
 
-        [Key]
-        [Column(Order = 1)]
+        [Required]
         [StringLength(50)]
         public string FirstName { get; set; }
 
-        [Key]
-        [Column(Order = 2)]
+        [Required]
         [StringLength(50)]
         public string LastName { get; set; }
 
-        [Key]
-        [Column(Order = 3)]
+        [Required]
         [StringLength(50)]
         public string SurName { get; set; }
 
-        [Key]
-        [Column(Order = 4)]
+        [Required]
         [StringLength(50)]
         public string City { get; set; }
 
-        [Key]
-        [Column(Order = 5)]
+        [Required]
         [StringLength(50)]
         public string Country { get; set; }
+
+        public int ID { get; set; }
     }
 }

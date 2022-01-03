@@ -8,6 +8,6 @@ namespace EntityAssembly.Classes
 {
     public abstract class FileCSVtoSQL 
     {
-        public abstract bool Run();
+        public abstract bool Run(int maxRecords);
     }
 }

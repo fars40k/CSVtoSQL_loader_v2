@@ -20,8 +20,9 @@ namespace CSVtoSQL.Views.DialogViews
     /// </summary>
     public partial class DataFilters : Window
     {
-        private Dictionary<ComboBox, object> comboBoxesToFilterPreset;
-        private Dictionary<string,Action> DatefilterPresetNames;
+        private Dictionary<ComboBox, object> comboBoxesDataTypes;
+        private Dictionary<int,TextBox> parametersTextBoxesbyRow;
+        private Dictionary<string, Action> dataFilterActionsPresetNames;
 
         public DataFilters()
         {
@@ -32,17 +33,64 @@ namespace CSVtoSQL.Views.DialogViews
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            FillComboBoxFilterPresset();
+            FillCollections();
         }
 
-        private void FillComboBoxFilterPresset()
+        /// <summary>
+        /// Заполняет коллекции по элементам View
+        /// </summary>
+        private void FillCollections()
         {
-            comboBoxesToFilterPreset.Add(Combobox_1, new SqlDateTime());
-            comboBoxesToFilterPreset.Add(Combobox_2, new SqlString());
-            comboBoxesToFilterPreset.Add(Combobox_3, new SqlString());
-            comboBoxesToFilterPreset.Add(Combobox_4, new SqlString());
-            comboBoxesToFilterPreset.Add(Combobox_5, new SqlString());
-            comboBoxesToFilterPreset.Add(Combobox_6, new SqlString());
+            comboBoxesDataTypes.Add(Combobox_1, new SqlDateTime());
+            dataFilterActionsPresetNames.Add(Localisation.Strings.FilterDataAll, SelectAll);
+            dataFilterActionsPresetNames.Add(Localisation.Strings.FilterDataContains, SelectContain);
+            for (int i = 0; i < this.VisualChildrenCount; i++)
+            {
+                if (this.GetVisualChild(i) is TextBox)
+                {
+                    TextBox tB = this.GetVisualChild(i) as TextBox;
+                    if (tB != null)
+                    {
+                        if (tB.Name.Contains("Param"))
+                        {
+
+                            int RowNumber = Int32.Parse(tB.Name.Substring(tB.Name.IndexOf("_") + 1, 1));
+                            parametersTextBoxesbyRow.Add(RowNumber, tB);
+                        }
+                    }
+                    if (this.GetVisualChild(i) is ComboBox)
+                    {
+                        ComboBox cB = this.GetVisualChild(i) as ComboBox;
+                        if (cB != null)
+                        {
+                            if (cB.Name.Contains("Combobox_1"))
+                            {
+                                comboBoxesDataTypes.Add(cB, new SqlDateTime());
+                            } else
+                            if (cB.Name.Contains("Combobox"))
+                            {
+                                comboBoxesDataTypes.Add(cB, new SqlString());
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        private void SelectAll()
+        {
+            //Row_6_Param_1.IsVisible = false;
+        }
+
+        private void SelectContain()
+        {
+            // Dynamic Linq here
+        }
+
+        private void AcceptButton_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

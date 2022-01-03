@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EntityAssembly
 { 
@@ -14,7 +15,8 @@ namespace EntityAssembly
         private EntityToExcel entityToEXL;
         private EntityToXML entityToXML;
 
-        public string filePath;
+        public string SourceFilePath;
+        public string FileToWritePath;
 
         public EntityWorker()
         {
@@ -23,9 +25,9 @@ namespace EntityAssembly
 
         private void SetDefaultDataProcessingMethods()
         {
-            fileCSVtoSQL = new CSVHelperLoader(filePath);
-            entityToEXL = new EPPLusSaver(filePath);
-            entityToXML = new XMLSerializeSaver(filePath, new Person());
+            fileCSVtoSQL = new CSVHelperLoader(SourceFilePath);
+            entityToEXL = new EPPLusSaver(FileToWritePath);
+            entityToXML = new XMLSerializeSaver(FileToWritePath, new Person());
         }
 
         /// <summary>
@@ -37,7 +39,6 @@ namespace EntityAssembly
             {
                 using (PersonsContext pC = new PersonsContext())
                 {
-                    pC.Database.Connection.Open();
                     if (pC.Database.Exists()) { return true; }
                     return false;
                 }
@@ -47,6 +48,29 @@ namespace EntityAssembly
                 return false;
             }
 
+        }
+
+        public void SetSourceFilePath(string newPath)
+        {
+            SourceFilePath = newPath;
+        }
+
+        public void SetFileToWritePath(string newPath)
+        {
+            FileToWritePath = newPath;
+        }
+
+        public bool ReadCSVToDb(int maxRecords)
+        {
+            try
+            {
+                fileCSVtoSQL.Run(maxRecords);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
     }

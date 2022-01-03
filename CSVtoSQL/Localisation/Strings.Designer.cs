@@ -232,6 +232,24 @@ namespace CSVtoSQL.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Все данные.
+        /// </summary>
+        public static string FilterDataAll {
+            get {
+                return ResourceManager.GetString("FilterDataAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Поле содержит .
+        /// </summary>
+        public static string FilterDataContains {
+            get {
+                return ResourceManager.GetString("FilterDataContains", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выбрать все.
         /// </summary>
         public static string FilterOptionSelectAll {

@@ -35,7 +35,7 @@
         <TextBox x:Name="Row_5" Text="{x:Static p:Strings.FilterRow5}" FontSize="14" HorizontalAlignment="Left" Height="24" Margin="10,7,0,7" Grid.Row="5" Width="119" TextAlignment="Center" Background="Transparent"/>
         <TextBox x:Name="Row_6" Text="{x:Static p:Strings.FilterRow6}" FontSize="14" HorizontalAlignment="Left" Height="24" Margin="10,7,0,7" Grid.Row="6" Width="119" TextAlignment="Center" Background="Transparent"/>
         <!--#endregion-->
-        <!--#region Combo_boxes-->
+        <!--#region ComboBoxes-->
         <ComboBox x:Name="Combobox_1" HorizontalAlignment="Left" Height="28" Margin="134,0,0,0" Grid.Row="1" VerticalAlignment="Center" Width="300"/>
         <ComboBox x:Name="Combobox_2" HorizontalAlignment="Left" Height="28" Margin="134,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="300"/>
         <ComboBox x:Name="Combobox_3" HorizontalAlignment="Left" Height="28" Margin="134,0,0,0" Grid.Row="3" VerticalAlignment="Center" Width="300"/>
@@ -44,20 +44,14 @@
         <ComboBox x:Name="Combobox_6" HorizontalAlignment="Left" Height="28" Margin="134,0,0,0" Grid.Row="6" VerticalAlignment="Center" Width="300"/>
         <!--#endregion-->
         <!--#region Input_text_boxes-->
-        <TextBox x:Name="Row_1_Param_1" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="447,7,0,7" Width="111" TextAlignment="Center" Grid.Row="1" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_1_Param_2" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="568,7,0,7" Width="112" TextAlignment="Center" Grid.Row="1" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_2_Param_1" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="448,7,0,7" Width="110" TextAlignment="Center" Grid.Row="2" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_2_Param_2" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="568,7,0,7" Width="112" TextAlignment="Center" Grid.Row="2" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_3_Param_1" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="448,7,0,7" Width="110" TextAlignment="Center" Grid.Row="3" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_3_Param_2" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="568,7,0,7" Width="112" TextAlignment="Center" Grid.Row="3" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_4_Param_1" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="448,9,0,5" Width="110" TextAlignment="Center" Grid.Row="4" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_4_Param_2" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="568,9,0,5" Width="112" TextAlignment="Center" Grid.Row="4" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_5_Param_1" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="448,7,0,7" Width="110" TextAlignment="Center" Grid.Row="5" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_5_Param_2" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="568,7,0,7" Width="112" TextAlignment="Center" Grid.Row="5" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_6_Param_1" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="447,7,0,7" Width="111" TextAlignment="Center" Grid.Row="6" IsReadOnly="False" Visibility="Hidden"/>
-        <TextBox x:Name="Row_6_Param_2" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="568,7,0,7" Width="112" TextAlignment="Center" Grid.Row="6" IsReadOnly="False" Visibility="Hidden"/>
+        <TextBox x:Name="Row_1_Param" Text="ДД.ММ.ГГГГ" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="447,7,0,7" Width="243" TextAlignment="Left" Grid.Row="1" IsReadOnly="False" Visibility="Hidden"/>
+        <TextBox x:Name="Row_2_Param" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="448,7,0,7" Width="243" TextAlignment="Left" Grid.Row="2" IsReadOnly="False" Visibility="Hidden"/>
+        <TextBox x:Name="Row_3_Param" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="448,7,0,7" Width="243" TextAlignment="Left" Grid.Row="3" IsReadOnly="False" Visibility="Hidden"/>
+        <TextBox x:Name="Row_4_Param" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="448,9,0,5" Width="243" TextAlignment="Left" Grid.Row="4" IsReadOnly="False" Visibility="Hidden"/>
+        <TextBox x:Name="Row_5_Param" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="448,7,0,7" Width="243" TextAlignment="Left" Grid.Row="5" IsReadOnly="False" Visibility="Hidden"/>
+        <TextBox x:Name="Row_6_Param" Text="" FontSize="16" HorizontalAlignment="Left" Height="24" Margin="447,7,0,7" Width="243" TextAlignment="Left" Grid.Row="6" IsReadOnly="False" Visibility="Hidden"/>
         <!--#endregion-->
-        <Button x:Name="AcceptButton" Content="{x:Static p:Strings.AcceptAndReturn}" HorizontalAlignment="Left" Height="30" Margin="134,0,0,0" Grid.Row="7" VerticalAlignment="Center" Width="300"/>
+        <Button x:Name="AcceptButton" Content="{x:Static p:Strings.AcceptAndReturn}" HorizontalAlignment="Left" Height="30" Margin="134,0,0,0" Grid.Row="7" VerticalAlignment="Center" Width="300" Click="AcceptButton_Click"/>
 
     </Grid>
 

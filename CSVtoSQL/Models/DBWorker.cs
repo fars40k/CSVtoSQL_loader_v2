@@ -23,6 +23,7 @@ namespace CSVtoSQL.Models
             model = newModel;
             connString = newConnString;
             Eworker = new EntityAssembly.EntityWorker();
+            Eworker.sourceFilePath = model
             if (Eworker.VerifyConnString(connString))
             {
                 model.SetAppGlobalState(EnumGlobalState.DbConnected);
