@@ -131,6 +131,9 @@ namespace CSVtoSQL.ViewModels
                 string str = dlg.FileName;
                 str = " " + str.Substring(str.LastIndexOf(@"\"), str.Length - str.LastIndexOf(@"\"));
                 FileString = str;
+            } else
+            {
+                Model.SetAppGlobalState(EnumGlobalState.AppLoaded);
             }
 
         }

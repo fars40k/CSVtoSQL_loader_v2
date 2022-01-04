@@ -14,19 +14,35 @@ namespace CSVtoSQL.Models
 {
     public class DBWorker
     {
-        private EntityAssembly.EntityWorker Eworker;
+        private EntityAssembly.EntityWorker eWorker;
         private MainModel model;
         private string connString;
+        private bool isDBOperationRunned;
+
+        public bool IsDBOperationRunned
+        {
+            get { return isDBOperationRunned; }
+            private set
+            {
+                isDBOperationRunned = value;
+                if (isDBOperationRunned)
+                {
+                    model.SetAppGlobalState(EnumGlobalState.Disabled);
+                } else
+                {
+                    model.SetAppGlobalState(EnumGlobalState.DbConnected);
+                }
+            }
+        }
 
         public DBWorker(MainModel newModel, string newConnString)
-        {    
+        {
             model = newModel;
             connString = newConnString;
-            Eworker = new EntityAssembly.EntityWorker();
-            Eworker.sourceFilePath = model
-            if (Eworker.VerifyConnString(connString))
+            eWorker = new EntityAssembly.EntityWorker();
+            if (eWorker.VerifyConnString(connString))
             {
-                model.SetAppGlobalState(EnumGlobalState.DbConnected);
+                IsDBOperationRunned = false;
                 model.WriteDBStringToFile(connString);
             }
             else
@@ -36,6 +52,38 @@ namespace CSVtoSQL.Models
             }
         }
 
+        public void SetFileSourcePath(string path)
+        {
+            eWorker.SetSourceFilePath(path);
+        }
+
+        public void SetWriteToFilePath(string path)
+        {
+            eWorker.SetFileToWritePath(path);
+        }
+
+        /// <summary>
+        /// Читает лимит загрузок для одного сеаса из App.config
+        /// </summary>
+        public void BeginLoadToDatabase()
+        {
+            try
+            {
+                string? DbLoadLimit = ConfigurationManager.AppSettings["DbLoadLimit"];
+                eWorker.ReadCSVToDb(Int32.Parse(DbLoadLimit));
+            }
+            catch (Exception ex)
+            {
+                if ((ex is FormatException) || (ex is ArgumentNullException))
+                {
+                    ErrorNotify.NewError(new AppError(Localisation.Strings.OpWrongSettings, ""));
+                } 
+                else
+                {
+                    ErrorNotify.NewError(new AppError(Localisation.Strings.OpLoadFromFileError, ""));
+                }
+            }
+
+        }
     }
-        
 }

@@ -439,6 +439,24 @@ namespace CSVtoSQL.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ошибка загрузки из CSV файла.
+        /// </summary>
+        public static string OpLoadFromFileError {
+            get {
+                return ResourceManager.GetString("OpLoadFromFileError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Неверные настройки программы.
+        /// </summary>
+        public static string OpWrongSettings {
+            get {
+                return ResourceManager.GetString("OpWrongSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Сохранить поврежденные данные.
         /// </summary>
         public static string SaveBadFileData {

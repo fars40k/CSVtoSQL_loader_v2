@@ -243,6 +243,12 @@
   <data name="OpenFileFormat" xml:space="preserve">
     <value>Табличные данные</value>
   </data>
+  <data name="OpLoadFromFileError" xml:space="preserve">
+    <value>Ошибка загрузки из CSV файла</value>
+  </data>
+  <data name="OpWrongSettings" xml:space="preserve">
+    <value>Неверные настройки программы</value>
+  </data>
   <data name="SaveBadFileData" xml:space="preserve">
     <value>Сохранить поврежденные данные</value>
   </data>

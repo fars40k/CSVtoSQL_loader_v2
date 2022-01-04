@@ -16,8 +16,10 @@ namespace CSVtoSQL.Models
         private static EnumGlobalState AppGlobalState { get; set; }
 
         public Action OperationsListRequest;
+        public Action LoadFromFileRequested;
         public Action<string> FileSelected;
         public Action<string> ConnectionStringAcquired;
+        public Action<string> FileSavePathSelected;
         public event Action<AppError> ErrorHappened;
         public event Action AppStateChanged;
 
@@ -54,6 +56,9 @@ namespace CSVtoSQL.Models
             ConnectionStringAcquired += (value) =>
             {
                 dbWorker = new DBWorker(this, value);
+                FileSavePathSelected += dbWorker.SetWriteToFilePath;
+                LoadFromFileRequested += dbWorker.BeginLoadToDatabase;
+                dbWorker.SetFileSourcePath(fileAnalyser.GetPath());
             };
         }
 
@@ -66,8 +71,7 @@ namespace CSVtoSQL.Models
             {
                 Operations.Add(0, new DBSaveToFile(this, Localisation.Strings.OpConvToXML, "xml"));
                 Operations.Add(1, new DBSaveToFile(this, Localisation.Strings.OpConvToXLSX, "xlsx"));
-                Operations.Add(2, new DBLoadFromFile(this, Localisation.Strings.OpCSVtoSQLExist));
-                Operations.Add(3, new DBLoadFromFile(this, Localisation.Strings.OpCSVtoSQLCreate));
+                Operations.Add(2, new DBLoadFromFile(this, Localisation.Strings.OpCSVtoSQLCreate));
             }
         }
 

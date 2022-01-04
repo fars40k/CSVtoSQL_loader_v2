@@ -25,7 +25,6 @@ namespace EntityAssembly
 
         private void SetDefaultDataProcessingMethods()
         {
-            fileCSVtoSQL = new CSVHelperLoader(SourceFilePath);
             entityToEXL = new EPPLusSaver(FileToWritePath);
             entityToXML = new XMLSerializeSaver(FileToWritePath, new Person());
         }
@@ -62,15 +61,8 @@ namespace EntityAssembly
 
         public bool ReadCSVToDb(int maxRecords)
         {
-            try
-            {
-                fileCSVtoSQL.Run(maxRecords);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            fileCSVtoSQL = new LumenWorksReader(SourceFilePath);
+            return fileCSVtoSQL.Run(maxRecords);               
         }
 
     }

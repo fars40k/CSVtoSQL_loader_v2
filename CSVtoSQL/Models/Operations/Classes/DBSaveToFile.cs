@@ -16,49 +16,23 @@ namespace CSVtoSQL.Models.Operations
     public class DBSaveToFile : Operation, ISaveFile
     {
         private string targetFormat;
-        private ICreateFile createFile;
         private NameGenerator nameGenerator;
 
         public DBSaveToFile(MainModel model,string newDescription,string Format) : base(model,newDescription)
         {
             this.targetFormat = Format;
-            SetFormatDependent(targetFormat);
-        }
-
-        /// <summary>
-        /// Задает классы содержащие методы записи
-        /// </summary>
-        /// <param name="targetFormat"></param>
-        private void SetFormatDependent(string targetFormat)
-        {
-            switch (targetFormat)
-            {
-                case "xml":
-                    {
-                        createFile = new CreateXMLFile();
-                        break;
-                    }
-
-                case "xlsx":
-                default:
-                    {
-                        createFile = new CreateExcelFile();
-                        break;
-                    }
-
-            }
-            nameGenerator = new NameGenerator();
+            nameGenerator = new NameGenerator(); 
         }
 
         public override void Select(object sender, RoutedEventArgs e)
         {
            string savePath =  GetSavePath(targetFormat);
-           if (savePath != "")
-            {
-
-            }
+           mainModel.FileSavePathSelected.Invoke(savePath);
         }
 
+        /// <summary>
+        /// Вызывает диалог сохранения файла для загрузки из базы данных
+        /// </summary>
         public string GetSavePath(string targetFormat)
         {
             SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
@@ -68,7 +42,7 @@ namespace CSVtoSQL.Models.Operations
             dlg.ShowDialog();
             if (dlg.FileName != "")
             {
-
+                return dlg.FileName;
             }
             return ("");
         }

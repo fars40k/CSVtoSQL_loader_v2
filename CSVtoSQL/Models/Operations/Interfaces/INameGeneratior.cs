@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CSVtoSQL.Models.Operations.Converters.Interfaces
 {
-    public interface INameGeneratior
+    internal interface INameGeneratior
     {
         public string GenerateName();
     }

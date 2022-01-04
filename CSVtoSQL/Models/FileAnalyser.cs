@@ -51,7 +51,13 @@ namespace CSVtoSQL.Models
              
             return (0);
         }
-
        
+        /// <summary>
+        /// Возвращает переданный путь к файлу 
+        /// </summary>
+       public string GetPath()
+        {
+            return Path;
+        }
     }
 }
