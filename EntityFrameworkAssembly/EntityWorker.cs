@@ -62,7 +62,8 @@ namespace EntityAssembly
         public bool ReadCSVToDb(int maxRecords)
         {
             fileCSVtoSQL = new LumenWorksReader(SourceFilePath);
-            return fileCSVtoSQL.Run(maxRecords);               
+            bool result = fileCSVtoSQL.Run(maxRecords);
+            return result;             
         }
 
     }

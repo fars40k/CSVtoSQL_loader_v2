@@ -1,4 +1,5 @@
-﻿using LumenWorks.Framework.IO.Csv;
+﻿using LumenWorks.Framework.IO;
+using LumenWorks.Framework.IO.Csv;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,16 +13,18 @@ namespace EntityAssembly.Classes
 {
     internal class LumenWorksReader : FileCSVtoSQL
     {
+        // sql bulk copy и создание новой таблицы
         public string filePath { get; private set; }
 
         public LumenWorksReader(string newfilePath)
         {
-            this.filePath = newfilePath;
+            string newPath = newfilePath.Replace(@"\\", @"\");
+            filePath = newPath;
         }
 
         public override bool Run(int maxRecords)
         {
-            using (var csv = new CachedCsvReader(new StreamReader("data.csv"), false, ';'))
+            using (var csv = new CachedCsvReader(new StreamReader(@"C:\Users\ArtyShock\Documents\TestCSV.csv"), false, ';'))
             {
                 // Настройка шаблона обработки CSV
 
@@ -43,13 +46,15 @@ namespace EntityAssembly.Classes
                 csv.Columns.Add(new Column { Name = "Country", Type = typeof(string) });
 
                 //Чтение из файла записей порциями ограниченными maxRecords и добавление в БД
-                while (csv.ReadNextRecord())
-                {                    
+                while (RecordsRead < maxRecords) // fix
+                {
+                    string errorsFilePath = "";
+
                     using (PersonsContext pC = new PersonsContext())
                     {
+                        pC.Configuration.AutoDetectChangesEnabled = false;
                         while ((csv.ReadNextRecord()) && (RecordsRead < maxRecords))
                         {
-
                             person = new Person();
                             RecordsRead++;
                             try
@@ -74,13 +79,19 @@ namespace EntityAssembly.Classes
                                         throw new Exception();
                                     }
                                 }
+                           
                             pC.Persons.Add(person);
                             }
                             catch (Exception ex)
                             {
-                                Add1RecordToErrorFile(csv);
+                                if (errorsFilePath == "") 
+                                { 
+                                    errorsFilePath = CreateErrorFile(filePath); 
+                                }
+                                Add1RecordToErrorFile(errorsFilePath, csv);
                             }
                         }
+                        pC.Configuration.AutoDetectChangesEnabled = true;
                         pC.SaveChanges();
                     }
 
@@ -90,18 +101,40 @@ namespace EntityAssembly.Classes
         }
 
         /// <summary>
+        /// Создать файл для ошибочных записей
+        /// </summary>
+        private string CreateErrorFile(string targetPath)
+        {
+            string path = targetPath.Substring(0, targetPath.LastIndexOf(".")-1) + "_Errors.csv";
+            if (File.Exists(path))
+            {
+                File.WriteAllText(path, String.Empty);
+            }
+            else
+            {
+                using (FileStream fstream = new FileStream(path, FileMode.OpenOrCreate))
+                {
+                }
+            }
+            return path;
+        }
+
+
+        /// <summary>
         /// Добавляет не распознанную запись в файл с ошибочными записями
         /// </summary>
-        private void Add1RecordToErrorFile(CachedCsvReader csv)
+        private void Add1RecordToErrorFile(string targetPath, CachedCsvReader csv)
         {
-            // Если файла нет то создать
-            //if (filePath.LastIndexOf(".")-6)
             string AssembledString = "";
-            for(int i = 0; i < csv.FieldCount; i++)
+            for (int i = 0; i < csv.FieldCount; i++)
             {
                 AssembledString += AssembledString + ';';
             }
             AssembledString += @"\r\n";
+            using (StreamWriter sw = new StreamWriter(targetPath, true, System.Text.Encoding.Default))
+            {               
+                sw.Write(AssembledString);
+            }            
         }
         
 

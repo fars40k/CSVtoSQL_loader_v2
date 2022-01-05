@@ -70,7 +70,8 @@ namespace CSVtoSQL.Models
             try
             {
                 string? DbLoadLimit = ConfigurationManager.AppSettings["DbLoadLimit"];
-                eWorker.ReadCSVToDb(Int32.Parse(DbLoadLimit));
+                bool result = eWorker.ReadCSVToDb(Int32.Parse(DbLoadLimit));
+                if (result == false) throw new Exception();
             }
             catch (Exception ex)
             {

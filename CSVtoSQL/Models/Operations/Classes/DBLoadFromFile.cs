@@ -15,7 +15,6 @@ namespace CSVtoSQL.Models.Operations
         public override void Select(object sender, RoutedEventArgs e)
         {
             mainModel.LoadFromFileRequested.Invoke();
-
         }
     } 
 
