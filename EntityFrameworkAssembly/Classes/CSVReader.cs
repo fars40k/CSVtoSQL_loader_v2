@@ -108,7 +108,7 @@ namespace EntityAssembly.Classes
         /// </summary>
         private string CreateErrorFile(string targetPath)
         {
-            string path = targetPath.Substring(0, targetPath.LastIndexOf(".")-1) + "_Errors.csv";
+            string path = targetPath.Substring(0, targetPath.LastIndexOf(".")) + "_Errors.csv";
             if (File.Exists(path))
             {
                 File.WriteAllText(path, String.Empty);
