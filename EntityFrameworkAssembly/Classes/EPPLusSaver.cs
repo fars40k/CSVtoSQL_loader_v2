@@ -13,13 +13,21 @@ namespace EntityAssembly.Classes
 
         public EPPLusSaver(string newFilePath)
         {
-            ExcelPackage.LicenseContext = LicenseContext.Commercial;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             filePath = newFilePath;
         }
 
         public override bool Run()
         {
-            throw new NotImplementedException();
+            using (PersonsContext pC = new PersonsContext())
+            {
+                using (var package = new ExcelPackage())
+                {
+                    ExcelWorksheet sheet = package.Workbook.Worksheets.Add("Querry"+DateTime.Now.ToString());
+
+                }
+            }
+        return true;
         }
     }
 }
