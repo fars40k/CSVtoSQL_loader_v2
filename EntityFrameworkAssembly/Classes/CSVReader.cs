@@ -62,7 +62,6 @@ namespace EntityAssembly.Classes
                                     throw new FormatException();
                                 }                            
 
-
                                 for (int i = 1; i < SplitBuffer.Length; i++)
                                 {
                                     if ((SplitBuffer[i].Length > 50) && (SplitBuffer[i].Length <= 1))
