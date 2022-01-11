@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -59,11 +60,25 @@ namespace EntityAssembly
             FileToWritePath = newPath;
         }
 
-        public bool ReadCSVToDb(int maxRecords)
+        public string ReadCSVToDb(int maxRecords, CancellationToken cancellationToken)
         {
             fileCSVtoSQL = new CSVReader(SourceFilePath);
+            fileCSVtoSQL.cancellationToken = cancellationToken;
+
             bool result = fileCSVtoSQL.Run(maxRecords);
-            return result;             
+            if (result)
+            {
+                if (fileCSVtoSQL.FailedToAllString().StartsWith("0 "))
+                {
+                    return "True";
+
+                } else
+                {
+                    return fileCSVtoSQL.FailedToAllString();
+
+                }
+            } else
+            return "False";             
         }
 
     }

@@ -15,8 +15,9 @@ namespace CSVtoSQL.Models
     {
         private static EnumGlobalState AppGlobalState { get; set; }
 
+        public Action OperationCancelCall;
         public Action OperationsListRequest;
-        public Action LoadFromFileRequested;
+        public Action<string> LoadFromFileRequested;
         public Action<string> FileSelected;
         public Action<string> ConnectionStringAcquired;
         public Action<string> FileSavePathSelected;
@@ -25,8 +26,8 @@ namespace CSVtoSQL.Models
 
         private FileAnalyser fileAnalyser;
         private DBWorker dbWorker;
-        private CancellationTokenSource cancellTokenSource;
-        private CancellationToken cancellationToken;
+        private CancellationTokenSource cancelTokenSource;
+        public CancellationToken cancellationToken;
 
         public MainViewModel? mainViewModel { get; private set; }
         public Dictionary<int, object> Operations { get; private set; } = new Dictionary<int, object>();
@@ -36,8 +37,8 @@ namespace CSVtoSQL.Models
         public MainModel(MainViewModel model)
         {
             mainViewModel = model;
-            cancellTokenSource = new CancellationTokenSource();
-            cancellationToken = cancellTokenSource.Token;
+            cancelTokenSource = new CancellationTokenSource();
+            cancellationToken = cancelTokenSource.Token;
             ApplyDefaultEventRouting();
             FillOperationsList();
             ErrorNotify.SetUINotifyMethod(mainViewModel.ShowError);
@@ -60,6 +61,14 @@ namespace CSVtoSQL.Models
                 LoadFromFileRequested += dbWorker.BeginLoadToDatabase;
                 dbWorker.SetFileSourcePath(fileAnalyser.GetPath());
             };
+            OperationCancelCall += () =>
+            {
+                if (IsAssyncRunned)
+                {
+                    cancelTokenSource.Cancel();
+                }
+
+            };
         }
 
         /// <summary>
@@ -71,7 +80,7 @@ namespace CSVtoSQL.Models
             {
                 Operations.Add(0, new DBSaveToFile(this, Localisation.Strings.OpConvToXML, "xml"));
                 Operations.Add(1, new DBSaveToFile(this, Localisation.Strings.OpConvToXLSX, "xlsx"));
-                Operations.Add(2, new DBLoadFromFile(this, Localisation.Strings.OpCSVtoSQLCreate));
+                Operations.Add(2, new DBLoadFromFile(this, Localisation.Strings.OpCSVtoSQLExist, "Old"));
             }
         }
 
@@ -127,5 +136,7 @@ namespace CSVtoSQL.Models
             }           
 
         }
+
+        
     } 
 }

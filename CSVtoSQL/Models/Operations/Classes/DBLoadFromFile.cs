@@ -9,12 +9,14 @@ namespace CSVtoSQL.Models.Operations
 {
     internal class DBLoadFromFile : Operation
     {
-        public DBLoadFromFile(MainModel model, string newDescription) : base(model, newDescription)
+        private string loadParam;
+
+        public DBLoadFromFile(MainModel model, string newDescription, string loadParam) : base(model, newDescription)
         {
         }
         public override void Select(object sender, RoutedEventArgs e)
         {
-            mainModel.LoadFromFileRequested.Invoke();
+            mainModel.LoadFromFileRequested.Invoke(loadParam);
         }
     } 
 

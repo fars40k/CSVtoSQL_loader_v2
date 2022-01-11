@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EntityAssembly.Classes
@@ -14,6 +15,9 @@ namespace EntityAssembly.Classes
         // sql bulk copy и создание новой таблицы
         public string filePath { get; private set; }
 
+        private int RecordsRead = 0;
+        private int FailedRecords = 0;
+
         public CSVReader(string newfilePath)
         {
             filePath = newfilePath;
@@ -21,8 +25,6 @@ namespace EntityAssembly.Classes
 
         public override bool Run(int maxRecords)
         {
-            int IdIncrement = 1;
-            int RecordsRead = 0;
             string Line;
             string[] SplitBuffer;
 
@@ -37,34 +39,37 @@ namespace EntityAssembly.Classes
                     RecordsRead = 0;
 
                     using (PersonsContext pC = new PersonsContext())
-                    {                        
-                        // Цикл для парсинга и добавления файла порциями
-                        while (RecordsRead < maxRecords)
+                    {
+                        int OldmaxID = pC.Database.ExecuteSqlCommand("SELECT MAX(ID) FROM dbo.Persons;");
+                        int IncrID = OldmaxID++;
+                        // Цикл для парсинга и добавления записей из файла порциями
+                        while ((RecordsRead < maxRecords) && (!cancellationToken.IsCancellationRequested))
                         {
                             Person person = new Person() { FirstName = "", SurName = "", LastName = "", City = "", Country = "" };
                             Line = sr.ReadLine();
                             // Если конец файла выйти из цикла
-                            if (Line == null) break;                           
+                            if (Line == null) break;
                             RecordsRead++;
 
                             pC.Configuration.AutoDetectChangesEnabled = false;
 
                             try
                             {
-                                SplitBuffer = Line.Replace(" ", "").Split(';');                                
+                                SplitBuffer = Line.Replace(" ", "").Split(';');
                                 // заполняет поля Person или записывает строку в файл ошибок
                                 if (ParseDateToSqlType(SplitBuffer[0]) != DateTime.MinValue)
-                                {                                    
+                                {
                                     person.Date = ParseDateToSqlType(SplitBuffer[0]);
                                 }
                                 else
                                 {
                                     throw new FormatException();
-                                }                            
+                                }
 
                                 for (int i = 1; i < SplitBuffer.Length; i++)
                                 {
-                                    if ((SplitBuffer[i].Length > 50) && (SplitBuffer[i].Length <= 1))
+                                    if ((SplitBuffer[i].Length > 50) || (SplitBuffer[i].Length <= 1)
+                                       || (SplitBuffer[i] == null))
                                     {
                                         throw new FormatException();
                                     }
@@ -75,7 +80,7 @@ namespace EntityAssembly.Classes
                                 person.LastName = SplitBuffer[3];
                                 person.City = SplitBuffer[4];
                                 person.Country = SplitBuffer[5];
-                                person.ID = IdIncrement++;
+                                person.ID = IncrID++;
 
                                 pC.Persons.Add(person);
                             }
@@ -86,14 +91,22 @@ namespace EntityAssembly.Classes
                                     errorsFilePath = CreateErrorFile(filePath);
                                 }
                                 Add1RecordToErrorFile(errorsFilePath, Line);
+                                FailedRecords++;
                             }
                             catch (Exception ex)
                             {
                                 return false;
                             }
                         }
-                        pC.Configuration.AutoDetectChangesEnabled = true;
-                        pC.SaveChanges();
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                           pC.Database.ExecuteSqlCommand("DELETE FROM dbo.Persons WHERE ID>@oldID", OldmaxID);                           
+                        }
+                        else
+                        {
+                            pC.Configuration.AutoDetectChangesEnabled = true;
+                            pC.SaveChanges();
+                        }
                     }
 
                 }
@@ -148,6 +161,14 @@ namespace EntityAssembly.Classes
             {
                 return DateTime.MinValue;
             }     
+        }
+
+        /// <summary>
+        /// Возвращает дробь отображающую отношение ошибок чтения ко всем строкам
+        /// </summary>
+        public override string FailedToAllString()
+        {
+            return FailedRecords.ToString() + @" / " + RecordsRead.ToString();
         }
     }
 }

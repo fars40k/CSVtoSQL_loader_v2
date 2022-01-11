@@ -32,6 +32,7 @@ namespace CSVtoSQL.Models
                     string? textFromFile = Encoding.Default.GetString(array);
                     if (textFromFile == "")
                     {
+                        
                         throw new ArgumentException(Localisation.Strings.ErrorFileEmpty);
                     } else
                     {

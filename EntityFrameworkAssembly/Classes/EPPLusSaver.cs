@@ -1,6 +1,7 @@
 ﻿using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,13 +22,17 @@ namespace EntityAssembly.Classes
         {
             using (PersonsContext pC = new PersonsContext())
             {
+                var maxId = pC.Database.SqlQuery<Person>("SELECT MAX(ID) FROM dbo.Persons","");
+                
                 using (var package = new ExcelPackage())
                 {
-                    ExcelWorksheet sheet = package.Workbook.Worksheets.Add("Querry"+DateTime.Now.ToString());
+                    ExcelWorksheet sheet = package.Workbook.Worksheets.Add("Querry" + DateTime.Now.ToString());
 
                 }
             }
-        return true;
+            return true;
+
         }
+
     }
 }

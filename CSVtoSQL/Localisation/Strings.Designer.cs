@@ -97,15 +97,6 @@ namespace CSVtoSQL.Localisation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Обнаружено поврежденных данных :.
-        /// </summary>
-        public static string Corrupted {
-            get {
-                return ResourceManager.GetString("Corrupted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to В работе приложения произошла критическая ошибка.
         /// </summary>
         public static string CriticalError {
@@ -439,11 +430,29 @@ namespace CSVtoSQL.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Записи добавлены частично. Не прочитанные записи добавлены в файл Error. (ошибки / всего):.
+        /// </summary>
+        public static string OpErrorAddRecords {
+            get {
+                return ResourceManager.GetString("OpErrorAddRecords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ошибка загрузки из CSV файла.
         /// </summary>
         public static string OpLoadFromFileError {
             get {
                 return ResourceManager.GetString("OpLoadFromFileError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Все записи успешно добавлены.
+        /// </summary>
+        public static string OpRecordsAdded {
+            get {
+                return ResourceManager.GetString("OpRecordsAdded", resourceCulture);
             }
         }
         

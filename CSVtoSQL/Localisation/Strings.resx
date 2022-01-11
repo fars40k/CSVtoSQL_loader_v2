@@ -129,9 +129,6 @@
   <data name="Cancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
-  <data name="Corrupted" xml:space="preserve">
-    <value>Обнаружено поврежденных данных :</value>
-  </data>
   <data name="CriticalError" xml:space="preserve">
     <value>В работе приложения произошла критическая ошибка</value>
   </data>
@@ -243,8 +240,14 @@
   <data name="OpenFileFormat" xml:space="preserve">
     <value>Табличные данные</value>
   </data>
+  <data name="OpErrorAddRecords" xml:space="preserve">
+    <value>Записи добавлены частично. Не прочитанные записи добавлены в файл Error. (ошибки / всего):</value>
+  </data>
   <data name="OpLoadFromFileError" xml:space="preserve">
     <value>Ошибка загрузки из CSV файла</value>
+  </data>
+  <data name="OpRecordsAdded" xml:space="preserve">
+    <value>Все записи успешно добавлены</value>
   </data>
   <data name="OpWrongSettings" xml:space="preserve">
     <value>Неверные настройки программы</value>

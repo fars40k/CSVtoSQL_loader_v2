@@ -101,6 +101,12 @@ namespace CSVtoSQL.ViewModels
             commandBinding.Command = ApplicationCommands.Print;
             commandBinding.Executed += CommandBinding_Database;
             mainWindow.DatabaseButton.CommandBindings.Add(commandBinding);
+
+            commandBinding = new CommandBinding();
+            mainWindow.OpCancelButton.Command = ApplicationCommands.CancelPrint;
+            commandBinding.Command = ApplicationCommands.CancelPrint;
+            commandBinding.Executed += CommandBinding_CancelOp;
+            mainWindow.OpCancelButton.CommandBindings.Add(commandBinding);
         }
 
         /// <summary>
@@ -138,6 +144,10 @@ namespace CSVtoSQL.ViewModels
 
         }
 
+        private void CommandBinding_CancelOp(object sender, ExecutedRoutedEventArgs e)
+        {
+            Model.OperationCancelCall.Invoke();
+        }
 
         #endregion
 
@@ -245,7 +255,6 @@ namespace CSVtoSQL.ViewModels
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
                         mainWindow.DatabaseButton.IsEnabled = false;
-                        mainWindow.ExecuteButton.IsEnabled = false;
                         mainWindow.FilterButton.IsEnabled = false;
                         mainWindow.OpCancelButton.IsEnabled = false;
                         UpdateOperationsList.Invoke();
@@ -255,7 +264,6 @@ namespace CSVtoSQL.ViewModels
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
                         mainWindow.DatabaseButton.IsEnabled = true;
-                        mainWindow.ExecuteButton.IsEnabled = false;
                         mainWindow.FilterButton.IsEnabled = false;
                         mainWindow.OpCancelButton.IsEnabled = false;
                         break;
@@ -265,9 +273,8 @@ namespace CSVtoSQL.ViewModels
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
                         mainWindow.DatabaseButton.IsEnabled = true;
-                        mainWindow.ExecuteButton.IsEnabled = false;
                         mainWindow.FilterButton.IsEnabled = true;
-                        mainWindow.OpCancelButton.IsEnabled = false;
+                        mainWindow.OpCancelButton.IsEnabled = true;
                         UpdateOperationsList.Invoke();
                         break;
                     }
@@ -276,9 +283,8 @@ namespace CSVtoSQL.ViewModels
                     {
                         mainWindow.FileLoadButton.IsEnabled = false;
                         mainWindow.DatabaseButton.IsEnabled = false;
-                        mainWindow.ExecuteButton.IsEnabled = false;
                         mainWindow.FilterButton.IsEnabled = false;
-                        mainWindow.OpCancelButton.IsEnabled = false;
+                        mainWindow.OpCancelButton.IsEnabled = true;
                         break;
                     }
 
@@ -287,7 +293,6 @@ namespace CSVtoSQL.ViewModels
                     {
                         mainWindow.FileLoadButton.IsEnabled = false;
                         mainWindow.DatabaseButton.IsEnabled = false;
-                        mainWindow.ExecuteButton.IsEnabled = false;
                         mainWindow.FilterButton.IsEnabled = false;
                         mainWindow.OpCancelButton.IsEnabled = false;
                         break;

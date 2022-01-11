@@ -9,6 +9,7 @@ using static CSVtoSQL.Models.MainModel;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data.Entity.Core.EntityClient;
+using System.Threading;
 
 namespace CSVtoSQL.Models
 {
@@ -65,13 +66,30 @@ namespace CSVtoSQL.Models
         /// <summary>
         /// Читает лимит загрузок для одного сеаса из App.config
         /// </summary>
-        public void BeginLoadToDatabase()
+        public async void BeginLoadToDatabase(string loadParam)
         {
             try
             {
                 string? DbLoadLimit = ConfigurationManager.AppSettings["DbLoadLimit"];
-                bool result = eWorker.ReadCSVToDb(Int32.Parse(DbLoadLimit));
-                if (result == false) throw new Exception();
+                string result = await Task.Run(() => eWorker.ReadCSVToDb(Int32.Parse(DbLoadLimit),model.cancellationToken));
+                switch (result)
+                {
+                    case "False":
+                        {
+                            throw new Exception();
+                        }
+                    case "True":
+                        {
+                            ErrorNotify.NewError(new AppError(Localisation.Strings.OpRecordsAdded, ""));
+                            break;
+                        }
+                    default:
+                        {
+                            ErrorNotify.NewError(new AppError(Localisation.Strings.OpErrorAddRecords, result));
+                            break;
+                        }
+                }
+
             }
             catch (Exception ex)
             {
