@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using CSVtoSQL.Models.Operations;
-using CSVtoSQL.Models.Operations.Converters;
+using WpfStarter.UI.Models.Operations;
+using WpfStarter.UI.Models.Operations.Converters;
 
-namespace CSVtoSQL.Models.Operations
+namespace WpfStarter.UI.Models.Operations
 {
     /// <summary>
     /// Класс операции записи в файл

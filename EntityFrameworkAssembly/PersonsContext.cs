@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 
-namespace EntityAssembly
+namespace WpfStarter.Data
 {
     public partial class PersonsContext : DbContext
     {

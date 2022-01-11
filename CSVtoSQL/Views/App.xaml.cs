@@ -6,10 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace CSVtoSQL.Views
+namespace WpfStarter.UI.Views
 {
     /// <summary>
-    /// Содержит ресурсы используемые всем приложением
+    /// Contains resources used by the entire application
     /// </summary>
     public partial class App : Application
     {

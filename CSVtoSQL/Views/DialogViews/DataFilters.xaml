@@ -1,10 +1,10 @@
-﻿<Window x:Class="CSVtoSQL.Views.DialogViews.DataFilters"
+﻿<Window x:Class="WpfStarter.UI.Views.DialogViews.DataFilters"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:p="clr-namespace:CSVtoSQL.Localisation"
-        xmlns:local="clr-namespace:CSVtoSQL.Views.DialogViews"
+        xmlns:p="clr-namespace:WpfStarter.UI.Localisation"
+        xmlns:local="clr-namespace:WpfStarter.UI.Views.DialogViews"
         mc:Ignorable="d"
         Title="{x:Static p:Strings.FilterTitle}" Height="320" Width="700" ResizeMode="NoResize">
     <Grid>

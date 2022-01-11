@@ -1,4 +1,4 @@
-namespace EntityAssembly
+namespace WpfStarter.Data
 {
     using System;
     using System.Collections.Generic;

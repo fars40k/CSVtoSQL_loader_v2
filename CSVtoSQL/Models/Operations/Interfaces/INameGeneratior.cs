@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSVtoSQL.Models.Operations.Converters.Interfaces
+namespace WpfStarter.UI.Models.Operations
 {
     internal interface INameGeneratior
     {

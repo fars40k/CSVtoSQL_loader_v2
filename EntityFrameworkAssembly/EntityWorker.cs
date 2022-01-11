@@ -1,4 +1,4 @@
-﻿using EntityAssembly.Classes;
+﻿using WpfStarter.Data.Export;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace EntityAssembly
+namespace WpfStarter.Data
 { 
     public class EntityWorker
     {

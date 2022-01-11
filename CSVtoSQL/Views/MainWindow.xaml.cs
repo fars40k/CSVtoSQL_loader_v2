@@ -12,54 +12,32 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using CSVtoSQL.Models;
-using CSVtoSQL.ViewModels;
+using WpfStarter.UI.Models;
+using WpfStarter.UI.ViewModels;
 
-namespace CSVtoSQL.Views
+namespace WpfStarter.UI.Views
 {
     /// <summary>
-    /// Содержит ресурсы относящиеся к Основному окну приложения
+    /// Contains resources used by the main window
     /// </summary>
-    
+
     public partial class MainWindow : Window
     {
         public MainViewModel MainWindowViewModel { get; private set; }
         public MainModel MainWindowModel { get; private set; }
 
-        /// <summary>
-        /// Устанавливает зависимости окна
-        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
+
             MainWindowViewModel = new MainViewModel(this);
             MainWindowModel = new MainModel(MainWindowViewModel);
-            SetDependencies();
-            SetBehaviour();
-            MainWindowViewModel.UpdateUserUI.Invoke();
-        }
-
-        /// <summary>
-        /// Cвязывает Model и ViewModel
-        /// </summary>
-        private void SetDependencies()
-        {
 
             this.DataContext = MainWindowViewModel;
-            MainWindowViewModel.SetModelReference(MainWindowModel);
-
-        }
-
-        /// <summary>
-        /// Устанавливает поведение окна
-        /// </summary>
-        private void SetBehaviour()
-        {
-
             this.ResizeMode = ResizeMode.CanResize;
 
+            MainWindowViewModel.SetModelReference(MainWindowModel);
+            MainWindowViewModel.UpdateUserUI.Invoke();
         }
-
-
     }
 }

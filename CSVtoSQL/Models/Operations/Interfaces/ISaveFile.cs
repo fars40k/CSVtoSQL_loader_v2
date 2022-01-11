@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSVtoSQL.Models.Operations.Converters
+namespace WpfStarter.UI.Models.Operations.Converters
 {
     internal interface ISaveFile
     {

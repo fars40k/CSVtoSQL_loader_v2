@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityAssembly.Classes
+namespace WpfStarter.Data.Export
 {
     public class EPPLusSaver : EntityToExcel
     {

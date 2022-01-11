@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CSVtoSQL.Models.Operations;
-using CSVtoSQL.ViewModels;
+using WpfStarter.UI.Models.Operations;
+using WpfStarter.UI.ViewModels;
 
-namespace CSVtoSQL.Models
+namespace WpfStarter.UI.Models
 {
     public partial class MainModel
     {
-        private static EnumGlobalState AppGlobalState { get; set; }
+        private static GlobalState AppGlobalState { get; set; }
 
         public Action OperationCancelCall;
         public Action OperationsListRequest;
@@ -32,7 +32,7 @@ namespace CSVtoSQL.Models
         public MainViewModel? mainViewModel { get; private set; }
         public Dictionary<int, object> Operations { get; private set; } = new Dictionary<int, object>();
 
-        public bool IsAssyncRunned { get; private set; } = false;
+        public bool IsAsyncRunned { get; private set; } = false;
 
         public MainModel(MainViewModel model)
         {
@@ -63,7 +63,7 @@ namespace CSVtoSQL.Models
             };
             OperationCancelCall += () =>
             {
-                if (IsAssyncRunned)
+                if (IsAsyncRunned)
                 {
                     cancelTokenSource.Cancel();
                 }
@@ -96,7 +96,7 @@ namespace CSVtoSQL.Models
         /// Устанавливает новое состояние приложения
         /// </summary>
         /// <param name="newState"></param>
-        public void SetAppGlobalState(EnumGlobalState newState)
+        public void SetAppGlobalState(GlobalState newState)
         {
             AppGlobalState = newState;
             AppStateChanged.Invoke();

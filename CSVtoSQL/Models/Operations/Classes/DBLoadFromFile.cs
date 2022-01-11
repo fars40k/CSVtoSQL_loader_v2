@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace CSVtoSQL.Models.Operations
+namespace WpfStarter.UI.Models.Operations
 {
     internal class DBLoadFromFile : Operation
     {

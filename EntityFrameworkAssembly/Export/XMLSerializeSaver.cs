@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace EntityAssembly.Classes
+namespace WpfStarter.Data.Export
 {
     public class XMLSerializeSaver : EntityToXML
     {

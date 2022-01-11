@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EntityAssembly.Classes
+namespace WpfStarter.Data.Export
 {
     internal class CSVReader : FileCSVtoSQL
     {

@@ -11,11 +11,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using CSVtoSQL.Localisation;
+using WpfStarter.UI.Localisation;
 using System.Configuration;
 using System.Collections.Specialized;
 
-namespace CSVtoSQL.Views.DialogViews
+namespace WpfStarter.UI.Views.DialogViews
 {
     /// <summary>
     /// Interaction logic for StringInput.xaml

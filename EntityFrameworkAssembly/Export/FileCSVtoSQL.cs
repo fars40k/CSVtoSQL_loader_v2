@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EntityAssembly.Classes
+namespace WpfStarter.Data.Export
 {
     public abstract class FileCSVtoSQL 
     {

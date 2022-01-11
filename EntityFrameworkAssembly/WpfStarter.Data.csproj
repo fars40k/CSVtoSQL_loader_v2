@@ -7,9 +7,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{05AB61AF-7B5A-4D91-8199-9ED96EEED9E8}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>EntityAssembly</RootNamespace>
-    <AssemblyName>EntityAssembly</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <RootNamespace>WpfStarter.Data</RootNamespace>
+    <AssemblyName>WpfStarter.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -97,12 +97,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\CSVReader.cs" />
-    <Compile Include="Classes\EPPLusSaver.cs" />
-    <Compile Include="Classes\XMLSerializeSaver.cs" />
-    <Compile Include="Classes\BaseClasses\FileCSVtoSQL.cs" />
-    <Compile Include="Classes\BaseClasses\EntityToExcel.cs" />
-    <Compile Include="Classes\BaseClasses\EntityToXML.cs" />
+    <Compile Include="Export\CSVReader.cs" />
+    <Compile Include="Export\EPPLusSaver.cs" />
+    <Compile Include="Export\XMLSerializeSaver.cs" />
+    <Compile Include="Export\FileCSVtoSQL.cs" />
+    <Compile Include="Export\EntityToExcel.cs" />
+    <Compile Include="Export\EntityToXML.cs" />
     <Compile Include="EntityWorker.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="PersonsContext.cs" />
@@ -112,6 +112,7 @@
     <None Include="App.Config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

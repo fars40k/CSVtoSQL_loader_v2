@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSVtoSQL.Models
+namespace WpfStarter.UI.Models
 {
     public class LinqBuilder
     {

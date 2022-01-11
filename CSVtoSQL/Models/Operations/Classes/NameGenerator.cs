@@ -1,15 +1,12 @@
-﻿using CSVtoSQL.Models.Operations.Converters.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSVtoSQL.Models
+namespace WpfStarter.UI.Models.Operations
 {
-    /// <summary>
-    /// Класс генератор имен
-    /// </summary>
+
     internal class NameGenerator : INameGeneratior
     {
         public NameGenerator()
@@ -18,9 +15,8 @@ namespace CSVtoSQL.Models
         }
 
         /// <summary>
-        /// Создает уникальное имя на основе даты и времени
+        /// Return unique name based on current date and time
         /// </summary>
-        /// <returns></returns>
         public string GenerateName()
         {
             return String.Join("",DateTime.Now.ToString().Split('/', ':', ' ', 'A', 'P', 'M'));

@@ -4,18 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
-using CSVtoSQL.Models.Operations;
-using static CSVtoSQL.Models.MainModel;
+using WpfStarter.UI.Models.Operations;
+using static WpfStarter.UI.Models.MainModel;
 using System.Configuration;
-using System.Data.SqlClient;
-using System.Data.Entity.Core.EntityClient;
 using System.Threading;
+using WpfStarter.Data;
 
-namespace CSVtoSQL.Models
+namespace WpfStarter.UI.Models
 {
     public class DBWorker
     {
-        private EntityAssembly.EntityWorker eWorker;
+        private EntityWorker eWorker;
         private MainModel model;
         private string connString;
         private bool isDBOperationRunned;
@@ -28,10 +27,10 @@ namespace CSVtoSQL.Models
                 isDBOperationRunned = value;
                 if (isDBOperationRunned)
                 {
-                    model.SetAppGlobalState(EnumGlobalState.Disabled);
+                    model.SetAppGlobalState(GlobalState.Disabled);
                 } else
                 {
-                    model.SetAppGlobalState(EnumGlobalState.DbConnected);
+                    model.SetAppGlobalState(GlobalState.DbConnected);
                 }
             }
         }
@@ -40,7 +39,7 @@ namespace CSVtoSQL.Models
         {
             model = newModel;
             connString = newConnString;
-            eWorker = new EntityAssembly.EntityWorker();
+            eWorker = new WpfStarter.Data.EntityWorker();
             if (eWorker.VerifyConnString(connString))
             {
                 IsDBOperationRunned = false;
@@ -49,7 +48,7 @@ namespace CSVtoSQL.Models
             else
             {
                 ErrorNotify.NewError(new AppError(Localisation.Strings.DBError, ""));
-                model.SetAppGlobalState(EnumGlobalState.FileDecided);
+                model.SetAppGlobalState(GlobalState.FileDecided);
             }
         }
 
@@ -63,14 +62,12 @@ namespace CSVtoSQL.Models
             eWorker.SetFileToWritePath(path);
         }
 
-        /// <summary>
-        /// Читает лимит загрузок для одного сеаса из App.config
-        /// </summary>
+
         public async void BeginLoadToDatabase(string loadParam)
         {
             try
             {
-                string? DbLoadLimit = ConfigurationManager.AppSettings["DbLoadLimit"];
+                string DbLoadLimit = ConfigurationManager.AppSettings["BatchLimit"];
                 string result = await Task.Run(() => eWorker.ReadCSVToDb(Int32.Parse(DbLoadLimit),model.cancellationToken));
                 switch (result)
                 {

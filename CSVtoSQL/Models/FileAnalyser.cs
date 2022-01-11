@@ -2,9 +2,9 @@
 using System.IO;
 using System.Text;
 using System.Windows;
-using static CSVtoSQL.Models.MainModel;
+using static WpfStarter.UI.Models.MainModel;
 
-namespace CSVtoSQL.Models
+namespace WpfStarter.UI.Models
 {
     internal class FileAnalyser
     {
@@ -36,14 +36,14 @@ namespace CSVtoSQL.Models
                         throw new ArgumentException(Localisation.Strings.ErrorFileEmpty);
                     } else
                     {
-                        Model.SetAppGlobalState(EnumGlobalState.FileDecided);
+                        Model.SetAppGlobalState(GlobalState.FileDecided);
                     }
                 }
              }
              catch (ArgumentException ex)
              {
                 ErrorNotify.NewError(new AppError(Localisation.Strings.ErrorFileEmpty, ""));
-                Model.SetAppGlobalState(EnumGlobalState.AppLoaded);
+                Model.SetAppGlobalState(GlobalState.AppLoaded);
             }
              catch (Exception e)
              {

@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using CSVtoSQL.Localisation;
-using CSVtoSQL.Models;
+using WpfStarter.UI.Localisation;
+using WpfStarter.UI.Models;
 using Microsoft.Win32;
-using static CSVtoSQL.Models.MainModel;
-using MainWindow = CSVtoSQL.Views.MainWindow;
-using CSVtoSQL.Views.DialogViews;
+using static WpfStarter.UI.Models.MainModel;
+using MainWindow = WpfStarter.UI.Views.MainWindow;
+using WpfStarter.UI.Views.DialogViews;
 using System.Configuration;
 
-namespace CSVtoSQL.ViewModels
+namespace WpfStarter.UI.ViewModels
 {
     /// <summary>
     /// Содержит модель представления для основного окна
@@ -32,8 +32,6 @@ namespace CSVtoSQL.ViewModels
         private string userHelpString;
         private string errorString;
         private string fileString;
-        private string databaseString;
-        private string fileAnalysed;
 
         public string UserHelpString
         {
@@ -64,26 +62,7 @@ namespace CSVtoSQL.ViewModels
                 OnPropertyChanged("FileString");
             }
         }
-
-        public string DataBaseString
-        {
-            get => databaseString; 
-            set
-            {
-                databaseString = value;
-                OnPropertyChanged("DataBaseString");
-            }
-        }
         
-        public string FileAnalysed
-        {
-            get => fileAnalysed;
-            set
-            {
-                fileAnalysed = value;
-                OnPropertyChanged("FileAnalysedString");
-            }
-        }
         #endregion
 
         #region UI_Commands
@@ -95,12 +74,6 @@ namespace CSVtoSQL.ViewModels
             commandBinding.Command = ApplicationCommands.Open;
             commandBinding.Executed += CommandBinding_Open;
             mainWindow.FileLoadButton.CommandBindings.Add(commandBinding);
-
-            commandBinding = new CommandBinding();
-            mainWindow.DatabaseButton.Command = ApplicationCommands.Print;
-            commandBinding.Command = ApplicationCommands.Print;
-            commandBinding.Executed += CommandBinding_Database;
-            mainWindow.DatabaseButton.CommandBindings.Add(commandBinding);
 
             commandBinding = new CommandBinding();
             mainWindow.OpCancelButton.Command = ApplicationCommands.CancelPrint;
@@ -126,7 +99,7 @@ namespace CSVtoSQL.ViewModels
         private void CommandBinding_Open(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            Model.SetAppGlobalState(EnumGlobalState.Disabled);
+            Model.SetAppGlobalState(GlobalState.Disabled);
             dlg.DefaultExt = ".csv";
             dlg.Filter = Localisation.Strings.OpenFileFormat + " (*.csv)|*csv";
             dlg.ShowDialog();
@@ -139,7 +112,7 @@ namespace CSVtoSQL.ViewModels
                 FileString = str;
             } else
             {
-                Model.SetAppGlobalState(EnumGlobalState.AppLoaded);
+                Model.SetAppGlobalState(GlobalState.AppLoaded);
             }
 
         }
@@ -152,7 +125,7 @@ namespace CSVtoSQL.ViewModels
         #endregion
 
         private MainWindow mainWindow;
-        private MainModel? Model { get; set; }
+        private MainModel Model { get; set; }
 
         public Action UpdateFileInfoOnView;
         public Action UpdateOperationsList;
@@ -210,7 +183,7 @@ namespace CSVtoSQL.ViewModels
         public void SetModelReference(MainModel newModel)
         {
             if (Model == null) Model = newModel;
-            Model.SetAppGlobalState(MainModel.EnumGlobalState.AppLoaded);
+            Model.SetAppGlobalState(MainModel.GlobalState.AppLoaded);
         }
 
         /// <summary>
@@ -254,8 +227,6 @@ namespace CSVtoSQL.ViewModels
                 case "AppLoaded":
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
-                        mainWindow.DatabaseButton.IsEnabled = false;
-                        mainWindow.FilterButton.IsEnabled = false;
                         mainWindow.OpCancelButton.IsEnabled = false;
                         UpdateOperationsList.Invoke();
                         break;
@@ -263,8 +234,6 @@ namespace CSVtoSQL.ViewModels
                 case "FileDecided":
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
-                        mainWindow.DatabaseButton.IsEnabled = true;
-                        mainWindow.FilterButton.IsEnabled = false;
                         mainWindow.OpCancelButton.IsEnabled = false;
                         break;
                     }
@@ -272,8 +241,6 @@ namespace CSVtoSQL.ViewModels
                 case "DbConnected":
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
-                        mainWindow.DatabaseButton.IsEnabled = true;
-                        mainWindow.FilterButton.IsEnabled = true;
                         mainWindow.OpCancelButton.IsEnabled = true;
                         UpdateOperationsList.Invoke();
                         break;
@@ -282,8 +249,6 @@ namespace CSVtoSQL.ViewModels
                 case "Disabled":
                     {
                         mainWindow.FileLoadButton.IsEnabled = false;
-                        mainWindow.DatabaseButton.IsEnabled = false;
-                        mainWindow.FilterButton.IsEnabled = false;
                         mainWindow.OpCancelButton.IsEnabled = true;
                         break;
                     }
@@ -292,8 +257,6 @@ namespace CSVtoSQL.ViewModels
                 default:
                     {
                         mainWindow.FileLoadButton.IsEnabled = false;
-                        mainWindow.DatabaseButton.IsEnabled = false;
-                        mainWindow.FilterButton.IsEnabled = false;
                         mainWindow.OpCancelButton.IsEnabled = false;
                         break;
                     }
