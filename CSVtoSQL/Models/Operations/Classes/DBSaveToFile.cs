@@ -31,7 +31,7 @@ namespace WpfStarter.UI.Models.Operations
         }
 
         /// <summary>
-        /// Вызывает диалог сохранения файла для загрузки из базы данных
+        /// Shows savefile dialog window and returns savepath or empty string ("") 
         /// </summary>
         public string GetSavePath(string targetFormat)
         {
@@ -40,11 +40,7 @@ namespace WpfStarter.UI.Models.Operations
             dlg.FileName = nameGenerator.GenerateName();
             dlg.Filter = Localisation.Strings.FileSave + " (*." + targetFormat + ")|*" + targetFormat;
             dlg.ShowDialog();
-            if (dlg.FileName != "")
-            {
-                return dlg.FileName;
-            }
-            return ("");
+            return dlg.FileName;
         }
     }
 }

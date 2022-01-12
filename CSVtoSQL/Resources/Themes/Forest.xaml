@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="ColourSideBeam">ForestGreen</SolidColorBrush>
+    <SolidColorBrush x:Key="ColourShelf">LightGreen</SolidColorBrush>
+    <SolidColorBrush x:Key="ColourBackplate">Azure</SolidColorBrush>
+    <SolidColorBrush x:Key="ColourTextHelp">#FF0F3700</SolidColorBrush>
+    <SolidColorBrush x:Key="ColourTextError">Crimson</SolidColorBrush>
+    <SolidColorBrush x:Key="ColourCancelForeground">White</SolidColorBrush>
+    <SolidColorBrush x:Key="ColourCancelBackground">DarkRed</SolidColorBrush>
+    <SolidColorBrush x:Key="ColourBorderLight">White</SolidColorBrush>
+
+</ResourceDictionary>

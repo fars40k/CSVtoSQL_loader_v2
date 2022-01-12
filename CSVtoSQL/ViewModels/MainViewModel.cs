@@ -42,7 +42,6 @@ namespace WpfStarter.UI.ViewModels
                 OnPropertyChanged("UserHelpString");
             }
         }
-
         public string ErrorString
         {
             get => errorString;
@@ -52,7 +51,6 @@ namespace WpfStarter.UI.ViewModels
                 OnPropertyChanged("ErrorString");
             }
         }
-
         public string FileString
         {
             get => fileString;
@@ -62,7 +60,19 @@ namespace WpfStarter.UI.ViewModels
                 OnPropertyChanged("FileString");
             }
         }
-        
+
+        /// <summary>
+        /// On changes in binded string properties changes the text of the View
+        /// </summary>
+        /// <param name="name"></param>
+        private void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
         #endregion
 
         #region UI_Commands
@@ -90,42 +100,42 @@ namespace WpfStarter.UI.ViewModels
             /*var dialog = new StringInput(Model.ExstractDBStringFromFile());
             dialog.ShowDialog();
             string returnedString = dialog.CurrentConnString.Replace(" ", string.Empty);*/
-            Model.ConnectionStringAcquired("");
+            mainModel.ConnectionStringAcquired("");
         }
 
         /// <summary>
-        /// Обработчик команды открытия файла
+        /// Open file command handler
         /// </summary>
         private void CommandBinding_Open(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            Model.SetAppGlobalState(GlobalState.Disabled);
+            mainModel.SetAppGlobalState(GlobalState.Disabled);
             dlg.DefaultExt = ".csv";
             dlg.Filter = Localisation.Strings.OpenFileFormat + " (*.csv)|*csv";
             dlg.ShowDialog();
             ErrorNotify.ClearError();
             if (dlg.FileName != "")
             {
-                Model.FileSelected(dlg.FileName);              
+                mainModel.FileSelected(dlg.FileName);              
                 string str = dlg.FileName;
                 str = " " + str.Substring(str.LastIndexOf(@"\"), str.Length - str.LastIndexOf(@"\"));
                 FileString = str;
             } else
             {
-                Model.SetAppGlobalState(GlobalState.AppLoaded);
+                mainModel.SetAppGlobalState(GlobalState.AppLoaded);
             }
 
         }
 
         private void CommandBinding_CancelOp(object sender, ExecutedRoutedEventArgs e)
         {
-            Model.OperationCancelCall.Invoke();
+            mainModel.OperationCancelCall.Invoke();
         }
 
         #endregion
 
         private MainWindow mainWindow;
-        private MainModel Model { get; set; }
+        private MainModel mainModel { get; set; }
 
         public Action UpdateFileInfoOnView;
         public Action UpdateOperationsList;
@@ -137,16 +147,16 @@ namespace WpfStarter.UI.ViewModels
         public MainViewModel(MainWindow main)
         {
             mainWindow = main;
-            SetDefaultEventRouting();
+            SetDefaultReferences();
             SetDefaultCommandBindings();           
         }
 
         /// <summary>
-        /// Связывает делегаты,события и методы
+        /// Binds delegates, events and methods
         /// </summary>
-        private void SetDefaultEventRouting()
+        private void SetDefaultReferences()
         {
-            UpdateUserUI += UpdateDynamicUIStrings;
+            UpdateUserUI += UpdateUIBindedStrings;
             UpdateUserUI += UpdateUIElementsAvalability;
             UpdateOperationsList += SetOperationsToList;
             ShowError += ReadErrorsAndShow;
@@ -182,8 +192,8 @@ namespace WpfStarter.UI.ViewModels
         /// <param name="newModel"></param>
         public void SetModelReference(MainModel newModel)
         {
-            if (Model == null) Model = newModel;
-            Model.SetAppGlobalState(MainModel.GlobalState.AppLoaded);
+            if (mainModel == null) mainModel = newModel;
+            mainModel.SetAppGlobalState(MainModel.GlobalState.AppLoaded);
         }
 
         /// <summary>
@@ -191,17 +201,17 @@ namespace WpfStarter.UI.ViewModels
         /// </summary>
         private void SetOperationsToList()
         {
-            if (Model.GetAppGlobalState() == "DbConnected")
+            if (mainModel.GetAppGlobalState() == "FileDecided")
             {
-                if (mainWindow.FunctionsList.Children.Count != Model.Operations.Count)
+                if (mainWindow.FunctionsList.Children.Count != mainModel.Operations.Count)
                 {
-                    for (int OpId = 0; OpId < Model.Operations.Count; OpId++)
+                    for (int OpId = 0; OpId < mainModel.Operations.Count; OpId++)
                     {
                         Button btn = new Button();
                         btn.HorizontalAlignment = HorizontalAlignment.Stretch;
                         btn.Width = mainWindow.FunctionsList.Width;
                         btn.MinHeight *= 2;
-                        Operation tmpOp = Model.Operations[OpId] as Operation;
+                        Operation tmpOp = mainModel.Operations[OpId] as Operation;
                         btn.Content = tmpOp.Description;
                         btn.Click += tmpOp.Select;
                         if (!mainWindow.FunctionsList.Children.Contains(btn))
@@ -213,16 +223,17 @@ namespace WpfStarter.UI.ViewModels
             }
             else
             {
-                mainWindow.FunctionsList.Children.RemoveRange(0, Model.Operations.Count);
+                mainWindow.FunctionsList.Children.RemoveRange(0, mainModel.Operations.Count);
             }
         }
 
         /// <summary>
-        /// Получает состояние приложения и изменяет доступность интерфейса
+        /// Receives application global state from Model and accordingly changes 
+        /// IsEnabled property of UI elements 
         /// </summary>
         private void UpdateUIElementsAvalability()
         {      
-            switch (Model.GetAppGlobalState())
+            switch (mainModel.GetAppGlobalState())
             {
                 case "AppLoaded":
                     {
@@ -263,13 +274,14 @@ namespace WpfStarter.UI.ViewModels
             }
 
         }
-      
+
         /// <summary>
-        /// Получает состояние приложения из Model и изменяет связанные строки
+        /// Receives application global state from Model and accordingly changes 
+        /// binded strings
         /// </summary>
-        private void UpdateDynamicUIStrings()
+        private void UpdateUIBindedStrings()
         {
-            switch (Model.GetAppGlobalState())
+            switch (mainModel.GetAppGlobalState())
             {
                 case "AppLoaded":
                     {
@@ -281,7 +293,6 @@ namespace WpfStarter.UI.ViewModels
                 case "FileDecided":
                     {
                         UserHelpString = Localisation.Strings.Help2;
-                        DataBaseString = Localisation.Strings.DataBase;
                         break;
                     }
                 case "DbConnected":
@@ -309,18 +320,7 @@ namespace WpfStarter.UI.ViewModels
 
         }
 
-        /// <summary>
-        /// На основе изменений в связанных свойствах ViewModel изменяет текст View
-        /// </summary>
-        /// <param name="name"></param>
-        private void OnPropertyChanged(string name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
-        }
+        
 
     }
 }

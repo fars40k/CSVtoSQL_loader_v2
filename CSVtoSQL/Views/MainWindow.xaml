@@ -6,7 +6,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="{x:Static p:Strings.Title}" Height="400" Width="500" MinHeight="400" MinWidth="500">
-
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary 
+            Source="/WpfStarter.UI;component/Resources/Styles.xaml">
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"></RowDefinition>
@@ -73,8 +81,9 @@
         <Button x:Name="FileLoadButton"  
                 Content="{x:Static p:Strings.SelectFile}" 
                 Grid.Column="3"
-                Margin="0,47,150,6" 
-                FontSize="12"/>
+                Margin="0,51,150,6" 
+                FontSize="12"
+                />
 
         <TextBlock x:Name="FileText" 
                    Grid.Column="3" 
@@ -121,12 +130,10 @@
 
         <TextBlock x:Name="ErrorText" 
                    Grid.Column="3" 
-                   HorizontalAlignment="Left" 
                    Grid.Row="5" 
                    TextWrapping="Wrap" 
                    Text="{Binding ErrorString}" 
                    Grid.ColumnSpan="2" 
-                   Width="356" 
                    Foreground="Crimson" 
                    FontSize="14" Margin="4,5,0,5"/>
 

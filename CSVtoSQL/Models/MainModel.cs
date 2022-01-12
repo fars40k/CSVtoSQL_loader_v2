@@ -21,7 +21,6 @@ namespace WpfStarter.UI.Models
         public Action<string> FileSelected;
         public Action<string> ConnectionStringAcquired;
         public Action<string> FileSavePathSelected;
-        public event Action<AppError> ErrorHappened;
         public event Action AppStateChanged;
 
         private FileAnalyser fileAnalyser;
@@ -39,15 +38,15 @@ namespace WpfStarter.UI.Models
             mainViewModel = model;
             cancelTokenSource = new CancellationTokenSource();
             cancellationToken = cancelTokenSource.Token;
-            ApplyDefaultEventRouting();
+            SetDefaultReferences();
             FillOperationsList();
             ErrorNotify.SetUINotifyMethod(mainViewModel.ShowError);
         }
 
         /// <summary>
-        /// Связывает делегаты,события и методы
+        /// Binds delegates, events and methods
         /// </summary>
-        public void ApplyDefaultEventRouting()
+        public void SetDefaultReferences()
         {
             AppStateChanged += mainViewModel.UpdateUserUI;
             FileSelected += (value) =>
@@ -72,7 +71,7 @@ namespace WpfStarter.UI.Models
         }
 
         /// <summary>
-        /// Заполняет список доступных операций
+        /// Fills Operations Dictionary with Operation class inheritors
         /// </summary>
         private void FillOperationsList()
         {
@@ -85,7 +84,7 @@ namespace WpfStarter.UI.Models
         }
 
         /// <summary>
-        /// Возвращает текущее состояние приложения
+        /// Returns definition of current application global state
         /// </summary>
         public string GetAppGlobalState()
         {
@@ -93,7 +92,7 @@ namespace WpfStarter.UI.Models
         }
 
         /// <summary>
-        /// Устанавливает новое состояние приложения
+        /// Sets new application global state
         /// </summary>
         /// <param name="newState"></param>
         public void SetAppGlobalState(GlobalState newState)
@@ -103,7 +102,7 @@ namespace WpfStarter.UI.Models
         }
 
         /// <summary>
-        /// Получает строку подключения из файла
+        /// Returns string from "Connection.txt" or creates empty file
         /// </summary>
         public string ExstractDBStringFromFile()
         {
@@ -123,7 +122,7 @@ namespace WpfStarter.UI.Models
         }
 
         /// <summary>
-        /// Записывает строку подключения в файл
+        /// Writes argument string to existing file "Connection.txt"
         /// </summary>
         public void WriteDBStringToFile(string newDBstring)
         {

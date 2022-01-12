@@ -15,7 +15,7 @@ namespace WpfStarter.UI.Models.Operations
         }
 
         /// <summary>
-        /// Return unique name based on current date and time
+        /// Returns unique name based on current date and time
         /// </summary>
         public string GenerateName()
         {

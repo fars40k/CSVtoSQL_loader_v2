@@ -1,0 +1,53 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/WpfStarter.UI;component/Resources/Themes/Forest.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="{x:Type Button}" x:Key="ButtonCommon">
+        <Setter Property="FontSize" 
+                Value="12" />
+    </Style>
+
+    <Style TargetType="{x:Type Button}" x:Key="ButtonEnlarged">
+        <Setter Property="FontSize" 
+                Value="14" />
+        <Setter Property="Height"
+                Value="25"/>
+        <Setter Property="Width"
+                Value="270" />        
+    </Style>
+
+    <Style TargetType="{x:Type Button}" x:Key="ButtonCancel">
+        <Setter Property="FontSize" 
+                Value="16" />
+        <Setter Property="Background" 
+                Value="{DynamicResource ColourCancelBackground}"/>
+        <Setter Property="Foreground" 
+                Value="{DynamicResource ColourCancelForeground}"/>
+    </Style>
+
+    <Style TargetType="{x:Type Rectangle}" x:Key="SideBeam">
+        <Setter Property="Fill" 
+                Value="{DynamicResource ColourSideBeam}"/>
+        <Setter Property="Stroke" 
+                Value="{DynamicResource ColourBorderLight}"/>
+    </Style>
+
+    <Style TargetType="{x:Type Rectangle}" x:Key="Shelf">
+        <Setter Property="Fill" 
+                Value="{DynamicResource ColourShelf}"/>
+        <Setter Property="Stroke" 
+                Value="{DynamicResource ColourBorderLight}"/>
+    </Style>
+
+    <Style TargetType="{x:Type Rectangle}" x:Key="Backplate">
+        <Setter Property="Fill" 
+                Value="{DynamicResource ColourBackplate}"/>
+        <Setter Property="Stroke" 
+                Value="{DynamicResource ColourShelf}"/>
+    </Style>
+
+
+</ResourceDictionary>

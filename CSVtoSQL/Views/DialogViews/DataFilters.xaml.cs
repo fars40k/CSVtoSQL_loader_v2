@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace WpfStarter.UI.Views.DialogViews
 {
@@ -21,8 +16,7 @@ namespace WpfStarter.UI.Views.DialogViews
     public partial class DataFilters : Window
     {
         private Dictionary<ComboBox, object> comboBoxesDataTypes;
-        private Dictionary<int,TextBox> parametersTextBoxesbyRow;
-        private Dictionary<string, Action> dataFilterActionsPresetNames;
+        private Dictionary<string, Action> dataFilterActionsPresets;
 
         public DataFilters()
         {
@@ -33,64 +27,79 @@ namespace WpfStarter.UI.Views.DialogViews
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            FillCollections();
+            FillCollectionsAndComboboxes();
+            MakeAllParamsInvisible();
         }
 
-        /// <summary>
-        /// Заполняет коллекции по элементам View
-        /// </summary>
-        private void FillCollections()
+        private void FillCollectionsAndComboboxes()
         {
             comboBoxesDataTypes.Add(Combobox_1, new SqlDateTime());
-            dataFilterActionsPresetNames.Add(Localisation.Strings.FilterDataAll, SelectAll);
-            dataFilterActionsPresetNames.Add(Localisation.Strings.FilterDataContains, SelectContain);
+            dataFilterActionsPresets.Add(Localisation.Strings.FilterDataAll, SelectAll);
+            dataFilterActionsPresets.Add(Localisation.Strings.FilterDataContains, SelectContain);
+
             for (int i = 0; i < this.VisualChildrenCount; i++)
             {
-                if (this.GetVisualChild(i) is TextBox)
+                if (this.GetVisualChild(i) is ComboBox)
                 {
-                    TextBox tB = this.GetVisualChild(i) as TextBox;
-                    if (tB != null)
+                    ComboBox cB = this.GetVisualChild(i) as ComboBox;
+                    if (cB != null)
                     {
-                        if (tB.Name.Contains("Param"))
+                        if (cB.Name.Contains("Combobox_1"))
                         {
-
-                            int RowNumber = Int32.Parse(tB.Name.Substring(tB.Name.IndexOf("_") + 1, 1));
-                            parametersTextBoxesbyRow.Add(RowNumber, tB);
+                            comboBoxesDataTypes.Add(cB, new SqlDateTime());
+                            cB.ItemsSource = dataFilterActionsPresets.Keys;
+                        }
+                        else
+                        if (cB.Name.Contains("Combobox"))
+                        {
+                            comboBoxesDataTypes.Add(cB, new SqlString());
+                            cB.ItemsSource = dataFilterActionsPresets.Keys;
                         }
                     }
-                    if (this.GetVisualChild(i) is ComboBox)
-                    {
-                        ComboBox cB = this.GetVisualChild(i) as ComboBox;
-                        if (cB != null)
-                        {
-                            if (cB.Name.Contains("Combobox_1"))
-                            {
-                                comboBoxesDataTypes.Add(cB, new SqlDateTime());
-                            } else
-                            if (cB.Name.Contains("Combobox"))
-                            {
-                                comboBoxesDataTypes.Add(cB, new SqlString());
-                            }
-                        }
 
-                    }
                 }
+
             }
         }
 
         private void SelectAll()
         {
-            //Row_6_Param_1.IsVisible = false;
+            
         }
 
         private void SelectContain()
         {
-            // Dynamic Linq here
+            
         }
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
             
+        }
+
+        private void MakeParamVisible(int rowNumber)
+        {
+            for (int i = 0; i < this.VisualChildrenCount; i++)
+            {
+                if (this.GetVisualChild(i) is TextBox)
+                {
+                    TextBox tB = this.GetVisualChild(i) as TextBox;
+                    if (tB.Name.Contains(rowNumber.ToString()))
+                    {
+                        tB.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+
+        private void MakeAllParamsInvisible()
+        {
+            Row_1_Param.Visibility = Visibility.Hidden;
+            Row_2_Param.Visibility = Visibility.Hidden;
+            Row_3_Param.Visibility = Visibility.Hidden;
+            Row_4_Param.Visibility = Visibility.Hidden;
+            Row_5_Param.Visibility = Visibility.Hidden;
+            Row_6_Param.Visibility = Visibility.Hidden;
         }
     }
 }

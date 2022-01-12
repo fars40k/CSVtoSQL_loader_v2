@@ -5,7 +5,7 @@
         public enum GlobalState
         {
             AppLoaded,
-            FileDecided,
+            FileSelected,
             DoingDbWork,
             Disabled,
             CriticalError
