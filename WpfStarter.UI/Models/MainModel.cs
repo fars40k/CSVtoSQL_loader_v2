@@ -28,12 +28,12 @@ namespace WpfStarter.UI.Models
         private CancellationTokenSource cancelTokenSource;
         public CancellationToken cancellationToken;
 
-        public MainViewModel? mainViewModel { get; private set; }
+        public MainWindowViewModel? mainViewModel { get; private set; }
         public Dictionary<int, object> Operations { get; private set; } = new Dictionary<int, object>();
 
         public bool IsAsyncRunned { get; private set; } = false;
 
-        public MainModel(MainViewModel model)
+        public MainModel(MainWindowViewModel model)
         {
             mainViewModel = model;
             cancelTokenSource = new CancellationTokenSource();

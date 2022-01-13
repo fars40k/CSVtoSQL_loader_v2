@@ -36,7 +36,7 @@ namespace WpfStarter.UI.Models
                         throw new ArgumentException(Localisation.Strings.ErrorFileEmpty);
                     } else
                     {
-                        Model.SetAppGlobalState(GlobalState.FileDecided);
+                        Model.SetAppGlobalState(GlobalState.FileSelected);
                     }
                 }
              }

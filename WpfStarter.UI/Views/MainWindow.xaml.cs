@@ -23,14 +23,14 @@ namespace WpfStarter.UI.Views
 
     public partial class MainWindow : Window
     {
-        public MainViewModel MainWindowViewModel { get; private set; }
+        public MainWindowViewModel MainWindowViewModel { get; private set; }
         public MainModel MainWindowModel { get; private set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            MainWindowViewModel = new MainViewModel(this);
+            MainWindowViewModel = new MainWindowViewModel(this);
             MainWindowModel = new MainModel(MainWindowViewModel);
 
             this.DataContext = MainWindowViewModel;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -8,12 +9,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace WpfStarter.UI.Views.DialogViews
+namespace WpfStarter.UI.Views
 {
     /// <summary>
     /// Interaction logic for DataFilters.xaml
     /// </summary>
-    public partial class DataFilters : Window
+    public partial class DataFilters : UserControl
     {
         private Dictionary<ComboBox, object> comboBoxesDataTypes;
         private Dictionary<string, Action> dataFilterActionsPresets;
@@ -21,11 +22,11 @@ namespace WpfStarter.UI.Views.DialogViews
         public DataFilters()
         {
             InitializeComponent();
-            this.DataContext = this;
-            this.Loaded += MainWindow_Loaded;
+            //this.DataContext = this;
+            //this.Loaded += MainWindow_Loaded;
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        /* private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             FillCollectionsAndComboboxes();
             MakeAllParamsInvisible();
@@ -100,6 +101,6 @@ namespace WpfStarter.UI.Views.DialogViews
             Row_4_Param.Visibility = Visibility.Hidden;
             Row_5_Param.Visibility = Visibility.Hidden;
             Row_6_Param.Visibility = Visibility.Hidden;
-        }
+        }*/
     }
 }

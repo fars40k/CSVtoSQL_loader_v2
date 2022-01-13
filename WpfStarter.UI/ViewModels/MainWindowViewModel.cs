@@ -15,17 +15,18 @@ using WpfStarter.UI.Models;
 using Microsoft.Win32;
 using static WpfStarter.UI.Models.MainModel;
 using MainWindow = WpfStarter.UI.Views.MainWindow;
-using WpfStarter.UI.Views.DialogViews;
+using WpfStarter.UI.Views;
 using System.Configuration;
+using Prism.Mvvm;
 
 namespace WpfStarter.UI.ViewModels
 {
     /// <summary>
-    /// Содержит модель представления для основного окна
+    /// Contains ViewModel for main window
     /// </summary>
     /// 
 
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : BindableBase
     {
         #region UI_Binded_Strings
 
@@ -82,20 +83,17 @@ namespace WpfStarter.UI.ViewModels
             mainWindow.FileLoadButton.Command = ApplicationCommands.Open;
             CommandBinding commandBinding = new CommandBinding();
             commandBinding.Command = ApplicationCommands.Open;
-            commandBinding.Executed += CommandBinding_Open;
+            commandBinding.Executed += CommandBindingOpen;
             mainWindow.FileLoadButton.CommandBindings.Add(commandBinding);
 
             commandBinding = new CommandBinding();
-            mainWindow.OpCancelButton.Command = ApplicationCommands.CancelPrint;
+            mainWindow.OperationCancelButton.Command = ApplicationCommands.CancelPrint;
             commandBinding.Command = ApplicationCommands.CancelPrint;
-            commandBinding.Executed += CommandBinding_CancelOp;
-            mainWindow.OpCancelButton.CommandBindings.Add(commandBinding);
+            commandBinding.Executed += CommandBindingCancelOperation;
+            mainWindow.OperationCancelButton.CommandBindings.Add(commandBinding);
         }
 
-        /// <summary>
-        /// Обработчик команды получения строки подключения
-        /// </summary>
-        private void CommandBinding_Database(object sender, ExecutedRoutedEventArgs e)
+        private void CommandBindingDatabase(object sender, ExecutedRoutedEventArgs e)
         {
             /*var dialog = new StringInput(Model.ExstractDBStringFromFile());
             dialog.ShowDialog();
@@ -106,7 +104,7 @@ namespace WpfStarter.UI.ViewModels
         /// <summary>
         /// Open file command handler
         /// </summary>
-        private void CommandBinding_Open(object sender, ExecutedRoutedEventArgs e)
+        private void CommandBindingOpen(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             mainModel.SetAppGlobalState(GlobalState.Disabled);
@@ -126,8 +124,10 @@ namespace WpfStarter.UI.ViewModels
             }
 
         }
-
-        private void CommandBinding_CancelOp(object sender, ExecutedRoutedEventArgs e)
+        /// <summary>
+        /// Cancel operation command handler
+        /// </summary>
+        private void CommandBindingCancelOperation(object sender, ExecutedRoutedEventArgs e)
         {
             mainModel.OperationCancelCall.Invoke();
         }
@@ -144,7 +144,7 @@ namespace WpfStarter.UI.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public MainViewModel(MainWindow main)
+        public MainWindowViewModel(MainWindow main)
         {
             mainWindow = main;
             SetDefaultReferences();
@@ -238,21 +238,21 @@ namespace WpfStarter.UI.ViewModels
                 case "AppLoaded":
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
-                        mainWindow.OpCancelButton.IsEnabled = false;
+                        mainWindow.OperationCancelButton.IsEnabled = false;
                         UpdateOperationsList.Invoke();
                         break;
                     }
                 case "FileDecided":
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
-                        mainWindow.OpCancelButton.IsEnabled = false;
+                        mainWindow.OperationCancelButton.IsEnabled = false;
                         break;
                     }
              
                 case "DbConnected":
                     {
                         mainWindow.FileLoadButton.IsEnabled = true;
-                        mainWindow.OpCancelButton.IsEnabled = true;
+                        mainWindow.OperationCancelButton.IsEnabled = true;
                         UpdateOperationsList.Invoke();
                         break;
                     }
@@ -260,7 +260,7 @@ namespace WpfStarter.UI.ViewModels
                 case "Disabled":
                     {
                         mainWindow.FileLoadButton.IsEnabled = false;
-                        mainWindow.OpCancelButton.IsEnabled = true;
+                        mainWindow.OperationCancelButton.IsEnabled = true;
                         break;
                     }
 
@@ -268,7 +268,7 @@ namespace WpfStarter.UI.ViewModels
                 default:
                     {
                         mainWindow.FileLoadButton.IsEnabled = false;
-                        mainWindow.OpCancelButton.IsEnabled = false;
+                        mainWindow.OperationCancelButton.IsEnabled = false;
                         break;
                     }
             }

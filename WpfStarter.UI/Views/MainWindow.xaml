@@ -10,7 +10,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary 
-            Source="/WpfStarter.UI;component/Resources/Styles.xaml">
+            Source="/WpfStarter.UI;component/Assets/Styles.xaml">
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -32,57 +32,47 @@
             <ColumnDefinition Width="90"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Rectangle Grid.Column="2"
+        <Rectangle Style="{StaticResource Backplate}"
+                   Grid.Column="2"
                    Grid.ColumnSpan="4" 
-                   Stroke="LightGreen" 
-                   Fill="Azure"
                    Grid.RowSpan="10"/>
 
-        <Rectangle Grid.Column="1" 
+        <Rectangle Style="{StaticResource SideBeam}"
+                   Grid.Column="1" 
                    HorizontalAlignment="Center" 
-                   Grid.Row="0" Stroke="White" 
+                   Grid.Row="0"
                    Width="40" 
-                   Fill="ForestGreen" 
                    Grid.RowSpan="10"/>
 
-        <Rectangle Grid.Column="1" 
-                   Grid.ColumnSpan="6" 
-                   HorizontalAlignment="Left" 
+        <Rectangle Style="{StaticResource Shelf}"
+                   Grid.Column="1" 
                    Height="6" 
-                   Grid.Row="1" 
-                   Stroke="White"  
+                   Grid.Row="1"  
                    VerticalAlignment="Center" 
-                   Width="415" 
-                   Fill="LimeGreen"/>
+                   Grid.ColumnSpan="3"/>
 
-        <Rectangle Grid.Column="1" 
-                   Grid.ColumnSpan="4" 
-                   HorizontalAlignment="Center" 
+        <Rectangle Style="{StaticResource Shelf}"
+                   Grid.Column="1" 
                    Height="6" 
-                   Grid.Row="2" 
-                   Stroke="White"  
-                   VerticalAlignment="Bottom"
-                   Width="415" 
-                   Fill="LimeGreen" Margin="0,0,0,39" Grid.RowSpan="3"/>
+                   Grid.Row="3" 
+                   VerticalAlignment="Center" 
+                   Grid.ColumnSpan="3"/>
 
-        <TextBlock x:Name="HelpText" 
+        <TextBlock x:Name="HelpText"
+                   Style="{StaticResource TextHelp}" 
                    Grid.Column="3" 
                    Grid.ColumnSpan="3" 
                    HorizontalAlignment="Left" 
                    Height="28" Margin="0,10,0,0" 
                    TextWrapping="Wrap" 
                    VerticalAlignment="Top" 
-                   Width="364" 
-                   FontSize="18" 
-                   Foreground="#FF0F3700" 
-                   FontFamily="Nirmala UI" 
-                   FontWeight="Normal"/>
+                   Width="364"/>
 
-        <Button x:Name="FileLoadButton"  
+        <Button x:Name="FileLoadButton"
+                Style="{StaticResource ButtonCommon}"
                 Content="{x:Static p:Strings.SelectFile}" 
                 Grid.Column="3"
                 Margin="0,51,150,6" 
-                FontSize="12"
                 />
 
         <TextBlock x:Name="FileText" 
@@ -129,22 +119,20 @@
                     RenderTransformOrigin="0.5,0.5"/>
 
         <TextBlock x:Name="ErrorText" 
+                   Style="{StaticResource TextError}"
                    Grid.Column="3" 
                    Grid.Row="5" 
                    TextWrapping="Wrap" 
                    Text="{Binding ErrorString}" 
                    Grid.ColumnSpan="2" 
-                   Foreground="Crimson" 
-                   FontSize="14" Margin="4,5,0,5"/>
+                   Margin="4,5,0,5"/>
 
-        <Button x:Name="OpCancelButton" 
+        <Button x:Name="OperationCancelButton"
+                Style="{StaticResource ButtonCancel}"                
                 Content="{x:Static p:Strings.Cancel}" 
-                FontSize="16" 
                 Grid.Column="3" 
                 Margin="1,5,135,6" 
-                Grid.Row="4" 
-                Foreground="White" 
-                Background="DarkRed"/>
+                Grid.Row="4"/>
 
     </Grid>
 </Window>

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Page Remove="Views\App.xaml" />
+    <Page Remove="Views\RefactoryDisasembly\MainWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,9 +27,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Views\RefactoryDisasembly\MainWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Prism.Core" Version="8.1.97" />
+    <PackageReference Include="Prism.Unity" Version="8.1.97" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.15" />
@@ -55,7 +65,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Resources\Themes\BlackAndWhite.xaml">
+    <Page Update="Assets\Themes\BlackAndWhite.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

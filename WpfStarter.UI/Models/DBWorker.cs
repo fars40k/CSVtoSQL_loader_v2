@@ -30,7 +30,7 @@ namespace WpfStarter.UI.Models
                     model.SetAppGlobalState(GlobalState.Disabled);
                 } else
                 {
-                    model.SetAppGlobalState(GlobalState.DbConnected);
+                    model.SetAppGlobalState(GlobalState.FileSelected);
                 }
             }
         }
@@ -48,7 +48,7 @@ namespace WpfStarter.UI.Models
             else
             {
                 ErrorNotify.NewError(new AppError(Localisation.Strings.DBError, ""));
-                model.SetAppGlobalState(GlobalState.FileDecided);
+                model.SetAppGlobalState(GlobalState.FileSelected);
             }
         }
 
