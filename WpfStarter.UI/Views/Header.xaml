@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="WpfStarter.UI.Views.Header"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:p="clr-namespace:WpfStarter.UI.Localisation"
+             xmlns:local="clr-namespace:WpfStarter.UI.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="90" d:DesignWidth="270">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/WpfStarter.UI;component/Assets/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel>
+        <TextBlock x:Name="HelpText" 
+                 Style="{StaticResource TextHelp}" 
+                 HorizontalAlignment="Left"
+                 Height="50"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Top" 
+                 Width="270"/>
+
+        <Button x:Name="FileButton" 
+                Style="{StaticResource ButtonCommon}" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Top" 
+                Width="262"
+                Height="19"
+                Content="{x:Static p:Strings.File}"/>
+
+        <TextBlock x:Name="FileNameText" 
+                 Style="{StaticResource TextCommon}" 
+                 HorizontalAlignment="Center"
+                 Height="20"
+                 TextWrapping="Wrap" 
+                 Width="270"/>
+    </StackPanel>
+</UserControl>

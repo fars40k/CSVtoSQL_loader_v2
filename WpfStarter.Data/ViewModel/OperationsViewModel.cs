@@ -4,15 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfStarter.UI.Models
+namespace WpfStarter.Data.ViewModel
 {
-    public class LinqBuilder
+    internal class OperationsViewModel
     {
-        public LinqBuilder()
-        {
-
-        }
-
-
     }
 }

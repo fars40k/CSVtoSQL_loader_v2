@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfStarter.UI.Models.Operations
+namespace WpfStarter.Data.ViewModel
 {
-    internal interface INameGeneratior
+    internal class DataFiltersViewModel
     {
-        public string GenerateName();
     }
 }

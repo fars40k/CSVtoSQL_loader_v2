@@ -2,6 +2,7 @@
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
+using Prism.Regions;
 
 
 namespace WpfStarter.UI.Views

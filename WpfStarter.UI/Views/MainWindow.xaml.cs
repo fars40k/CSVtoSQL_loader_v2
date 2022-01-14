@@ -12,32 +12,43 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfStarter.UI.Models;
-using WpfStarter.UI.ViewModels;
+using Prism.Unity;
+using Prism.Regions;
+using Prism.Ioc;
 
 namespace WpfStarter.UI.Views
 {
-    /// <summary>
-    /// Contains resources used by the main window
-    /// </summary>
-
     public partial class MainWindow : Window
     {
-        public MainWindowViewModel MainWindowViewModel { get; private set; }
-        public MainModel MainWindowModel { get; private set; }
+        IContainerExtension _headerContainer;
+        IContainerExtension _footerContainer;
+        IRegionManager _regionManager;
 
-        public MainWindow()
+        public MainWindow(IContainerExtension container, IRegionManager regionManager)
         {
             InitializeComponent();
-
-            MainWindowViewModel = new MainWindowViewModel(this);
-            MainWindowModel = new MainModel(MainWindowViewModel);
-
-            this.DataContext = MainWindowViewModel;
-            this.ResizeMode = ResizeMode.CanResize;
-
-            MainWindowViewModel.SetModelReference(MainWindowModel);
-            MainWindowViewModel.UpdateUserUI.Invoke();
+            _headerContainer = container;
+            IRegion region = _regionManager.Regions["HeaderRegion"];
         }
     }
+
+    /*
+            
+
+        public MainWindow(IContainerExtension container, IRegionManager regionManager)
+        {
+            InitializeComponent();
+            
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var view = _container.Resolve<ViewA>();
+            IRegion region = _regionManager.Regions["ContentRegion"];
+            region.Add(view);
+        }
+     
+     
+     
+     */
 }

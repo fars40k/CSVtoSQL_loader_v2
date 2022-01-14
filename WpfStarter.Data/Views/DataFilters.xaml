@@ -1,0 +1,126 @@
+﻿<UserControl x:Class="WpfStarter.Data.Views.DataFilters"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignHeight="400" d:DesignWidth="550">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type ComboBox}" x:Key="CommonComboBox">
+            <Setter Property="FontSize" 
+                Value="14" />
+            <Setter Property="Height"
+                Value="28"/>
+            <Setter Property="Width"
+                Value="300" />
+            <Setter Property="HorizontalAlignment"
+                Value="Left" />
+            <Setter Property="VerticalAlignment"
+                Value="Bottom" />
+            <Setter Property="Margin"
+                    Value="5,0,0,0"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}" x:Key="CommonInputTextBox">
+            <Setter Property="FontSize" 
+                Value="16"/>
+            <Setter Property="Height"
+                Value="28"/>
+            <Setter Property="Width"
+                Value="225"/>
+            <Setter Property="HorizontalAlignment"
+                Value="Right"/>
+            <Setter Property="VerticalAlignment"
+                Value="Bottom"/>
+            <Setter Property="TextAlignment"
+                Value="Left" />
+            <Setter Property="IsReadOnly"
+                Value="False"/>
+            <Setter Property="Margin"
+                    Value="0,0,5,0"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}" x:Key="CommonOutputTextBox">
+            <Setter Property="FontSize" 
+                Value="14"/>
+            <Setter Property="Height"
+                Value="20"/>
+            <Setter Property="Width"
+                Value="225"/>
+            <Setter Property="HorizontalAlignment"
+                Value="Center"/>
+            <Setter Property="VerticalAlignment"
+                Value="Top"/>
+            <Setter Property="TextAlignment"
+                Value="Center" />
+            <Setter Property="IsReadOnly"
+                Value="True"/>
+            <Setter Property="Margin"
+                    Value="0,12,0,0"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ComboBox x:Name="Combobox_1" 
+                  Style="{StaticResource CommonComboBox}"
+                  Grid.Row ="0"/>
+        <ComboBox x:Name="Combobox_2" 
+                  Style="{StaticResource CommonComboBox}"
+                  Grid.Row ="1"/>
+        <ComboBox x:Name="Combobox_3"
+                  Style="{StaticResource CommonComboBox}"
+                  Grid.Row ="2"/>
+        <ComboBox x:Name="Combobox_4" 
+                  Style="{StaticResource CommonComboBox}"
+                  Grid.Row ="3"/>
+        <ComboBox x:Name="Combobox_5" 
+                  Style="{StaticResource CommonComboBox}"
+                  Grid.Row ="4"/>
+        <ComboBox x:Name="Combobox_6" 
+                  Style="{StaticResource CommonComboBox}"
+                  Grid.Row ="5"/>
+        <TextBox x:Name="Row_1_Param" 
+                 Style="{StaticResource CommonInputTextBox}"
+                 Text="ДД.ММ.ГГГГ" 
+                 Grid.Row ="0"/>
+        <TextBox x:Name="Row_2_Param" 
+                 Style="{StaticResource CommonInputTextBox}"
+                 Grid.Row ="1"/>
+        <TextBox x:Name="Row_3_Param" 
+                 Style="{StaticResource CommonInputTextBox}"
+                 Grid.Row ="2"/>
+        <TextBox x:Name="Row_4_Param" 
+                 Style="{StaticResource CommonInputTextBox}"
+                 Grid.Row ="3"/>
+        <TextBox x:Name="Row_5_Param" 
+                 Style="{StaticResource CommonInputTextBox}"
+                 Grid.Row ="4"/>
+        <TextBox x:Name="Row_6_Param" 
+                 Style="{StaticResource CommonInputTextBox}"
+                 Grid.Row ="5"/>
+        <TextBox x:Name="Row_1_Name" 
+                 Style="{StaticResource CommonOutputTextBox}"
+                 Grid.Row ="0"/>
+        <TextBox x:Name="Row_2_Name" 
+                 Style="{StaticResource CommonOutputTextBox}"
+                 Grid.Row ="1"/>
+        <TextBox x:Name="Row_3_Name" 
+                 Style="{StaticResource CommonOutputTextBox}"
+                 Grid.Row ="2"/>
+        <TextBox x:Name="Row_4_Name" 
+                 Style="{StaticResource CommonOutputTextBox}"
+                 Grid.Row ="3"/>
+        <TextBox x:Name="Row_5_Name" 
+                 Style="{StaticResource CommonOutputTextBox}"
+                 Grid.Row ="4"/>
+        <TextBox x:Name="Row_6_Name" 
+                 Style="{StaticResource CommonOutputTextBox}"
+                 Grid.Row ="5"/>
+    </Grid>
+
+</UserControl>
