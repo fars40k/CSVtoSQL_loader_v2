@@ -13,13 +13,10 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </ItemsControl.Resources>
-    <ItemsControl.ItemTemplate>
-        <DataTemplate>
-            <Button Style="{StaticResource ButtonEnlarged}" 
-                HorizontalAlignment="Center" 
-                Width="230"
-                Height="30"
-                Content="From collection"/>
-        </DataTemplate>
-    </ItemsControl.ItemTemplate>
+    <ListBox ItemsSource="{Binding OperationsItems}" 
+             SelectionMode="Single"
+             VerticalAlignment="Stretch">
+        
+        
+    </ListBox>
 </ItemsControl>

@@ -8,7 +8,7 @@ using OfficeOpenXml;
 
 namespace WpfStarter.Data.Export
 {
-    public class EPPLusSaver : EntityToExcel
+    public class EPPLusSaver : IEntityToExcel
     {
         public string filePath { get; private set; }
 
@@ -18,7 +18,7 @@ namespace WpfStarter.Data.Export
             filePath = newFilePath;
         }
 
-        public override bool Run()
+        public bool Run()
         {
             int currentRow = 1;
             using (PersonsContext pC = new PersonsContext())

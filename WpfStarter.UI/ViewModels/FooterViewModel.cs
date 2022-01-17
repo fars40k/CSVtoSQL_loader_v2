@@ -23,20 +23,57 @@ namespace WpfStarter.UI.ViewModels
             private set => SetProperty(ref _errorString, value);
         }
 
+        public DelegateCommand OperationLaunchCommand { get; private set; }
+
         public FooterViewModel(IContainerProvider containerProvider)
         {
             model = containerProvider.Resolve<Models.Model>();
             ErrorNotify.SetUINotifyMethod(ShowError);
+            OperationLaunchCommand = new DelegateCommand(OperationLaunch);
+            model.AppStateChanged += Model_AppStateChanged;
         }
 
-        public void OperationLaunchCommand()
+        public void OperationLaunch()
         {
 
         }
 
         public void ShowError(string newError)
         {
+            ErrorString = newError;
+        }
+        private void Model_AppStateChanged(string newState)
+        {
+            switch (newState)
+            {
+                case "DbConnectionFailed":
+                    {
+                        ErrorNotify.NewError(Localisation.Strings.DBError);
+                        break;
+                    }
+                case "DbConnected":
+                    {
+                        ErrorNotify.NewError(string.Empty);
+                        break;
+                    }
 
+                case "FileSelected":
+                    {
+                        break;
+                    }
+
+                case "Disabled":
+                    {     
+                        break;
+                    }
+
+                case "CriticalError":
+                default:
+                    {
+                        ErrorNotify.NewError(Localisation.Strings.CriticalError);
+                        break;
+                    }
+            }
         }
     }
 }

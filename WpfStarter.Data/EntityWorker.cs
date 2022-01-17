@@ -7,80 +7,82 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Prism.Ioc;
 
 namespace WpfStarter.Data
-{ 
+{
     public class EntityWorker
     {
-        private FileCSVtoSQL fileCSVtoSQL;
-        private EntityToExcel entityToEXL;
-        private EntityToXML entityToXML;
+        public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
+        private IContainerExtension _container;
 
-        public string SourceFilePath;
-        public string FileToWritePath;
+        private ICSVtoDatabase fileCSVtoSQL;
+        private IEntityToExcel entityToEXL;
+        private IEntityToXML entityToXML;
 
-        public EntityWorker()
+        public EntityWorker(IContainerExtension container)
         {
+            _container = container;
+
             SetDefaultDataProcessingMethods();
-            bool IsDatabaseAvalable = VerifyConnString("");
-            
+            VerifyConnection("");
         }
 
         private void SetDefaultDataProcessingMethods()
         {
-            entityToEXL = new EPPLusSaver(FileToWritePath);
-            entityToXML = new XMLSaver(FileToWritePath, new Person());
+          //  entityToEXL = new EPPLusSaver(FileToWritePath);
+          //  entityToXML = new XMLSaver(FileToWritePath, new Person());
         }
 
-        /// <summary>
-        /// Открывает контекст к базе данных для проверки правильного ввода строки подключения
-        /// </summary>
-        public bool VerifyConnString(string newConnStr)
+        public void VerifyConnection(string newConnStr)
         {
             try
             {
                 using (PersonsContext pC = new PersonsContext())
                 {
-                    if (pC.Database.Exists()) { return true; }
-                    return false;
+                    if (pC.Database.Connection.State == System.Data.ConnectionState.Open)
+                    {
+                        this.DoesDatabaseConnectionInitialized = true;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                return false;
+                this.DoesDatabaseConnectionInitialized = false;
             }
-
         }
 
         public void SetSourceFilePath(string newPath)
         {
-            SourceFilePath = newPath;
+          //  SourceFilePath = newPath;
         }
 
         public void SetFileToWritePath(string newPath)
         {
-            FileToWritePath = newPath;
+          //  FileToWritePath = newPath;
         }
 
-        public string ReadCSVToDb(int maxRecords, CancellationToken cancellationToken)
+        public string ReadCSVToDb(int maxRecords)
         {
-            fileCSVtoSQL = new CSVReader(SourceFilePath);
-            fileCSVtoSQL.cancellationToken = cancellationToken;
+            /* fileCSVtoSQL = new CSVReader(SourceFilePath);
 
-            bool result = fileCSVtoSQL.Run(maxRecords);
-            if (result)
-            {
-                if (fileCSVtoSQL.FailedToAllString().StartsWith("0 "))
-                {
-                    return "True";
 
-                } else
-                {
-                    return fileCSVtoSQL.FailedToAllString();
+             bool result = fileCSVtoSQL.Run(maxRecords);
+             if (result)
+             {
+                 if (fileCSVtoSQL.FailedToAllString().StartsWith("0 "))
+                 {
+                     return "True";
 
-                }
-            } else
-            return "False";             
+                 } else
+                 {
+                     return fileCSVtoSQL.FailedToAllString();
+
+                 }
+             } else
+             return "False";    
+            */
+            return "";
         }
 
     }

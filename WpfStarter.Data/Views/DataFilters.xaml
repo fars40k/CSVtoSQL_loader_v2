@@ -8,6 +8,8 @@
         mc:Ignorable="d"
         d:DesignHeight="400" d:DesignWidth="550">
     <UserControl.Resources>
+        
+
         <Style TargetType="{x:Type ComboBox}" x:Key="CommonComboBox">
             <Setter Property="FontSize" 
                 Value="14" />

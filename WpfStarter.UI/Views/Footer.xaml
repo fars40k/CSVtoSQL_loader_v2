@@ -22,7 +22,8 @@
                  HorizontalAlignment="Left"
                  Height="50"
                  TextWrapping="Wrap"
-                 VerticalAlignment="Top" 
+                 VerticalAlignment="Top"
+                 Margin="0,3,0,0"
                  Width="270"/>
         <Button x:Name="GoButton" 
                 Style="{StaticResource ButtonGo}" 

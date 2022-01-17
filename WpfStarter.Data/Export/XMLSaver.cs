@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace WpfStarter.Data.Export
 {
-    public class XMLSaver : EntityToXML
+    public class XMLSaver : IEntityToXML
     {
         public string filePath { get; private set; }
         XmlSerializer serializer;
@@ -20,7 +20,7 @@ namespace WpfStarter.Data.Export
             filePath = newFilePath;
         }
 
-        public override bool Run()
+        public bool Run()
         {
             try
             {

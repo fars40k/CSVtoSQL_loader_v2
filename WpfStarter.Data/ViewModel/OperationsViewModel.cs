@@ -1,5 +1,7 @@
 ﻿using Prism.Commands;
+using Prism.Ioc;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,19 +14,27 @@ namespace WpfStarter.Data.ViewModel
 {
     internal class OperationsViewModel : BindableBase
     {
-        private ObservableCollection<Person> _operations;
+        private ObservableCollection<Operation> _operationsItems;
 
-        public ObservableCollection<Person> Operations
+        public ObservableCollection<Operation> OperationsItems
         {
-            get { return _operations; }
-            set { SetProperty(ref _operations, value); }
+            get { return _operationsItems; }
+            set { SetProperty(ref _operationsItems, value); }
         }
 
         public DelegateCommand<Operation> OperationSelectedCommand { get; private set; }
 
-        public OperationsViewModel()
+        public OperationsViewModel(IContainerProvider containerProvider)
         {
+            OperationsItems.Add(new Operation(""));
+            OperationsItems.Add(new Operation("fdsdffsd"));
 
+
+
+        }
+
+        public void OperationSelected(Operation operation)
+        {
 
         }
     }

@@ -17,8 +17,10 @@ namespace WpfStarter.Data
         void IModule.RegisterTypes(IContainerRegistry containerRegistry)
         {
            _containerRegistry = containerRegistry;
+
            _containerRegistry.RegisterForNavigation<DataFilters>();
            _containerRegistry.RegisterForNavigation<Operations>();
+
             containerRegistry.RegisterSingleton<EntityWorker>();
         }
 

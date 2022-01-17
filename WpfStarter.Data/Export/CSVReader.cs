@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace WpfStarter.Data.Export
 {
-    internal class CSVReader : FileCSVtoSQL
+    internal class CSVReader : ICSVtoDatabase
     {
         // sql bulk copy и создание новой таблицы
         public string filePath { get; private set; }
@@ -23,8 +23,9 @@ namespace WpfStarter.Data.Export
             filePath = newfilePath;
         }
 
-        public override bool Run(int maxRecords)
+        public bool Run()
         {
+            int maxRecords = 1;
             string Line;
             string[] SplitBuffer;
 
@@ -43,7 +44,7 @@ namespace WpfStarter.Data.Export
                         int OldmaxID = pC.Database.ExecuteSqlCommand("SELECT MAX(ID) FROM dbo.Persons;");
                         int IncrID = OldmaxID++;
                         // Цикл для парсинга и добавления записей из файла порциями
-                        while ((RecordsRead < maxRecords) && (!cancellationToken.IsCancellationRequested))
+                        while (RecordsRead < maxRecords)
                         {
                             Person person = new Person() { FirstName = "", SurName = "", LastName = "", City = "", Country = "" };
                             Line = sr.ReadLine();
@@ -98,15 +99,17 @@ namespace WpfStarter.Data.Export
                                 return false;
                             }
                         }
-                        if (cancellationToken.IsCancellationRequested)
+                        /*if (cancellationToken.IsCancellationRequested)
                         {
                            pC.Database.ExecuteSqlCommand("DELETE FROM dbo.Persons WHERE ID>@oldID", OldmaxID);                           
                         }
                         else
                         {
-                            pC.Configuration.AutoDetectChangesEnabled = true;
-                            pC.SaveChanges();
-                        }
+                            
+                        }*/
+
+                        pC.Configuration.AutoDetectChangesEnabled = true;
+                        pC.SaveChanges();
                     }
 
                 }
@@ -166,7 +169,7 @@ namespace WpfStarter.Data.Export
         /// <summary>
         /// Возвращает дробь отображающую отношение ошибок чтения ко всем строкам
         /// </summary>
-        public override string FailedToAllString()
+        public string FailedToAllString()
         {
             return FailedRecords.ToString() + @" / " + RecordsRead.ToString();
         }

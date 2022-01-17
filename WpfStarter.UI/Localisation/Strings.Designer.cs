@@ -340,7 +340,7 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Подключитесь к базе данных.
+        ///   Looks up a localized string similar to Сообщите администратору об ошибке.
         /// </summary>
         public static string Help2 {
             get {
@@ -376,7 +376,7 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ожидайте завершения или нажмите &quot;Отмена&quot;.
+        ///   Looks up a localized string similar to Ожидайте завершения.
         /// </summary>
         public static string Help6 {
             get {

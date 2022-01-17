@@ -33,8 +33,45 @@ namespace WpfStarter.UI.ViewModels
         public HeaderViewModel(IContainerProvider containerProvider)
         {
             model = containerProvider.Resolve<Models.Model>();
-            HelpString = Localisation.Strings.Help1;
-            SelectFileCommand = new DelegateCommand(SelectFile);
+            model.AppStateChanged += Model_AppStateChanged;
+            model.NotifyAppGlobalState();
+        }
+
+        private void Model_AppStateChanged(string newState)
+        {
+            switch (newState)
+            {
+                case "DbConnectionFailed":
+                    {
+                        HelpString = Localisation.Strings.Help2;                        
+                        break;
+                    }
+                case "DbConnected":
+                    {
+                        HelpString = Localisation.Strings.Help1;
+                        SelectFileCommand = new DelegateCommand(SelectFile);
+                        break;
+                    }
+
+                case "FileSelected":
+                    {
+                        HelpString = Localisation.Strings.Help4;
+                        break;
+                    }
+
+                case "Disabled":
+                    {
+                        HelpString = Localisation.Strings.Help6;
+                        break;
+                    }
+
+                case "CriticalError":
+                default:
+                    {
+                        HelpString = Localisation.Strings.CriticalErrorHelp;
+                        break;
+                    }
+            }
         }
 
         public DelegateCommand SelectFileCommand { get; private set; }

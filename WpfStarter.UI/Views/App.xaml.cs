@@ -2,6 +2,7 @@
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
+using WpfStarter.Data;
 using WpfStarter.UI.Models;
 
 namespace WpfStarter.UI.Views
