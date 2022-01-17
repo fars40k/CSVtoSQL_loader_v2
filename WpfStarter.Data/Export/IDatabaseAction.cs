@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfStarter.Data.Export
 {
-    public abstract class EntityToExcel 
+    internal interface IDatabaseAction
     {
-        public abstract bool Run();
     }
 }

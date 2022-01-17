@@ -15,11 +15,13 @@ using System.Windows.Shapes;
 using Prism.Unity;
 using Prism.Regions;
 using Prism.Ioc;
+using WpfStarter.UI.Models;
 
 namespace WpfStarter.UI.Views
 {
     public partial class MainWindow : Window
     {
+        Model model;
         IContainerExtension _container;
         IRegionManager _regionManager;
 
@@ -31,6 +33,8 @@ namespace WpfStarter.UI.Views
 
             regionManager.RegisterViewWithRegion("HeaderRegion", typeof(Header));
             regionManager.RegisterViewWithRegion("FooterRegion", typeof(Footer));
+
+            model = container.Resolve<Model>();
         }
 
 

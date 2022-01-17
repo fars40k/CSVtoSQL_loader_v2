@@ -12,17 +12,18 @@ namespace WpfStarter.Data
         void IModule.OnInitialized(IContainerProvider containerProvider)
         {
             var regionManager = containerProvider.Resolve<IRegionManager>();
-
-            regionManager.RegisterViewWithRegion("FiltersRegion", typeof(DataFilters));
-            regionManager.RegisterViewWithRegion("OperationsRegion", typeof(Operations));
         }
 
         void IModule.RegisterTypes(IContainerRegistry containerRegistry)
         {
            _containerRegistry = containerRegistry;
-
+           _containerRegistry.RegisterForNavigation<DataFilters>();
+           _containerRegistry.RegisterForNavigation<Operations>();
             containerRegistry.RegisterSingleton<EntityWorker>();
+        }
 
+        public void RegisterRelatedRegions()
+        {
 
         }
     }

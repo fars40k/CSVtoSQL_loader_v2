@@ -128,7 +128,7 @@ namespace WpfStarter.Data.Views
             if (sender is TextBox)
             {
                 TextBox tB = sender as TextBox;
-                int RowNumber = Int32.Parse(tB.Name.Substring(tB.Name.Length - 1, tB.Name.Length));
+                int RowNumber = Int32.Parse(tB.Name.Substring(tB.Name.Length - 1, 1));
 
                 string ExtractedParam = "";
 

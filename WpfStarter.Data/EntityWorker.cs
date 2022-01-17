@@ -22,6 +22,8 @@ namespace WpfStarter.Data
         public EntityWorker()
         {
             SetDefaultDataProcessingMethods();
+            bool IsDatabaseAvalable = VerifyConnString("");
+            
         }
 
         private void SetDefaultDataProcessingMethods()

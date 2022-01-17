@@ -2,8 +2,7 @@
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
-using Prism.Regions;
-
+using WpfStarter.UI.Models;
 
 namespace WpfStarter.UI.Views
 {
@@ -19,7 +18,7 @@ namespace WpfStarter.UI.Views
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            
+            containerRegistry.RegisterSingleton<Model>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
