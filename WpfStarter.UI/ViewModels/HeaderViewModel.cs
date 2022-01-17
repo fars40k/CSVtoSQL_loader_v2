@@ -52,10 +52,7 @@ namespace WpfStarter.UI.ViewModels
                 str = " " + str.Substring((str.LastIndexOf(@"\") + 1), str.Length - (str.LastIndexOf(@"\") + 1));
                 FileNameString = str;
             }
-            else
-            {
-               
-            }
+
         }
     }
 }
