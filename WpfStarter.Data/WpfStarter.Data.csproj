@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.15.0" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="EPPlus" Version="5.8.5" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />

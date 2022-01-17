@@ -20,35 +20,20 @@ namespace WpfStarter.UI.Views
 {
     public partial class MainWindow : Window
     {
-        IContainerExtension _headerContainer;
-        IContainerExtension _footerContainer;
+        IContainerExtension _container;
         IRegionManager _regionManager;
 
         public MainWindow(IContainerExtension container, IRegionManager regionManager)
         {
             InitializeComponent();
-            _headerContainer = container;
-            IRegion region = _regionManager.Regions["HeaderRegion"];
+            _container = container;
+            _regionManager = regionManager;
+
+            regionManager.RegisterViewWithRegion("HeaderRegion", typeof(Header));
+            regionManager.RegisterViewWithRegion("FooterRegion", typeof(Footer));
         }
+
+
     }
-
-    /*
-            
-
-        public MainWindow(IContainerExtension container, IRegionManager regionManager)
-        {
-            InitializeComponent();
-            
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var view = _container.Resolve<ViewA>();
-            IRegion region = _regionManager.Regions["ContentRegion"];
-            region.Add(view);
-        }
-     
-     
-     
-     */
+    
 }

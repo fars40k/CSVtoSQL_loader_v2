@@ -9,6 +9,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Linq.Dynamic;
+using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace WpfStarter.Data.Views
 {
@@ -17,49 +19,64 @@ namespace WpfStarter.Data.Views
     /// </summary>
     public partial class DataFilters : UserControl
     {
-        private string[] LINQShardsToBuildString;
-        private string[] RowsNames;
+        public string[] LINQShardsToBuildExpression = new string[6] 
+        {"", "", "", "", "", ""};
+
+        private string[] RowNames = new string[6]
+        {"Date","FirstName","SurName","LastName","City","Country"};
+
+        private ObservableCollection<string> _comboboxEntries;
+        public ObservableCollection<string> ComboboxEntries
+        {
+            set => _comboboxEntries = value;
+            get
+            {
+                return _comboboxEntries;
+            }
+        }
+
+
         private Type[] rowDataTypes = new Type[6]
         {
             typeof(DateTime), typeof(string), typeof(string),
             typeof(string), typeof(string), typeof(string)
         };
-        private Dictionary<string, Action<int>> dataFilterActionsPresets;
+
+        private List<Action<int>> dataFilterActionsPresets = new List<Action<int>>();
+
+        public DataFilters()
+        {
+            InitializeComponent();
+            this.DataContext = this;      
+        }
 
         public DataFilters(string[] localisedStrings)
         {
-            InitializeComponent();
+            SetLocalizedStrings(localisedStrings);
             this.DataContext = this;
-            this.Loaded += MainWindow_Loaded;
-            if (localisedStrings.Length == 2)
-            {
-                dataFilterActionsPresets.Add(localisedStrings[0], (a) => NoSettings(a));
-                dataFilterActionsPresets.Add(localisedStrings[1], (a) => SelectParam(a));
-            }            
+            InitializeComponent();
         }
 
-        public string BuildLINQExpressionFromSettings()
-        {
-            foreach (string shard in LINQShardsToBuildString)
-            {
-
-            }
-            return "";
-        }
-
-
-        private void SetRowsName(string[] rowsNames)
+        private void SetLocalizedStrings(string[] localisedStrings)
         {
 
+            ComboboxEntries = new ObservableCollection<string> { localisedStrings[0], localisedStrings[1] };
+            Row_1_Name.Text = localisedStrings[2];
+            Row_2_Name.Text = localisedStrings[3];
+            Row_3_Name.Text = localisedStrings[4];
+            Row_4_Name.Text = localisedStrings[5];
+            Row_5_Name.Text = localisedStrings[6];
+            Row_6_Name.Text = localisedStrings[7];
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             MakeAllParamsInvisible();
-
+            dataFilterActionsPresets.Add(SelectAll);
+            dataFilterActionsPresets.Add(SelectParam);
         }
 
-        private void MakeParamVisible(int rowNumber)
+        private void SetParamVisibility(int rowNumber,Visibility newVisibility)
         {
             for (int i = 0; i < this.VisualChildrenCount; i++)
             {
@@ -68,7 +85,7 @@ namespace WpfStarter.Data.Views
                     TextBox tB = this.GetVisualChild(i) as TextBox;
                     if (tB.Name.Contains(rowNumber.ToString()))
                     {
-                        tB.Visibility = Visibility.Visible;
+                        tB.Visibility = newVisibility;
                     }
                 }
             }
@@ -76,38 +93,66 @@ namespace WpfStarter.Data.Views
 
         private void MakeAllParamsInvisible()
         {
-            Row_1_Param.Visibility = Visibility.Hidden;
-            Row_2_Param.Visibility = Visibility.Hidden;
-            Row_3_Param.Visibility = Visibility.Hidden;
-            Row_4_Param.Visibility = Visibility.Hidden;
-            Row_5_Param.Visibility = Visibility.Hidden;
-            Row_6_Param.Visibility = Visibility.Hidden;
+            Row_Param_1.Visibility = Visibility.Hidden;
+            Row_Param_2.Visibility = Visibility.Hidden;
+            Row_Param_3.Visibility = Visibility.Hidden;
+            Row_Param_4.Visibility = Visibility.Hidden;
+            Row_Param_5.Visibility = Visibility.Hidden;
+            Row_Param_6.Visibility = Visibility.Hidden;
         }
 
-        private void NoSettings(int rowNumber)
+        private void SelectAll(int rowNumber)
         {
-
+            LINQShardsToBuildExpression[rowNumber] = "";
+            SetParamVisibility(rowNumber, Visibility.Hidden);
         }
 
         private void SelectParam(int rowNumber)
         {
-            if (rowDataTypes[rowNumber] == typeof(DateTime))
-            {
+            SetParamVisibility(rowNumber, Visibility.Visible);            
+        }
 
-            } else
+        private void AnySelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox)
             {
-                for (int i = 0; i < this.VisualChildrenCount; i++)
+                ComboBox cB = sender as ComboBox;
+                int RowNumber = Int32.Parse(cB.Name.Substring(cB.Name.Length-1, cB.Name.Length));
+                int SelectedRow = cB.SelectedIndex;
+                dataFilterActionsPresets[SelectedRow].Invoke(RowNumber);
+            }
+        }
+
+        private void ParameterChangedEvent(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox)
+            {
+                TextBox tB = sender as TextBox;
+                int RowNumber = Int32.Parse(tB.Name.Substring(tB.Name.Length - 1, tB.Name.Length));
+
+                string ExtractedParam = "";
+
+                if (rowDataTypes[RowNumber] == typeof(DateTime))
                 {
-                    if (this.GetVisualChild(i) is TextBox)
-                    {
-                        TextBox tB = this.GetVisualChild(i) as TextBox;
-                        if (tB.Name.Contains(rowNumber.ToString()))
-                        {
-                            //
-                        }
-                    }
+                    Regex pattern = new Regex(@"[0-9]{4}-[0-1][0-9]-[0-3][0-9]", RegexOptions.Compiled);
+                    if (pattern.IsMatch(tB.Text)) ExtractedParam += tB.Text;
+                }
+                else
+                {
+                    ExtractedParam += tB.Text;
+                }
+
+                if (ExtractedParam == "")
+                {
+                    LINQShardsToBuildExpression[RowNumber] = "";
+                }
+                else
+                {
+                    LINQShardsToBuildExpression[RowNumber] = RowNames[RowNumber] + " = " + ExtractedParam;
                 }
             }
+
+
         }
     }
 }

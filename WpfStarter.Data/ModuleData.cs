@@ -5,18 +5,25 @@ using WpfStarter.Data.Views;
 
 namespace WpfStarter.Data
 {
-    internal class ModuleData : IModule
+    public class ModuleData : IModule
     {
+        IContainerRegistry _containerRegistry;
+
         void IModule.OnInitialized(IContainerProvider containerProvider)
         {
             var regionManager = containerProvider.Resolve<IRegionManager>();
+
             regionManager.RegisterViewWithRegion("FiltersRegion", typeof(DataFilters));
-            regionManager.RegisterViewWithRegion("Operations", typeof(Operations));
+            regionManager.RegisterViewWithRegion("OperationsRegion", typeof(Operations));
         }
 
         void IModule.RegisterTypes(IContainerRegistry containerRegistry)
         {
-           
+           _containerRegistry = containerRegistry;
+
+            containerRegistry.RegisterSingleton<EntityWorker>();
+
+
         }
     }
 }

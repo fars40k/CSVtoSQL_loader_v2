@@ -21,7 +21,8 @@
                  Height="50"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top" 
-                 Width="270"/>
+                 Width="270"
+                 Text="{Binding HelpString}"/>
 
         <Button x:Name="FileButton" 
                 Style="{StaticResource ButtonCommon}" 
@@ -29,13 +30,15 @@
                 VerticalAlignment="Top" 
                 Width="262"
                 Height="19"
-                Content="{x:Static p:Strings.File}"/>
+                Content="{x:Static p:Strings.File}"
+                Command="{Binding SelectFileCommand}"/>
 
         <TextBlock x:Name="FileNameText" 
                  Style="{StaticResource TextCommon}" 
                  HorizontalAlignment="Center"
                  Height="20"
                  TextWrapping="Wrap" 
-                 Width="270"/>
+                 Width="270"
+                 Text="{Binding FileNameString}"/>
     </StackPanel>
 </UserControl>

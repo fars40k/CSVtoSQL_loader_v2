@@ -27,7 +27,7 @@ namespace WpfStarter.Data
         private void SetDefaultDataProcessingMethods()
         {
             entityToEXL = new EPPLusSaver(FileToWritePath);
-            entityToXML = new XMLSerializeSaver(FileToWritePath, new Person());
+            entityToXML = new XMLSaver(FileToWritePath, new Person());
         }
 
         /// <summary>

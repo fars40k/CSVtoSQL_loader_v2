@@ -15,18 +15,21 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel>
-        <Button x:Name="FileButton" 
-                Style="{StaticResource ButtonCancel}" 
-                HorizontalAlignment="Center" 
-                Width="270"
-                Height="30"
-                Content="{x:Static p:Strings.Cancel}"/>
+
         <TextBlock x:Name="ErrorText" 
+                 Text="{Binding ErrorString}"
                  Style="{StaticResource TextError}" 
                  HorizontalAlignment="Left"
-                 Height="60"
+                 Height="50"
                  TextWrapping="Wrap"
                  VerticalAlignment="Top" 
                  Width="270"/>
+        <Button x:Name="GoButton" 
+                Style="{StaticResource ButtonGo}" 
+                Width="270"
+                Height="30"
+                Content="{x:Static p:Strings.Go}"
+                Command="{Binding OperationLaunchCommand}"
+                />
     </StackPanel>
 </UserControl>
