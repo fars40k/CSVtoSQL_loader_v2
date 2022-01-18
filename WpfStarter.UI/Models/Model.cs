@@ -2,6 +2,7 @@
 using Prism.Regions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,19 +19,19 @@ namespace WpfStarter.UI.Models
         private EntityWorker _databaseWorker;
 
         private string _sourceFile;
-        public string SourceFile
-        {
-            get { return _sourceFile; }
-            set { _sourceFile = value; }
-        }
 
         public Action<string> AppStateChanged;
+        public Action<string> FileSelected;
 
         public Model(IContainerExtension container, IRegionManager regionManager)
         {
             _container = container;
             _regionManager = regionManager;
             _databaseWorker = container.Resolve<EntityWorker>();
+
+            ApplyDefaultEventRouting();
+            SetDataViewsLocalisation(container);
+
             DatabaseInitialized(_databaseWorker.DoesDatabaseConnectionInitialized);
         }
 
@@ -39,14 +40,30 @@ namespace WpfStarter.UI.Models
             if (IsInitialized)
             {
                 SetAppGlobalState(EnumGlobalState.DbConnected);
-                _regionManager.RequestNavigate("OperationsRegion","Operations");
             } else
             {
                 SetAppGlobalState(EnumGlobalState.DbConnectionFailed);                
             }
         }
 
-        private string GetAppGlobalState()
+        public void ApplyDefaultEventRouting()
+        {
+            FileSelected += (value) =>
+            {
+                if (new FileInfo(value).Length <= 64)
+                {
+                    ErrorNotify.NewError(Localisation.Strings.ErrorFileEmpty);
+                }
+                else
+                {
+                    SetAppGlobalState(EnumGlobalState.FileSelected);
+                    _regionManager.RequestNavigate("OperationsRegion", "Operations");
+                    _sourceFile = value;
+                }
+            };
+
+        }
+            private string GetAppGlobalState()
         {
             return _appGlobalState.ToString();
         }
@@ -63,6 +80,22 @@ namespace WpfStarter.UI.Models
         {
             _appGlobalState = newState;
             this.NotifyAppGlobalState();
+        }
+
+        protected void SetDataViewsLocalisation(IContainerExtension container)
+        {
+            DataViewsLocalisation dVl = container.Resolve<DataViewsLocalisation>();
+            dVl.SetNewViewString("Operation 1", Localisation.Strings.OpCSVtoSQLExist);
+            dVl.SetNewViewString("Operation 2", Localisation.Strings.OpConvToXLSX);
+            dVl.SetNewViewString("Operation 3", Localisation.Strings.OpConvToXML);
+            dVl.SetNewViewString("Date", Localisation.Strings.FilterRow1);
+            dVl.SetNewViewString("FirstName", Localisation.Strings.FilterRow2);
+            dVl.SetNewViewString("LastName", Localisation.Strings.FilterRow3);
+            dVl.SetNewViewString("SurName", Localisation.Strings.FilterRow4);
+            dVl.SetNewViewString("City", Localisation.Strings.FilterRow5);
+            dVl.SetNewViewString("Country", Localisation.Strings.FilterRow6);
+            dVl.SetNewViewString("Filter 1", Localisation.Strings.FilterDataAll);
+            dVl.SetNewViewString("Filter 2", Localisation.Strings.FilterDataContains);
         }
     }
 }

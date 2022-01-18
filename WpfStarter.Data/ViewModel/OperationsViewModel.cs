@@ -9,11 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WpfStarter.Data.Export;
+using System.Windows.Forms;
 
 namespace WpfStarter.Data.ViewModel
 {
     internal class OperationsViewModel : BindableBase
     {
+
         private ObservableCollection<Operation> _operationsItems;
 
         public ObservableCollection<Operation> OperationsItems
@@ -26,11 +28,10 @@ namespace WpfStarter.Data.ViewModel
 
         public OperationsViewModel(IContainerProvider containerProvider)
         {
-            OperationsItems.Add(new Operation(""));
-            OperationsItems.Add(new Operation("fdsdffsd"));
-
-
-
+            DataViewsLocalisation dwl = containerProvider.Resolve<DataViewsLocalisation>();
+            OperationsItems.Add(new Operation(dwl._dataViewsStrings["Operation 1"]));
+            OperationsItems.Add(new Operation(dwl._dataViewsStrings["Operation 2"]));
+            OperationsItems.Add(new Operation(dwl._dataViewsStrings["Operation 3"]));
         }
 
         public void OperationSelected(Operation operation)

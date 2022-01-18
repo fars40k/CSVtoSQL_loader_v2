@@ -40,10 +40,9 @@ namespace WpfStarter.Data
             {
                 using (PersonsContext pC = new PersonsContext())
                 {
-                    if (pC.Database.Connection.State == System.Data.ConnectionState.Open)
-                    {
-                        this.DoesDatabaseConnectionInitialized = true;
-                    }
+                    pC.Database.Connection.Open();
+                    pC.Database.Connection.Close();
+                    this.DoesDatabaseConnectionInitialized = true;
                 }
             }
             catch (Exception ex)

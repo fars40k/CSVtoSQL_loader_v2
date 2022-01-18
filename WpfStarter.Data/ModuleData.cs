@@ -22,11 +22,8 @@ namespace WpfStarter.Data
            _containerRegistry.RegisterForNavigation<Operations>();
 
             containerRegistry.RegisterSingleton<EntityWorker>();
+            containerRegistry.RegisterSingleton<DataViewsLocalisation>();
         }
 
-        public void RegisterRelatedRegions()
-        {
-
-        }
     }
 }

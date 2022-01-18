@@ -84,7 +84,8 @@ namespace WpfStarter.UI.ViewModels
             dlg.ShowDialog();
             if (dlg.FileName != "")
             {
-                model.SourceFile = dlg.FileName;
+                ErrorNotify.ClearError();
+                model.FileSelected(dlg.FileName);
                 string str = dlg.FileName;
                 str = " " + str.Substring((str.LastIndexOf(@"\") + 1), str.Length - (str.LastIndexOf(@"\") + 1));
                 FileNameString = str;

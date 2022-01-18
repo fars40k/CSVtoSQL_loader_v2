@@ -30,11 +30,11 @@ namespace WpfStarter.UI.Views
             InitializeComponent();
             _container = container;
             _regionManager = regionManager;
+            model = container.Resolve<Model>();
 
             regionManager.RegisterViewWithRegion("HeaderRegion", typeof(Header));
             regionManager.RegisterViewWithRegion("FooterRegion", typeof(Footer));
 
-            model = container.Resolve<Model>();
         }
 
 
