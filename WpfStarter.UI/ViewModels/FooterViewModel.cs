@@ -35,7 +35,7 @@ namespace WpfStarter.UI.ViewModels
 
         public void OperationLaunch()
         {
-
+            model.BeginOperation.Invoke();
         }
 
         public void ShowError(string newError)

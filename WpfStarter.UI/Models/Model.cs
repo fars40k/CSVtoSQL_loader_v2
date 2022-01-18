@@ -20,6 +20,7 @@ namespace WpfStarter.UI.Models
 
         private string _sourceFile;
 
+        public Action BeginOperation;
         public Action<string> AppStateChanged;
         public Action<string> FileSelected;
 
@@ -28,6 +29,7 @@ namespace WpfStarter.UI.Models
             _container = container;
             _regionManager = regionManager;
             _databaseWorker = container.Resolve<EntityWorker>();
+            var localisation = container.Resolve<DataViewsLocalisation>();
 
             ApplyDefaultEventRouting();
             SetDataViewsLocalisation(container);
@@ -57,9 +59,14 @@ namespace WpfStarter.UI.Models
                 else
                 {
                     SetAppGlobalState(EnumGlobalState.FileSelected);
-                    _regionManager.RequestNavigate("OperationsRegion", "Operations");
+                    _databaseWorker.AddDataViewsToRegions();
                     _sourceFile = value;
                 }
+            };
+
+            BeginOperation += () =>
+            {
+                _databaseWorker.BeginOperation();
             };
 
         }

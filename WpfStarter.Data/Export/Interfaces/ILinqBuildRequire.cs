@@ -1,7 +1,7 @@
 ﻿
 namespace WpfStarter.Data.Export
 {
-    public interface IEntityToExcel : IDatabaseAction
+    public interface ILinqBuildRequire : IDatabaseAction
     {
         public bool Run();
     }

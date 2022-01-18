@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfStarter.Data.ViewModel
+namespace WpfStarter.Data.ViewModels
 {
     internal class DataFiltersViewModel : BindableBase
     {

@@ -8,30 +8,51 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Prism.Ioc;
+using Prism.Regions;
+using WpfStarter.Data.Views;
 
 namespace WpfStarter.Data
 {
     public class EntityWorker
     {
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
+       
         private IContainerExtension _container;
+        private Operation _selectedOperation;
 
-        private ICSVtoDatabase fileCSVtoSQL;
-        private IEntityToExcel entityToEXL;
-        private IEntityToXML entityToXML;
+        private DataFilters _filters;
 
         public EntityWorker(IContainerExtension container)
         {
-            _container = container;
+            _container = container;        
 
-            SetDefaultDataProcessingMethods();
             VerifyConnection("");
         }
 
-        private void SetDefaultDataProcessingMethods()
+        public void BeginOperation()
         {
-          //  entityToEXL = new EPPLusSaver(FileToWritePath);
-          //  entityToXML = new XMLSaver(FileToWritePath, new Person());
+            if (_selectedOperation != null)
+            {
+                if (_selectedOperation is ILinqBuildRequire)
+                {
+
+                }
+            }
+
+        }
+
+        public void AddDataViewsToRegions()
+        {
+            IRegionManager regionManager = _container.Resolve<IRegionManager>();
+
+            var view = _container.Resolve<Operations>();
+            IRegion region = regionManager.Regions["OperationsRegion"];
+            region.Add(view);
+
+            _filters = _container.Resolve<DataFilters>();
+            region = regionManager.Regions["FiltersRegion"];
+            region.Add(_filters);
+
         }
 
         public void VerifyConnection(string newConnStr)

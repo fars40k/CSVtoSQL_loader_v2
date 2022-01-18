@@ -6,11 +6,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfStarter.Data.Views"
              xmlns:prism="http://prismlibrary.com/"
-             prism:ViewModelLocator.AutoWireViewModel="True"
+             prism:ViewModelLocator.AutoWireViewModel="True" 
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="270">
 
-    <ListBox x:Name="OperationsList" ItemsSource="{Binding OperationsItems}" Height="109">
+    <ListBox x:Name="OperationsList" ItemsSource="{Binding OperationsItems}" Height="150" Width="240" Margin="0,10,0,0">
         <i:Interaction.Triggers>
         <i:EventTrigger EventName="SelectionChanged">
             <prism:InvokeCommandAction Command="{Binding OperationSelectedCommand}" CommandParameter="{Binding SelectedItem}" />

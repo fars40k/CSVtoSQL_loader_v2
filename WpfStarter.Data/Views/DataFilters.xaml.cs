@@ -11,6 +11,7 @@ using System.Windows.Data;
 using System.Linq.Dynamic;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
+using Prism.Ioc;
 
 namespace WpfStarter.Data.Views
 {
@@ -23,7 +24,7 @@ namespace WpfStarter.Data.Views
         {"", "", "", "", "", ""};
 
         private string[] RowNames = new string[6]
-        {"Date","FirstName","SurName","LastName","City","Country"};
+        {"Date","FirstName","LastName","SurName","City","Country"};
 
         private ObservableCollection<string> _comboboxEntries;
         public ObservableCollection<string> ComboboxEntries
@@ -44,29 +45,26 @@ namespace WpfStarter.Data.Views
 
         private List<Action<int>> dataFilterActionsPresets = new List<Action<int>>();
 
-        public DataFilters()
+        public DataFilters(IContainerProvider containerProvider)
         {
             InitializeComponent();
-            this.DataContext = this;      
-        }
-
-        public DataFilters(string[] localisedStrings)
-        {
-            SetLocalizedStrings(localisedStrings);
+            SetLocalizedStrings(containerProvider);
             this.DataContext = this;
-            InitializeComponent();
         }
 
-        private void SetLocalizedStrings(string[] localisedStrings)
+        private void SetLocalizedStrings(IContainerProvider containerProvider)
         {
+            DataViewsLocalisation dwl = containerProvider.Resolve<DataViewsLocalisation>();
+            ComboboxEntries = new ObservableCollection<string>();
+            ComboboxEntries.Add(dwl._dataViewsStrings["Filter 1"]);
+            ComboboxEntries.Add(dwl._dataViewsStrings["Filter 2"]);
 
-            ComboboxEntries = new ObservableCollection<string> { localisedStrings[0], localisedStrings[1] };
-            Row_1_Name.Text = localisedStrings[2];
-            Row_2_Name.Text = localisedStrings[3];
-            Row_3_Name.Text = localisedStrings[4];
-            Row_4_Name.Text = localisedStrings[5];
-            Row_5_Name.Text = localisedStrings[6];
-            Row_6_Name.Text = localisedStrings[7];
+            Row_1_Name.Text = dwl._dataViewsStrings["Date"];
+            Row_2_Name.Text = dwl._dataViewsStrings["FirstName"];
+            Row_3_Name.Text = dwl._dataViewsStrings["LastName"];
+            Row_4_Name.Text = dwl._dataViewsStrings["SurName"];
+            Row_5_Name.Text = dwl._dataViewsStrings["City"];
+            Row_6_Name.Text = dwl._dataViewsStrings["Country"];
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)

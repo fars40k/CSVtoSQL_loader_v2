@@ -8,7 +8,7 @@ using OfficeOpenXml;
 
 namespace WpfStarter.Data.Export
 {
-    public class EPPLusSaver : IEntityToExcel
+    public class EPPLusSaver : ILinqBuildRequire
     {
         public string filePath { get; private set; }
 

@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace WpfStarter.Data.Export
 {
-    public class XMLSaver : IEntityToXML
+    public class XMLSaver : ILinqBuildRequire
     {
         public string filePath { get; private set; }
         XmlSerializer serializer;
