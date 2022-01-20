@@ -10,7 +10,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="270">
 
-    <ListBox x:Name="OperationsList" ItemsSource="{Binding OperationsItems}" Height="150" Width="240" Margin="0,10,0,0">
+    <ListBox x:Name="OperationsList" 
+             ItemsSource="{Binding OperationsItems}" 
+             Height="150" 
+             Width="256" 
+             Margin="0,10,0,0">
         <i:Interaction.Triggers>
         <i:EventTrigger EventName="SelectionChanged">
             <prism:InvokeCommandAction Command="{Binding OperationSelectedCommand}" CommandParameter="{Binding SelectedItem}" />

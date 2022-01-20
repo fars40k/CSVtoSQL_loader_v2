@@ -16,24 +16,40 @@ namespace WpfStarter.Data
     public class EntityWorker
     {
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
-       
+
         private IContainerExtension _container;
+
         private Operation _selectedOperation;
+        public List<IDatabaseAction> DatabaseOperationsServices = new List<IDatabaseAction>();
 
         private DataFilters _filters;
+
+        public Action<List<IDatabaseAction>> OperationsListFilled;
 
         public EntityWorker(IContainerExtension container)
         {
             _container = container;        
+            VerifyConnection();
+            FillOperationsList(container);
+        }
 
-            VerifyConnection("");
+        private void FillOperationsList(IContainerExtension container)
+        {
+            if (DatabaseOperationsServices.Count == 0)
+            {
+                DatabaseOperationsServices.Add(container.Resolve<CSVReader>());
+                DatabaseOperationsServices.Add(container.Resolve<EPPLusSaver>());
+                DatabaseOperationsServices.Add(container.Resolve<XMLSaver>());           
+            }
+            if (OperationsListFilled != null)  OperationsListFilled.Invoke(DatabaseOperationsServices);
+    
         }
 
         public void BeginOperation()
         {
             if (_selectedOperation != null)
             {
-                if (_selectedOperation is ILinqBuildRequire)
+                if (_selectedOperation is ILinqBuildRequired)
                 {
 
                 }
@@ -45,7 +61,7 @@ namespace WpfStarter.Data
         {
             IRegionManager regionManager = _container.Resolve<IRegionManager>();
 
-            var view = _container.Resolve<Operations>();
+            Operations view = _container.Resolve<Operations>();
             IRegion region = regionManager.Regions["OperationsRegion"];
             region.Add(view);
 
@@ -53,9 +69,11 @@ namespace WpfStarter.Data
             region = regionManager.Regions["FiltersRegion"];
             region.Add(_filters);
 
+            FillOperationsList(_container);
+
         }
 
-        public void VerifyConnection(string newConnStr)
+        public void VerifyConnection()
         {
             try
             {

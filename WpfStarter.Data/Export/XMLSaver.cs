@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prism.Ioc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,15 +10,14 @@ using System.Xml.Serialization;
 
 namespace WpfStarter.Data.Export
 {
-    public class XMLSaver : ILinqBuildRequire
+    public class XMLSaver : Operation, ILinqBuildRequired
     {
         public string filePath { get; private set; }
-        XmlSerializer serializer;
 
-        public XMLSaver(string newFilePath, object typeToSerial)
+        public XMLSaver(IContainerExtension container)
         {
-            serializer = new XmlSerializer(typeToSerial.GetType());
-            filePath = newFilePath;
+            DataViewsLocalisation dwl = container.Resolve<DataViewsLocalisation>();
+            Description = dwl._dataViewsStrings["Operation 3"];
         }
 
         public bool Run()

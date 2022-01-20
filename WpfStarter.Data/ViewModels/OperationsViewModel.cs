@@ -14,7 +14,6 @@ namespace WpfStarter.Data.ViewModels
 {
     internal class OperationsViewModel : BindableBase
     {
-
         private ObservableCollection<Operation> _operationsItems;
 
         public ObservableCollection<Operation> OperationsItems
@@ -25,19 +24,24 @@ namespace WpfStarter.Data.ViewModels
 
         public DelegateCommand<Operation> OperationSelectedCommand { get; private set; }
 
-        public OperationsViewModel(IContainerProvider containerProvider)
+        public OperationsViewModel(IContainerProvider containerProvider,EntityWorker eW)
         {
-            DataViewsLocalisation dwl = containerProvider.Resolve<DataViewsLocalisation>();
-            OperationsItems = new ObservableCollection<Operation>();
-            OperationsItems.Add(new Operation(dwl._dataViewsStrings["Operation 1"]));
-            OperationsItems.Add(new Operation(dwl._dataViewsStrings["Operation 2"]));
-            OperationsItems.Add(new Operation(dwl._dataViewsStrings["Operation 3"]));
-            
+            eW.OperationsListFilled += AddOperations;
+            OperationsItems = new ObservableCollection<Operation>();         
+            OperationSelectedCommand = new DelegateCommand<Operation>(OperationSelected);            
         }
 
         public void OperationSelected(Operation operation)
         {
 
+        }
+
+        public void AddOperations(IList<IDatabaseAction> actions)
+        {
+            foreach (IDatabaseAction action in actions)
+            {
+                OperationsItems.Add(action as Operation);
+            }
         }
     }
 }

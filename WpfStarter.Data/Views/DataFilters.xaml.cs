@@ -23,7 +23,7 @@ namespace WpfStarter.Data.Views
         public string[] LINQShardsToBuildExpression = new string[6] 
         {"", "", "", "", "", ""};
 
-        private string[] RowNames = new string[6]
+        private string[] _rowNames = new string[6]
         {"Date","FirstName","LastName","SurName","City","Country"};
 
         private ObservableCollection<string> _comboboxEntries;
@@ -37,7 +37,7 @@ namespace WpfStarter.Data.Views
         }
 
 
-        private Type[] rowDataTypes = new Type[6]
+        private Type[] _rowDataTypes = new Type[6]
         {
             typeof(DateTime), typeof(string), typeof(string),
             typeof(string), typeof(string), typeof(string)
@@ -65,11 +65,7 @@ namespace WpfStarter.Data.Views
             Row_4_Name.Text = dwl._dataViewsStrings["SurName"];
             Row_5_Name.Text = dwl._dataViewsStrings["City"];
             Row_6_Name.Text = dwl._dataViewsStrings["Country"];
-        }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            MakeAllParamsInvisible();
             dataFilterActionsPresets.Add(SelectAll);
             dataFilterActionsPresets.Add(SelectParam);
         }
@@ -115,8 +111,9 @@ namespace WpfStarter.Data.Views
             if (sender is ComboBox)
             {
                 ComboBox cB = sender as ComboBox;
-                int RowNumber = Int32.Parse(cB.Name.Substring(cB.Name.Length-1, cB.Name.Length));
+                int RowNumber = Int32.Parse(cB.Name.Substring(cB.Name.Length-1, 1));
                 int SelectedRow = cB.SelectedIndex;
+                if (SelectedRow == 1) 
                 dataFilterActionsPresets[SelectedRow].Invoke(RowNumber);
             }
         }
@@ -130,7 +127,7 @@ namespace WpfStarter.Data.Views
 
                 string ExtractedParam = "";
 
-                if (rowDataTypes[RowNumber] == typeof(DateTime))
+                if (_rowDataTypes[RowNumber] == typeof(DateTime))
                 {
                     Regex pattern = new Regex(@"[0-9]{4}-[0-1][0-9]-[0-3][0-9]", RegexOptions.Compiled);
                     if (pattern.IsMatch(tB.Text)) ExtractedParam += tB.Text;
@@ -146,7 +143,7 @@ namespace WpfStarter.Data.Views
                 }
                 else
                 {
-                    LINQShardsToBuildExpression[RowNumber] = RowNames[RowNumber] + " = " + ExtractedParam;
+                    LINQShardsToBuildExpression[RowNumber] = _rowNames[RowNumber] + " = " + ExtractedParam;
                 }
             }
 

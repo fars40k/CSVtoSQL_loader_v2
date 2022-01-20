@@ -9,16 +9,21 @@ namespace WpfStarter.Data.Export
 {
     public class Operation : IDatabaseAction
     {
-        public string Description { get; private set; }
+        public string Description { get; set; }
 
         public Operation(string newDescription)
         {
-            Description = newDescription;
+            if (Description == null) Description = newDescription;
+        }
+
+        public Operation()
+        {
+
         }
 
         public override string ToString()
         {
-            return Description;
+            return Description ?? " ";
         }
 
         public virtual string ShowSaveFileDialog(string targetFormat)

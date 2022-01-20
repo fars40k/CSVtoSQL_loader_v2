@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prism.Ioc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace WpfStarter.Data.Export
 {
-    internal class CSVReader : ICSVtoDatabase
+    internal class CSVReader : Operation
     {
         // sql bulk copy и создание новой таблицы
         public string filePath { get; private set; }
@@ -18,9 +19,10 @@ namespace WpfStarter.Data.Export
         private int RecordsRead = 0;
         private int FailedRecords = 0;
 
-        public CSVReader(string newfilePath)
+        public CSVReader(IContainerExtension container)
         {
-            filePath = newfilePath;
+            DataViewsLocalisation dwl = container.Resolve<DataViewsLocalisation>();
+            Description = dwl._dataViewsStrings["Operation 1"];
         }
 
         public bool Run()
@@ -29,7 +31,7 @@ namespace WpfStarter.Data.Export
             string Line;
             string[] SplitBuffer;
 
-            //Чтение из файла записей порциями ограниченными maxRecords и добавление в БД
+            // Reading records from file in batches
             using (StreamReader sr = new StreamReader(filePath))
             {
                 while (true) 
@@ -43,13 +45,16 @@ namespace WpfStarter.Data.Export
                     {
                         int OldmaxID = pC.Database.ExecuteSqlCommand("SELECT MAX(ID) FROM dbo.Persons;");
                         int IncrID = OldmaxID++;
-                        // Цикл для парсинга и добавления записей из файла порциями
+
+                        // Loop for parsing and adding records from a file in batches
                         while (RecordsRead < maxRecords)
                         {
                             Person person = new Person() { FirstName = "", SurName = "", LastName = "", City = "", Country = "" };
                             Line = sr.ReadLine();
-                            // Если конец файла выйти из цикла
+
+                            // If end-of-file breaks cycle
                             if (Line == null) break;
+
                             RecordsRead++;
 
                             pC.Configuration.AutoDetectChangesEnabled = false;
@@ -57,7 +62,8 @@ namespace WpfStarter.Data.Export
                             try
                             {
                                 SplitBuffer = Line.Replace(" ", "").Split(';');
-                                // заполняет поля Person или записывает строку в файл ошибок
+
+                                // Fills properties of "Person" or writes that line to an error file
                                 if (ParseDateToSqlType(SplitBuffer[0]) != DateTime.MinValue)
                                 {
                                     person.Date = ParseDateToSqlType(SplitBuffer[0]);
@@ -98,15 +104,7 @@ namespace WpfStarter.Data.Export
                             {
                                 return false;
                             }
-                        }
-                        /*if (cancellationToken.IsCancellationRequested)
-                        {
-                           pC.Database.ExecuteSqlCommand("DELETE FROM dbo.Persons WHERE ID>@oldID", OldmaxID);                           
-                        }
-                        else
-                        {
-                            
-                        }*/
+                        }                     
 
                         pC.Configuration.AutoDetectChangesEnabled = true;
                         pC.SaveChanges();
@@ -116,11 +114,11 @@ namespace WpfStarter.Data.Export
             }
             return true;
         }
-        
-    
+
+
 
         /// <summary>
-        /// Создать файл для ошибочных записей
+        ///  Writies to file or creates new one to write line with error 
         /// </summary>
         private string CreateErrorFile(string targetPath)
         {
@@ -140,7 +138,7 @@ namespace WpfStarter.Data.Export
 
 
         /// <summary>
-        /// Добавляет не распознанную запись в файл с ошибочными записями
+        /// Adds an unrecognized entry to a file with err entries
         /// </summary>
         private void Add1RecordToErrorFile(string targetPath,string line)
         {
@@ -149,10 +147,10 @@ namespace WpfStarter.Data.Export
                 sw.WriteLine(line);
             }            
         }
-        
+
 
         /// <summary>
-        /// Конвертирует строку в DateTime тип или возвращает минимальное значение
+        /// Converts a string to DateTime type or returns the minimum value
         /// </summary>
         private DateTime ParseDateToSqlType(string inputString)
         {
@@ -167,7 +165,7 @@ namespace WpfStarter.Data.Export
         }
 
         /// <summary>
-        /// Возвращает дробь отображающую отношение ошибок чтения ко всем строкам
+        /// Returns a fraction representing the ratio of read errors to all rows
         /// </summary>
         public string FailedToAllString()
         {

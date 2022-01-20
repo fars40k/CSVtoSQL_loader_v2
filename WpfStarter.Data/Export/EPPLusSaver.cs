@@ -5,17 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OfficeOpenXml;
+using Prism.Ioc;
 
 namespace WpfStarter.Data.Export
 {
-    public class EPPLusSaver : ILinqBuildRequire
+    public class EPPLusSaver : Operation, ILinqBuildRequired
     {
         public string filePath { get; private set; }
 
-        public EPPLusSaver(string newFilePath)
+        public EPPLusSaver(IContainerExtension container)
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            filePath = newFilePath;
+            DataViewsLocalisation dwl = container.Resolve<DataViewsLocalisation>();
+            Description = dwl._dataViewsStrings["Operation 2"];
         }
 
         public bool Run()

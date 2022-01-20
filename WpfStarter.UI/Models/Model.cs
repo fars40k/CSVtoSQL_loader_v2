@@ -18,6 +18,8 @@ namespace WpfStarter.UI.Models
         private IRegionManager _regionManager;
         private EntityWorker _databaseWorker;
 
+        public DataViewsLocalisation DataViewsLocalisation;
+
         private string _sourceFile;
 
         public Action BeginOperation;
@@ -29,10 +31,11 @@ namespace WpfStarter.UI.Models
             _container = container;
             _regionManager = regionManager;
             _databaseWorker = container.Resolve<EntityWorker>();
-            var localisation = container.Resolve<DataViewsLocalisation>();
+            DataViewsLocalisation = container.Resolve<DataViewsLocalisation>();
+
+            SetDataViewsLocalisation(container);
 
             ApplyDefaultEventRouting();
-            SetDataViewsLocalisation(container);
 
             DatabaseInitialized(_databaseWorker.DoesDatabaseConnectionInitialized);
         }

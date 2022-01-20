@@ -37,6 +37,9 @@ namespace WpfStarter.UI.ViewModels
             model.NotifyAppGlobalState();
         }
 
+        /// <summary>
+        /// Changes user help string in accordance with input string
+        /// </summary>
         private void Model_AppStateChanged(string newState)
         {
             switch (newState)
