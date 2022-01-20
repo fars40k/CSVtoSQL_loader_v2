@@ -76,6 +76,7 @@
                   Grid.Row ="0"    
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectionChanged="AnySelectionChanged"
+                  SelectedIndex="0"
                   />
         
         <ComboBox x:Name="Combobox_2" 
@@ -83,6 +84,7 @@
                   Grid.Row ="1"
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectionChanged="AnySelectionChanged"
+                  SelectedIndex="0"
                   />
         
         <ComboBox x:Name="Combobox_3"
@@ -90,6 +92,7 @@
                   Grid.Row ="2"
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectionChanged="AnySelectionChanged"
+                  SelectedIndex="0"
                   />
         
         <ComboBox x:Name="Combobox_4" 
@@ -97,6 +100,7 @@
                   Grid.Row ="3"
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectionChanged="AnySelectionChanged"
+                  SelectedIndex="0"
                   />
         
         <ComboBox x:Name="Combobox_5" 
@@ -104,6 +108,7 @@
                   Grid.Row ="4"
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectionChanged="AnySelectionChanged"
+                  SelectedIndex="0"
                   />
         
         <ComboBox x:Name="Combobox_6" 
@@ -111,6 +116,7 @@
                   Grid.Row ="5"
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectionChanged="AnySelectionChanged"
+                  SelectedIndex="0"
                   />
 
         <TextBox x:Name="Row_Param_1" 

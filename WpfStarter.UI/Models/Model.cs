@@ -31,6 +31,8 @@ namespace WpfStarter.UI.Models
             _container = container;
             _regionManager = regionManager;
             _databaseWorker = container.Resolve<EntityWorker>();
+            _databaseWorker.Initialisation();
+
             DataViewsLocalisation = container.Resolve<DataViewsLocalisation>();
 
             SetDataViewsLocalisation(container);

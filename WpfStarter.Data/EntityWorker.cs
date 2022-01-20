@@ -17,7 +17,8 @@ namespace WpfStarter.Data
     {
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
 
-        private IContainerExtension _container;
+        private EntityWorker entityWorker;
+        private IContainerProvider _container;
 
         private Operation _selectedOperation;
         public List<IDatabaseAction> DatabaseOperationsServices = new List<IDatabaseAction>();
@@ -26,14 +27,20 @@ namespace WpfStarter.Data
 
         public Action<List<IDatabaseAction>> OperationsListFilled;
 
-        public EntityWorker(IContainerExtension container)
+        public EntityWorker(IContainerProvider container)
         {
-            _container = container;        
-            VerifyConnection();
-            FillOperationsList(container);
+            _container = container;
+            
         }
 
-        private void FillOperationsList(IContainerExtension container)
+        public void Initialisation()
+        {
+            entityWorker = _container.Resolve<EntityWorker>();
+            VerifyConnection();
+            FillOperationsList(_container);
+        }
+
+        private void FillOperationsList(IContainerProvider container)
         {
             if (DatabaseOperationsServices.Count == 0)
             {
@@ -61,7 +68,7 @@ namespace WpfStarter.Data
         {
             IRegionManager regionManager = _container.Resolve<IRegionManager>();
 
-            Operations view = _container.Resolve<Operations>();
+            Operations view = _container.Resolve<Operations>();            
             IRegion region = regionManager.Regions["OperationsRegion"];
             region.Add(view);
 
@@ -69,8 +76,7 @@ namespace WpfStarter.Data
             region = regionManager.Regions["FiltersRegion"];
             region.Add(_filters);
 
-            FillOperationsList(_container);
-
+            //OperationsListFilled.Invoke(DatabaseOperationsServices);
         }
 
         public void VerifyConnection()

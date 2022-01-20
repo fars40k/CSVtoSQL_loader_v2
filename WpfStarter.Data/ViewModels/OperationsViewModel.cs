@@ -24,11 +24,14 @@ namespace WpfStarter.Data.ViewModels
 
         public DelegateCommand<Operation> OperationSelectedCommand { get; private set; }
 
-        public OperationsViewModel(IContainerProvider containerProvider,EntityWorker eW)
+        public OperationsViewModel(IContainerProvider containerProvider)
         {
-            eW.OperationsListFilled += AddOperations;
             OperationsItems = new ObservableCollection<Operation>();         
-            OperationSelectedCommand = new DelegateCommand<Operation>(OperationSelected);            
+            OperationSelectedCommand = new DelegateCommand<Operation>(OperationSelected);
+
+            var eW = containerProvider.Resolve<EntityWorker>();
+            eW.OperationsListFilled += AddOperations;
+            eW.Initialisation();
         }
 
         public void OperationSelected(Operation operation)
