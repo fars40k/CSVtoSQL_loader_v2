@@ -118,7 +118,7 @@ namespace WpfStarter.Data.Export
 
 
         /// <summary>
-        ///  Writies to file or creates new one to write line with error 
+        ///  Writies to file or creates a new one to write line with error 
         /// </summary>
         private string CreateErrorFile(string targetPath)
         {

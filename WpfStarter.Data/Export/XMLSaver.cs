@@ -13,6 +13,7 @@ namespace WpfStarter.Data.Export
     public class XMLSaver : Operation, ILinqBuildRequired
     {
         public string filePath { get; private set; }
+        DataViewsLocalisation _dataViewsLocalisation;
 
         public XMLSaver(IContainerExtension container)
         {
@@ -22,53 +23,60 @@ namespace WpfStarter.Data.Export
 
         public bool Run()
         {
+            string nonDuplicatefilePath = filePath;
             try
             {
-                XDocument xDoc;
-                using (PersonsContext pC = new PersonsContext())
+                // Checks if file exist and save in incremental marked file
+                if (File.Exists(filePath))
                 {
-                    if (!File.Exists(filePath))
-                    {
-                        xDoc = new XDocument(
-                        new XDeclaration("1.0", "UTF-16", null),
-                        new XElement("TestProgram")
-                        );
-                    }
-                    else
-                    {
-                        xDoc = XDocument.Load(filePath);
-                    }
+                    int increment = 0;
 
-                    foreach (Person person in pC.Persons)
+                    while (File.Exists(nonDuplicatefilePath))
                     {
-                        xDoc.Element("TestProgram").Add(PersonToXmlRecord(person));
-                    }                   
+                        increment++;
+                        nonDuplicatefilePath = filePath.Replace(".", ("_" + increment.ToString() + "."));
+                    }
                 }
+                using (XmlWriter xmlWriter = XmlWriter.Create(nonDuplicatefilePath))
+                {
+                    xmlWriter.WriteStartElement("TestProgram");
 
-                xDoc.Save(filePath);
-                return (true);
+                    using (PersonsContext pC = new PersonsContext())
+                    {
+                        foreach (Person person in pC.Persons)
+                        {
+                            PersonToXmlRecord(xmlWriter,person);
+                        }
+                    }
 
+                    xmlWriter.WriteEndDocument();
+                    return (true);
+                }; 
+                    
             }
             catch (Exception ex)
-            {
+            {               
                 return (false);
             }
         }
 
 
-        public XElement PersonToXmlRecord(Person person)
+        public void PersonToXmlRecord(XmlWriter xmlWriter,Person person)
         {
-            XElement record = new XElement("Record",
-                new XAttribute("Id",person.ID.ToString()),
-                new XElement("Date", person.Date.ToString()),
-                new XElement("FirstName",person.FirstName.ToString()),
-                new XElement("LastName", person.LastName.ToString()),
-                new XElement("SurName", person.SurName.ToString()),
-                new XElement("City", person.City.ToString()),
-                new XElement("Country", person.Country.ToString())
-                );
-
-            return(record);
+            xmlWriter.WriteStartElement("Record");
+            xmlWriter.WriteAttributeString("Id", person.ID.ToString());
+            xmlWriter.WriteStartElement("Date");
+            xmlWriter.WriteString(person.Date.ToString());
+            xmlWriter.WriteStartElement("FirstName");
+            xmlWriter.WriteString(person.FirstName.ToString());
+            xmlWriter.WriteStartElement("LastName");
+            xmlWriter.WriteString(person.LastName.ToString());
+            xmlWriter.WriteStartElement("SurName");
+            xmlWriter.WriteString(person.SurName.ToString());
+            xmlWriter.WriteStartElement("City");
+            xmlWriter.WriteString(person.City.ToString());
+            xmlWriter.WriteStartElement("Country");
+            xmlWriter.WriteString(person.Country.ToString());
         }
     }
 }

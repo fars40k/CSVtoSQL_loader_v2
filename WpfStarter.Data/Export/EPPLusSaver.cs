@@ -35,7 +35,19 @@ namespace WpfStarter.Data.Export
                         WritePersonToStartCells(++currentRow, excelWorksheet, person);
                     }
 
-                    excelPackage.SaveAs(filePath);
+                    // Checks if file exist and save in incremental marked file
+                    string nonDuplicatefilePath = filePath;
+                    if (File.Exists(filePath))
+                    {
+                        int increment = 0;
+
+                        while (File.Exists(nonDuplicatefilePath))
+                        {
+                            increment++;
+                            nonDuplicatefilePath = filePath.Replace(".", ("_" + increment.ToString() + "."));
+                        }
+                    }
+                    excelPackage.SaveAs(nonDuplicatefilePath);
                 }
             }
             return true;
