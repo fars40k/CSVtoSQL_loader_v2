@@ -30,8 +30,7 @@ namespace WpfStarter.Data.ViewModels
             OperationSelectedCommand = new DelegateCommand<Operation>(OperationSelected);
 
             var eW = containerProvider.Resolve<EntityWorker>();
-            eW.OperationsListFilled += AddOperations;
-            eW.Initialisation();
+            AddOperations(eW.DatabaseOperationsServices);
         }
 
         public void OperationSelected(Operation operation)

@@ -28,8 +28,10 @@ namespace WpfStarter.UI.Views
         public MainWindow(IContainerExtension container, IRegionManager regionManager)
         {
             InitializeComponent();
+
             _container = container;
             _regionManager = regionManager;
+
             model = container.Resolve<Model>();
 
             regionManager.RegisterViewWithRegion("HeaderRegion", typeof(Header));

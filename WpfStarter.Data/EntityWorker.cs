@@ -15,41 +15,30 @@ namespace WpfStarter.Data
 {
     public class EntityWorker
     {
-        public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
-
-        private EntityWorker entityWorker;
         private IContainerProvider _container;
 
         private Operation _selectedOperation;
-        public List<IDatabaseAction> DatabaseOperationsServices = new List<IDatabaseAction>();
+        public List<IDatabaseAction> DatabaseOperationsServices { get; private set; }
 
         private DataFilters _filters;
 
-        public Action<List<IDatabaseAction>> OperationsListFilled;
+        public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
 
-        public EntityWorker(IContainerProvider container)
+        public EntityWorker(IContainerProvider containerProvider)
         {
-            _container = container;
-            
-        }
-
-        public void Initialisation()
-        {
-            entityWorker = _container.Resolve<EntityWorker>();
+            _container = containerProvider;
             VerifyConnection();
-            FillOperationsList(_container);
         }
 
-        private void FillOperationsList(IContainerProvider container)
+        private void FillOperationsList()
         {
+            DatabaseOperationsServices = new List<IDatabaseAction>();
             if (DatabaseOperationsServices.Count == 0)
             {
-                DatabaseOperationsServices.Add(container.Resolve<CSVReader>());
-                DatabaseOperationsServices.Add(container.Resolve<EPPLusSaver>());
-                DatabaseOperationsServices.Add(container.Resolve<XMLSaver>());           
-            }
-            if (OperationsListFilled != null)  OperationsListFilled.Invoke(DatabaseOperationsServices);
-    
+                DatabaseOperationsServices.Add(_container.Resolve<CSVReader>());
+                DatabaseOperationsServices.Add(_container.Resolve<EPPLusSaver>());
+                DatabaseOperationsServices.Add(_container.Resolve<XMLSaver>());           
+            }    
         }
 
         public void BeginOperation()
@@ -66,6 +55,8 @@ namespace WpfStarter.Data
 
         public void AddDataViewsToRegions()
         {
+            FillOperationsList();
+
             IRegionManager regionManager = _container.Resolve<IRegionManager>();
 
             Operations view = _container.Resolve<Operations>();            
@@ -94,16 +85,6 @@ namespace WpfStarter.Data
             {
                 this.DoesDatabaseConnectionInitialized = false;
             }
-        }
-
-        public void SetSourceFilePath(string newPath)
-        {
-          //  SourceFilePath = newPath;
-        }
-
-        public void SetFileToWritePath(string newPath)
-        {
-          //  FileToWritePath = newPath;
         }
 
         public string ReadCSVToDb(int maxRecords)
