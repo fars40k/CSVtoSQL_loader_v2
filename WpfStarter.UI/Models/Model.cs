@@ -12,29 +12,29 @@ namespace WpfStarter.UI.Models
 {
     public partial class Model
     {
-        public EnumGlobalState _appGlobalState { get; private set; }
+        private DataObjectPool _dataObjectPool;
 
-        private DataFacade _dataFacade;
-        private IContainerProvider _container;
+        public Model(IContainerProvider container)
+        {
+            _containerProvider = container;
 
-        private string _sourceFile;
+            _dataObjectPool = container.Resolve<DataObjectPool>();
+
+            ApplyDefaultEventRouting();
+
+            var dbWrk = container.Resolve<EntityWorker>();
+            DatabaseInitialized(dbWrk.DoesDatabaseConnectionInitialized);
+            dbWrk.NotifyDataAccessError += ErrorNotify.NewError;
+            BeginOperation += dbWrk.BeginOperation;
+        }
 
         public Action BeginOperation;
         public Action<string> AppStateChanged;
         public Action<string> FileSelected;
 
-        public Model(IContainerProvider container)
-        {
-            _container = container;
+        public EnumGlobalState _appGlobalState { get; private set; }
 
-            _dataFacade = container.Resolve<DataFacade>();
-            SetDataViewsLocalisation(container);
-
-            ApplyDefaultEventRouting();
-            var dbWrk = container.Resolve<EntityWorker>();  
-            DatabaseInitialized(dbWrk.DoesDatabaseConnectionInitialized);
-
-        }
+        private IContainerProvider _containerProvider;
 
         private void DatabaseInitialized(bool IsInitialized)
         {
@@ -49,7 +49,7 @@ namespace WpfStarter.UI.Models
 
         public void ApplyDefaultEventRouting()
         {
-            var dbWrk = _container.Resolve<EntityWorker>();
+            var dbWrk = _containerProvider.Resolve<EntityWorker>();
             FileSelected += (value) =>
             {
                 if (new FileInfo(value).Length <= 64)
@@ -60,7 +60,7 @@ namespace WpfStarter.UI.Models
                 {
                     SetAppGlobalState(EnumGlobalState.FileSelected);
                     dbWrk.AddDataViewsToRegions();
-                    _sourceFile = value;
+                    dbWrk.SourceFileSelected(value);
                 }
             };
 
@@ -87,22 +87,6 @@ namespace WpfStarter.UI.Models
         {
             _appGlobalState = newState;
             this.NotifyAppGlobalState();
-        }
-
-        protected void SetDataViewsLocalisation(IContainerProvider container)
-        {
-            var dVl = container.Resolve<DataViewsLocalisation>();
-            dVl.SetNewViewString("Operation 1", Localisation.Strings.OpCSVtoSQLExist);
-            dVl.SetNewViewString("Operation 2", Localisation.Strings.OpConvToXLSX);
-            dVl.SetNewViewString("Operation 3", Localisation.Strings.OpConvToXML);
-            dVl.SetNewViewString("Date", Localisation.Strings.FilterRow1);
-            dVl.SetNewViewString("FirstName", Localisation.Strings.FilterRow2);
-            dVl.SetNewViewString("LastName", Localisation.Strings.FilterRow3);
-            dVl.SetNewViewString("SurName", Localisation.Strings.FilterRow4);
-            dVl.SetNewViewString("City", Localisation.Strings.FilterRow5);
-            dVl.SetNewViewString("Country", Localisation.Strings.FilterRow6);
-            dVl.SetNewViewString("Filter 1", Localisation.Strings.FilterDataAll);
-            dVl.SetNewViewString("Filter 2", Localisation.Strings.FilterDataContains);
         }
     }
 }

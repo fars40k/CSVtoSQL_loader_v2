@@ -9,7 +9,6 @@
              prism:ViewModelLocator.AutoWireViewModel="True" 
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="270">
-
     <ListBox x:Name="OperationsList" 
              ItemsSource="{Binding OperationsItems}" 
              Height="150" 
@@ -17,7 +16,9 @@
              Margin="0,10,0,0">
         <i:Interaction.Triggers>
         <i:EventTrigger EventName="SelectionChanged">
-            <prism:InvokeCommandAction Command="{Binding OperationSelectedCommand}" CommandParameter="{Binding SelectedItem}" />
+                <prism:InvokeCommandAction 
+                    Command="{Binding OperationSelectedCommand}" 
+                    CommandParameter="{Binding SelectedItem, ElementName=OperationsList}" />
         </i:EventTrigger>
         </i:Interaction.Triggers>
     </ListBox>

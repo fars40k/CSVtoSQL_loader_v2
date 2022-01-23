@@ -9,10 +9,9 @@ namespace WpfStarter.Data
     public class ModuleData : IModule
 
     { 
-
         void IModule.OnInitialized(IContainerProvider containerProvider)
         {
-            var regionManager = containerProvider.Resolve<IRegionManager>();
+
         }
 
         void IModule.RegisterTypes(IContainerRegistry containerRegistry)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -15,19 +16,28 @@ namespace WpfStarter.Data.Export
     {
         // sql bulk copy и создание новой таблицы
         public string filePath { get; private set; }
+        public int BatchLimit { get; private set; }
 
-        private int RecordsRead = 0;
-        private int FailedRecords = 0;
+        private int RecordsRead;
+        private int FailedRecords;
 
         public CSVReader(IContainerExtension container)
         {
-            DataViewsLocalisation dwl = container.Resolve<DataViewsLocalisation>();
-            Description = dwl._dataViewsStrings["Operation 1"];
+            var ResourceManager = container.Resolve<ResourceManager>();
+            Description = ResourceManager.GetString("OpCSVtoSQLExist") ?? "missing";
+            BatchLimit = 10000;
         }
 
-        public bool Run()
+        public string Run(string newPath)
         {
-            int maxRecords = 1;
+            filePath = newPath;
+            return Run();
+        }
+
+        public string Run()
+        {
+            RecordsRead = 0;
+            FailedRecords = 0;
             string Line;
             string[] SplitBuffer;
 
@@ -37,17 +47,18 @@ namespace WpfStarter.Data.Export
                 while (true) 
                 {                    
                     string errorsFilePath = "";
-                    // Если конец файла выйти из цикла
+                    // If end-of-file leave iteration
                     if (sr.Peek() == -1) break;
                     RecordsRead = 0;
 
                     using (PersonsContext pC = new PersonsContext())
                     {
                         int OldmaxID = pC.Database.ExecuteSqlCommand("SELECT MAX(ID) FROM dbo.Persons;");
-                        int IncrID = OldmaxID++;
+                        OldmaxID = (OldmaxID < 1) ? 1 : OldmaxID;
+                        int IncrID = OldmaxID;
 
                         // Loop for parsing and adding records from a file in batches
-                        while (RecordsRead < maxRecords)
+                        while (RecordsRead < BatchLimit)
                         {
                             Person person = new Person() { FirstName = "", SurName = "", LastName = "", City = "", Country = "" };
                             Line = sr.ReadLine();
@@ -102,7 +113,7 @@ namespace WpfStarter.Data.Export
                             }
                             catch (Exception ex)
                             {
-                                return false;
+                                return "false";
                             }
                         }                     
 
@@ -112,7 +123,7 @@ namespace WpfStarter.Data.Export
 
                 }
             }
-            return true;
+            return "true";
         }
 
 

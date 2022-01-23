@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace WpfStarter.Data.Export
 {
@@ -26,18 +27,9 @@ namespace WpfStarter.Data.Export
             return Description ?? " ";
         }
 
-        public virtual string ShowSaveFileDialog(string targetFormat)
+        public virtual string Run()
         {
-            SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            Random random = new Random();
-            dlg.DefaultExt = "." + targetFormat;
-            dlg.FileName = random.Next(0, 9000).ToString();
-            dlg.Filter = "Save as" + " (*." + targetFormat + ")|*" + targetFormat;
-            dlg.ShowDialog();
-            if (dlg.FileName != "")
-            {
-                return dlg.FileName;
-            }
+            MessageBox.Show("Empty base class running requested");
             return "";
         }
     }

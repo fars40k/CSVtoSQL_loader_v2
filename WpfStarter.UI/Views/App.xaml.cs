@@ -20,9 +20,8 @@ namespace WpfStarter.UI.Views
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<Model>();
-            containerRegistry.RegisterSingleton<DataFacade>();
+            containerRegistry.RegisterSingleton<DataObjectPool>();
             containerRegistry.RegisterSingleton<EntityWorker>();
-            containerRegistry.RegisterSingleton<DataViewsLocalisation>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

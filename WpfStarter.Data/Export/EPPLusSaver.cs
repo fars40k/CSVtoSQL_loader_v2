@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Resources;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,17 +10,20 @@ using Prism.Ioc;
 
 namespace WpfStarter.Data.Export
 {
-    public class EPPLusSaver : Operation, ILinqBuildRequired
+    public class EPPLusSaver : Operation, ILinqBuildRequired, ISavePathSelectionRequired
     {
-        public string filePath { get; private set; }
-
         public EPPLusSaver(IContainerExtension container)
         {
-            DataViewsLocalisation dwl = container.Resolve<DataViewsLocalisation>();
-            Description = dwl._dataViewsStrings["Operation 2"];
+            var ResourceManager = container.Resolve<ResourceManager>();
+            Description = ResourceManager.GetString("OpConvToXLSX") ?? "missing";
+            targetFormat = ".xlsx";
         }
 
-        public bool Run()
+        public string filePath { get; private set; }
+        public string targetFormat { get; set; }
+        public string LINQExpression { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public string Run()
         {
             int currentRow = 1;
             using (PersonsContext pC = new PersonsContext())
@@ -32,7 +36,7 @@ namespace WpfStarter.Data.Export
 
                     foreach (Person person in pC.Persons)
                     {
-                        WritePersonToStartCells(++currentRow, excelWorksheet, person);
+                        WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
                     }
 
                     // Checks if file exist and save in incremental marked file
@@ -50,10 +54,10 @@ namespace WpfStarter.Data.Export
                     excelPackage.SaveAs(nonDuplicatefilePath);
                 }
             }
-            return true;
+            return "true";
         }
 
-        public void WritePersonToStartCells(int row,ExcelWorksheet sheet,Person person)
+        public void WritePersonToRowOfCells(int row,ExcelWorksheet sheet,Person person)
         {
             sheet.Cells[row, 1].Value = person.ID;
             sheet.Cells[row, 2].Value = person.Date;
@@ -64,5 +68,9 @@ namespace WpfStarter.Data.Export
             sheet.Cells[row, 7].Value = person.Country;
         }
 
+        public void SetSavePath(string newFilePath)
+        {
+            filePath = newFilePath;
+        }
     }
 }

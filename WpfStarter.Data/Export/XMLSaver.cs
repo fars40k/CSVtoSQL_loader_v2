@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -10,18 +11,20 @@ using System.Xml.Serialization;
 
 namespace WpfStarter.Data.Export
 {
-    public class XMLSaver : Operation, ILinqBuildRequired
+    public class XMLSaver : Operation, ILinqBuildRequired, ISavePathSelectionRequired
     {
-        public string filePath { get; private set; }
-        DataViewsLocalisation _dataViewsLocalisation;
-
         public XMLSaver(IContainerExtension container)
         {
-            DataViewsLocalisation dwl = container.Resolve<DataViewsLocalisation>();
-            Description = dwl._dataViewsStrings["Operation 3"];
+            var ResourceManager = container.Resolve<ResourceManager>();
+            Description = ResourceManager.GetString("OpConvToXML") ?? "missing";
+            targetFormat = ".xml";
         }
 
-        public bool Run()
+        public string filePath { get; private set; }
+        public string targetFormat { get; set; }
+        public string LINQExpression { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public string Run()
         {
             string nonDuplicatefilePath = filePath;
             try
@@ -50,13 +53,13 @@ namespace WpfStarter.Data.Export
                     }
 
                     xmlWriter.WriteEndDocument();
-                    return (true);
+                    return ("true");
                 }; 
                     
             }
             catch (Exception ex)
             {               
-                return (false);
+                return ("false");
             }
         }
 
@@ -77,6 +80,11 @@ namespace WpfStarter.Data.Export
             xmlWriter.WriteString(person.City.ToString());
             xmlWriter.WriteStartElement("Country");
             xmlWriter.WriteString(person.Country.ToString());
+        }
+
+        public void SetSavePath(string newFilePath)
+        {
+            filePath = newFilePath;
         }
     }
 }

@@ -26,16 +26,10 @@ namespace WpfStarter.Data.ViewModels
 
         public OperationsViewModel(IContainerProvider containerProvider)
         {
-            OperationsItems = new ObservableCollection<Operation>();         
-            OperationSelectedCommand = new DelegateCommand<Operation>(OperationSelected);
-
+            OperationsItems = new ObservableCollection<Operation>();
             var eW = containerProvider.Resolve<EntityWorker>();
+            OperationSelectedCommand = new DelegateCommand<Operation>(eW.OperationSelected);
             AddOperations(eW.DatabaseOperationsServices);
-        }
-
-        public void OperationSelected(Operation operation)
-        {
-
         }
 
         public void AddOperations(IList<IDatabaseAction> actions)
