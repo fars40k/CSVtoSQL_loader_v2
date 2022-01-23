@@ -128,6 +128,7 @@ namespace WpfStarter.Data
                                 obj.Run(SourceFile);
                                 break;
                             }
+
                     }
 
                    
@@ -155,11 +156,11 @@ namespace WpfStarter.Data
 
             Operations view = _container.Resolve<Operations>();            
             IRegion region = regionManager.Regions["OperationsRegion"];
-            region.Add(view);
+            if (region.ActiveViews.Count() == 0 )  region.Add(view);
 
             DataFilters filters = _container.Resolve<DataFilters>();
             region = regionManager.Regions["FiltersRegion"];
-            region.Add(filters);
+            if (region.ActiveViews.Count() == 0) region.Add(filters);
 
             //OperationsListFilled.Invoke(DatabaseOperationsServices);
         }
