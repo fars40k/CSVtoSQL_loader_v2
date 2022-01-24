@@ -12,20 +12,16 @@ namespace WpfStarter.UI.Models
 {
     public partial class Model
     {
-        private DataObjectPool _dataObjectPool;
-
         public Model(IContainerProvider container)
         {
             _containerProvider = container;
-
-            _dataObjectPool = container.Resolve<DataObjectPool>();
+            var dataPool = container.Resolve<DataObjectPool>();
 
             ApplyDefaultEventRouting();
 
             var dbWrk = container.Resolve<EntityWorker>();
             DatabaseInitialized(dbWrk.DoesDatabaseConnectionInitialized);
-            dbWrk.NotifyDataAccessError += ErrorNotify.NewError;
-            BeginOperation += dbWrk.BeginOperation;
+
         }
 
         public Action BeginOperation;
@@ -59,7 +55,6 @@ namespace WpfStarter.UI.Models
                 else
                 {
                     SetAppGlobalState(EnumGlobalState.FileSelected);
-                    dbWrk.AddDataViewsToRegions();
                     dbWrk.SourceFileSelected(value);
                 }
             };
@@ -68,6 +63,9 @@ namespace WpfStarter.UI.Models
             {
                 dbWrk.BeginOperation();
             };
+
+            dbWrk.NotifyDataAccessError += ErrorNotify.NewError;
+            BeginOperation += dbWrk.BeginOperation;
 
         }
             private string GetAppGlobalState()

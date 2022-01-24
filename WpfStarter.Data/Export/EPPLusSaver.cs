@@ -19,11 +19,11 @@ namespace WpfStarter.Data.Export
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var ResourceManager = container.Resolve<ResourceManager>();
             Description = ResourceManager.GetString("OpConvToXLSX") ?? "missing";
-            targetFormat = ".xlsx";
+            TargetFormat = ".xlsx";
         }
 
-        public string filePath { get; private set; }
-        public string targetFormat { get; set; }
+        public string FilePath { get; private set; } = "";
+        public string TargetFormat { get; set; }
         public string LINQExpression { get; set; } = "";
 
         public string Run()
@@ -56,15 +56,15 @@ namespace WpfStarter.Data.Export
                     excelWorksheet.Cells.AutoFitColumns();
 
                     // Checks if file exist and save in incremental marked file
-                    string nonDuplicatefilePath = filePath;
-                    if (File.Exists(filePath))
+                    string nonDuplicatefilePath = FilePath;
+                    if (File.Exists(FilePath))
                     {
                         int increment = 0;
 
                         while (File.Exists(nonDuplicatefilePath))
                         {
                             increment++;
-                            nonDuplicatefilePath = filePath.Replace(".", ("_" + increment.ToString() + "."));
+                            nonDuplicatefilePath = FilePath.Replace(".", ("_" + increment.ToString() + "."));
                         }
                     }                 
                     excelPackage.SaveAs(nonDuplicatefilePath);
@@ -86,7 +86,7 @@ namespace WpfStarter.Data.Export
 
         public void SetSavePath(string newFilePath)
         {
-            filePath = newFilePath;
+            FilePath = newFilePath;
         }
     }
 }

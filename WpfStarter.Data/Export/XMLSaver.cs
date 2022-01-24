@@ -19,27 +19,27 @@ namespace WpfStarter.Data.Export
         {
             var ResourceManager = container.Resolve<ResourceManager>();
             Description = ResourceManager.GetString("OpConvToXML") ?? "missing";
-            targetFormat = ".xml";
+            TargetFormat = ".xml";
         }
 
-        public string filePath { get; private set; }
-        public string targetFormat { get; set; }
+        public string FilePath { get; private set; } = "";
+        public string TargetFormat { get; set; }
         public string LINQExpression { get; set; } = "";
 
         public string Run()
         {
-            string nonDuplicatefilePath = filePath;
+            string nonDuplicatefilePath = FilePath;
             try
             {
                 // Checks if file exist and save in incremental marked file
-                if (File.Exists(filePath))
+                if (File.Exists(FilePath))
                 {
                     int increment = 0;
 
                     while (File.Exists(nonDuplicatefilePath))
                     {
                         increment++;
-                        nonDuplicatefilePath = filePath.Replace(".", ("_" + increment.ToString() + "."));
+                        nonDuplicatefilePath = FilePath.Replace(".", ("_" + increment.ToString() + "."));
                     }
                 }
 
@@ -120,7 +120,7 @@ namespace WpfStarter.Data.Export
 
         public void SetSavePath(string newFilePath)
         {
-            filePath = newFilePath;
+            FilePath = newFilePath;
         }
     }
 }

@@ -11,7 +11,8 @@ namespace WpfStarter.Data
     { 
         void IModule.OnInitialized(IContainerProvider containerProvider)
         {
-
+            EntityWorker eW = containerProvider.Resolve<EntityWorker>();
+            eW.UpdateDataViews.Invoke();
         }
 
         void IModule.RegisterTypes(IContainerRegistry containerRegistry)

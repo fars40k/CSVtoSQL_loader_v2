@@ -16,6 +16,7 @@ using Prism.Unity;
 using Prism.Regions;
 using Prism.Ioc;
 using WpfStarter.UI.Models;
+using WpfStarter.Data.Views;
 
 namespace WpfStarter.UI.Views
 {
@@ -32,10 +33,11 @@ namespace WpfStarter.UI.Views
             _container = container;
             _regionManager = regionManager;
 
-            model = container.Resolve<Model>();
-
             regionManager.RegisterViewWithRegion("HeaderRegion", typeof(Header));
             regionManager.RegisterViewWithRegion("FooterRegion", typeof(Footer));
+
+            model = container.Resolve<Model>();
+
 
         }
 

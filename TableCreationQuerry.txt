@@ -1,0 +1,10 @@
+CREATE TABLE Persons
+(
+ID int NOT NULL PRIMARY KEY,
+Date DateTime,
+FirstName NVARCHAR(50),
+LastName NVARCHAR(50),
+SurName NVARCHAR(50),
+City NVARCHAR(50),
+Country NVARCHAR(50)
+)

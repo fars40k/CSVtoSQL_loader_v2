@@ -20,29 +20,34 @@ namespace WpfStarter.Data
 {
     public class EntityWorker
     {
-        private ResourceManager _resourceManager;
 
         public EntityWorker(IContainerProvider container)
         {
             _container = container;
-
             VerifyConnection();
 
-            _resourceManager = container.Resolve<ResourceManager>();
+            UpdateDataViews += () =>
+            {
+                AddDataViewsToRegions();
+                AddOperationsToList();
+            };
 
             SourceFileSelected += (s) =>
             {
                 SourceFile = s;
+                UpdateDataViews.Invoke();
             };
         }
 
+        public Action UpdateDataViews;
         public Action<string> SourceFileSelected;
         public Action<string> NotifyDataAccessError;
+        public Action<List<IDatabaseAction>> OperationsListUpdated;
         public Func<List<string>> GetLINQShardsRequest;
 
         public IDatabaseAction SelectedOperation { get; private set; }
         private IContainerProvider _container;
-        public List<IDatabaseAction> DatabaseOperationsServices { get; private set; }
+        public List<IDatabaseAction> DatabaseOperationsServices { get; private set; } = new List<IDatabaseAction>();
 
         public List<string> contextPropertyNames { get; private set; }
             = new List<string>()
@@ -64,21 +69,65 @@ namespace WpfStarter.Data
 
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
 
-        private void FillOperationsList()
+        public void VerifyConnection()
         {
-            DatabaseOperationsServices = new List<IDatabaseAction>();
-            if (DatabaseOperationsServices.Count == 0)
+            try
             {
-                DatabaseOperationsServices.Add(_container.Resolve<CSVReader>());
-                DatabaseOperationsServices.Add(_container.Resolve<EPPLusSaver>());
-                DatabaseOperationsServices.Add(_container.Resolve<XMLSaver>());           
+                using (PersonsContext pC = new PersonsContext())
+                {
+                    pC.Database.CreateIfNotExists();
+                    pC.Database.Connection.Open();
+                    pC.Database.Connection.Close();
+                    this.DoesDatabaseConnectionInitialized = true;
+                }
             }
+            catch (Exception ex)
+            {
+                this.DoesDatabaseConnectionInitialized = false;
+            }
+        }
+
+        private void AddDataViewsToRegions()
+        {
+            if (SourceFile == null)
+            {
+                IRegionManager regionManager = _container.Resolve<IRegionManager>();
+
+                Operations view = _container.Resolve<Operations>();
+                IRegion region = regionManager.Regions["OperationsRegion"];
+                if (region.ActiveViews.Count() == 0) region.Add(view);
+
+                DataFilters filters = _container.Resolve<DataFilters>();
+                region = regionManager.Regions["FiltersRegion"];
+                if (region.ActiveViews.Count() == 0) region.Add(filters);
+            }
+        }
+
+        private void AddOperationsToList()
+        {
+            if (SourceFile == null)
+            {
+                DatabaseOperationsServices.Add(_container.Resolve<EPPLusSaver>());
+                DatabaseOperationsServices.Add(_container.Resolve<XMLSaver>());
+            }
+            else
+            {
+                bool CanCreateFlag = true;
+                foreach (IDatabaseAction action in DatabaseOperationsServices)
+                {
+                    if (action is CSVReader) CanCreateFlag = false;
+                }
+                if (CanCreateFlag) DatabaseOperationsServices.Add(_container.Resolve<CSVReader>());
+            }
+
+            if (OperationsListUpdated != null) OperationsListUpdated.Invoke(DatabaseOperationsServices);
         }
 
         public void BeginOperation()
         {
             try
             {
+                var _resourceManager = _container.Resolve<ResourceManager>();
                 NotifyDataAccessError(_resourceManager.GetString("Help6") ?? "missing");
 
                 if (SelectedOperation != null)
@@ -110,7 +159,7 @@ namespace WpfStarter.Data
                         ISavePathSelectionRequired savePathSelection = (ISavePathSelectionRequired)SelectedOperation;
                         SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
                         Random random = new Random();
-                        dlg.DefaultExt = savePathSelection.targetFormat;
+                        dlg.DefaultExt = savePathSelection.TargetFormat;
                         dlg.FileName = random.Next(0, 9000).ToString();
                         dlg.Filter = " (*" + dlg.DefaultExt + ")|*" + dlg.DefaultExt;
                         dlg.ShowDialog();
@@ -144,7 +193,7 @@ namespace WpfStarter.Data
 
                     }                   
                 }
-                RemoveOperationSelection();
+                
             }
             catch (Exception ex)
             {
@@ -160,41 +209,8 @@ namespace WpfStarter.Data
             SelectedOperation = operation;
         }
 
-        public void AddDataViewsToRegions()
-        {
-            FillOperationsList();
 
-            IRegionManager regionManager = _container.Resolve<IRegionManager>();
-
-            Operations view = _container.Resolve<Operations>();            
-            IRegion region = regionManager.Regions["OperationsRegion"];
-            if (region.ActiveViews.Count() == 0 )  region.Add(view);
-
-            DataFilters filters = _container.Resolve<DataFilters>();
-            region = regionManager.Regions["FiltersRegion"];
-            if (region.ActiveViews.Count() == 0) region.Add(filters);
-
-            //OperationsListFilled.Invoke(DatabaseOperationsServices);
-        }
-
-        public void VerifyConnection()
-        {
-            try
-            {
-                using (PersonsContext pC = new PersonsContext())
-                {
-                    pC.Database.Connection.Open();
-                    pC.Database.Connection.Close();
-                    this.DoesDatabaseConnectionInitialized = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                this.DoesDatabaseConnectionInitialized = false;
-            }
-        }
-
-        private void RemoveOperationSelection()
+       /* private void RemoveOperationSelection()
         {
             SelectedOperation = null;
             IRegionManager regionManager = _container.Resolve<IRegionManager>();
@@ -203,6 +219,6 @@ namespace WpfStarter.Data
             region.RemoveAll();
             region.Add(view);
         }
-
+       */
     }
 }

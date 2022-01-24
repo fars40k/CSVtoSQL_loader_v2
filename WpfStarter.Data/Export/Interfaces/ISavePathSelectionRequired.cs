@@ -8,7 +8,7 @@ namespace WpfStarter.Data.Export
 {
     internal interface ISavePathSelectionRequired : IDatabaseAction
     {
-        public string targetFormat { get; set; }
+        public string TargetFormat { get; set; } 
 
         public void SetSavePath(string newFilePath);
     }

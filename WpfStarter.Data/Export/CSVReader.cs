@@ -15,7 +15,7 @@ namespace WpfStarter.Data.Export
     internal class CSVReader : Operation
     {
         // sql bulk copy и создание новой таблицы
-        public string filePath { get; private set; }
+        public string filePath { get; private set; } = "";
         public int BatchLimit { get; private set; }
 
         private int RecordsRead;
