@@ -20,7 +20,7 @@ namespace WpfStarter.Data.ViewModels
             var eW = container.Resolve<EntityWorker>();
             eW.GetLINQShardsRequest += GetLINQShards; 
 
-            LINQShardsToBuildExpression.AddRange<string>(new List<string>() { "YEAR-MM-DD", "", "", "", "", ""});
+            LINQShardsToBuildExpression.AddRange<string>(new List<string>() { "", "", "", "", "", ""});
 
             var ResourceManager = container.Resolve<ResourceManager>();
             ComboboxEntries = new ObservableCollection<string>();

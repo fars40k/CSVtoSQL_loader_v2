@@ -53,6 +53,7 @@ namespace WpfStarter.Data.Export
 
                     using (PersonsContext pC = new PersonsContext())
                     {
+                        // Getting maximal ID value
                         int OldmaxID = 1;
                         try
                         {
@@ -111,6 +112,7 @@ namespace WpfStarter.Data.Export
                             }
                             catch (FormatException ex)
                             {
+                                // Saving Line with errors to file
                                 if (errorsFilePath == "")
                                 {
                                     errorsFilePath = CreateErrorFile(filePath);

@@ -129,6 +129,19 @@ namespace WpfStarter.Data
                                 break;
                             }
 
+                        case EPPLusSaver:
+                            {
+                                EPPLusSaver obj = SelectedOperation as EPPLusSaver;
+                                obj.Run();
+                                break;
+                            }
+                        case XMLSaver:
+                            {
+                                XMLSaver obj = SelectedOperation as XMLSaver;
+                                obj.Run();
+                                break;
+                            }
+
                     }                   
                 }
                 RemoveOperationSelection();

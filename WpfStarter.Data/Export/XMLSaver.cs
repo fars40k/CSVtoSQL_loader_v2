@@ -1,7 +1,9 @@
 ﻿using Prism.Ioc;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +24,7 @@ namespace WpfStarter.Data.Export
 
         public string filePath { get; private set; }
         public string targetFormat { get; set; }
-        public string LINQExpression { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string LINQExpression { get; set; } = "";
 
         public string Run()
         {
@@ -40,22 +42,42 @@ namespace WpfStarter.Data.Export
                         nonDuplicatefilePath = filePath.Replace(".", ("_" + increment.ToString() + "."));
                     }
                 }
-                using (XmlWriter xmlWriter = XmlWriter.Create(nonDuplicatefilePath))
+
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.IndentChars = "\t";
+
+                using (XmlWriter xmlWriter = XmlWriter.Create(nonDuplicatefilePath, settings))
                 {
                     xmlWriter.WriteStartElement("TestProgram");
 
                     using (PersonsContext pC = new PersonsContext())
                     {
-                        foreach (Person person in pC.Persons)
+
+                        // If not empty data filters changes source of items
+                        object list;
+                        if (LINQExpression == "")
                         {
-                            PersonToXmlRecord(xmlWriter,person);
+                            list = pC.Persons;
+                        }
+                        else
+                        {
+                            list = pC.Persons
+                                         .Where(LINQExpression)
+                                         .ToList();
+                        }
+
+                        foreach (Person person in (IEnumerable)list)
+                        {
+                            PersonToXmlRecord(xmlWriter, person);
                         }
                     }
 
                     xmlWriter.WriteEndDocument();
+                    xmlWriter.Close();
                     return ("true");
-                }; 
-                    
+                };
+
             }
             catch (Exception ex)
             {               
@@ -67,19 +89,33 @@ namespace WpfStarter.Data.Export
         public void PersonToXmlRecord(XmlWriter xmlWriter,Person person)
         {
             xmlWriter.WriteStartElement("Record");
-            xmlWriter.WriteAttributeString("Id", person.ID.ToString());
+            xmlWriter.WriteAttributeString("Id",person.ID.ToString().Trim());
+
             xmlWriter.WriteStartElement("Date");
-            xmlWriter.WriteString(person.Date.ToString());
+            xmlWriter.WriteString(person.Date.ToShortDateString().Trim());
+            xmlWriter.WriteEndElement();
+
             xmlWriter.WriteStartElement("FirstName");
-            xmlWriter.WriteString(person.FirstName.ToString());
+            xmlWriter.WriteString(person.FirstName.ToString().Trim());
+            xmlWriter.WriteEndElement();
+
             xmlWriter.WriteStartElement("LastName");
-            xmlWriter.WriteString(person.LastName.ToString());
+            xmlWriter.WriteString(person.LastName.ToString().Trim());
+            xmlWriter.WriteEndElement();
+
             xmlWriter.WriteStartElement("SurName");
-            xmlWriter.WriteString(person.SurName.ToString());
+            xmlWriter.WriteString(person.SurName.ToString().Trim());
+            xmlWriter.WriteEndElement();
+
             xmlWriter.WriteStartElement("City");
-            xmlWriter.WriteString(person.City.ToString());
+            xmlWriter.WriteString(person.City.ToString().Trim());
+            xmlWriter.WriteEndElement();
+
             xmlWriter.WriteStartElement("Country");
-            xmlWriter.WriteString(person.Country.ToString());
+            xmlWriter.WriteString(person.Country.ToString().Trim());
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteEndElement();
         }
 
         public void SetSavePath(string newFilePath)

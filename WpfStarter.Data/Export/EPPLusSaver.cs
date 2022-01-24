@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using OfficeOpenXml;
 using Prism.Ioc;
+using System.Linq.Dynamic;
+using System.Linq.Dynamic.Core;
 
 namespace WpfStarter.Data.Export
 {
@@ -14,6 +16,7 @@ namespace WpfStarter.Data.Export
     {
         public EPPLusSaver(IContainerExtension container)
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var ResourceManager = container.Resolve<ResourceManager>();
             Description = ResourceManager.GetString("OpConvToXLSX") ?? "missing";
             targetFormat = ".xlsx";
@@ -21,7 +24,7 @@ namespace WpfStarter.Data.Export
 
         public string filePath { get; private set; }
         public string targetFormat { get; set; }
-        public string LINQExpression { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string LINQExpression { get; set; } = "";
 
         public string Run()
         {
@@ -31,13 +34,26 @@ namespace WpfStarter.Data.Export
                 using (ExcelPackage excelPackage = new ExcelPackage())
                 {
                     excelPackage.Workbook.Properties.Author = Environment.UserName;
-
                     ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
 
-                    foreach (Person person in pC.Persons)
+                    // If not empty data filters changes source of items
+                    object list;
+                    if (LINQExpression == "")
+                    {
+                        list = pC.Persons;
+                    }
+                    else
+                    {
+                        list = pC.Persons
+                                     .Where(LINQExpression)
+                                     .ToList();                     
+                    }
+
+                    foreach (Person person in (IEnumerable<Person>)list)
                     {
                         WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
                     }
+                    excelWorksheet.Cells.AutoFitColumns();
 
                     // Checks if file exist and save in incremental marked file
                     string nonDuplicatefilePath = filePath;
@@ -50,7 +66,7 @@ namespace WpfStarter.Data.Export
                             increment++;
                             nonDuplicatefilePath = filePath.Replace(".", ("_" + increment.ToString() + "."));
                         }
-                    }
+                    }                 
                     excelPackage.SaveAs(nonDuplicatefilePath);
                 }
             }
@@ -60,7 +76,7 @@ namespace WpfStarter.Data.Export
         public void WritePersonToRowOfCells(int row,ExcelWorksheet sheet,Person person)
         {
             sheet.Cells[row, 1].Value = person.ID;
-            sheet.Cells[row, 2].Value = person.Date;
+            sheet.Cells[row, 2].Value = person.Date.ToString();
             sheet.Cells[row, 3].Value = person.FirstName;
             sheet.Cells[row, 4].Value = person.LastName;
             sheet.Cells[row, 5].Value = person.SurName;
