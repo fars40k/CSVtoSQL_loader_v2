@@ -47,14 +47,21 @@ namespace WpfStarter.Data.Export
                 while (true) 
                 {                    
                     string errorsFilePath = "";
-                    // If end-of-file leave iteration
+                    // If end-of-file leaves iteration
                     if (sr.Peek() == -1) break;
                     RecordsRead = 0;
 
                     using (PersonsContext pC = new PersonsContext())
                     {
-                        int OldmaxID = pC.Database.ExecuteSqlCommand("SELECT MAX(ID) FROM dbo.Persons;");
-                        OldmaxID = (OldmaxID < 1) ? 1 : OldmaxID;
+                        int OldmaxID = 1;
+                        try
+                        {
+                            OldmaxID = pC.Persons.Max(e => e.ID);
+                        }
+                        catch (Exception ex)
+                        {
+                        }                       
+                        
                         int IncrID = OldmaxID;
 
                         // Loop for parsing and adding records from a file in batches
@@ -98,7 +105,7 @@ namespace WpfStarter.Data.Export
                                 person.LastName = SplitBuffer[3];
                                 person.City = SplitBuffer[4];
                                 person.Country = SplitBuffer[5];
-                                person.ID = IncrID++;
+                                person.ID = ++IncrID;
 
                                 pC.Persons.Add(person);
                             }
@@ -118,6 +125,7 @@ namespace WpfStarter.Data.Export
                         }                     
 
                         pC.Configuration.AutoDetectChangesEnabled = true;
+                        pC.ChangeTracker.DetectChanges();
                         pC.SaveChanges();
                     }
 

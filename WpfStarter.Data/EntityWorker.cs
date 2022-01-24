@@ -129,16 +129,15 @@ namespace WpfStarter.Data
                                 break;
                             }
 
-                    }
-
-                   
+                    }                   
                 }
-
+                RemoveOperationSelection();
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show(ex.ToString());
             }
+        
             NotifyDataAccessError("");
         }
 
@@ -182,27 +181,14 @@ namespace WpfStarter.Data
             }
         }
 
-        public string ReadCSVToDb(int maxRecords)
+        private void RemoveOperationSelection()
         {
-            /* fileCSVtoSQL = new CSVReader(SourceFilePath);
-
-
-             bool result = fileCSVtoSQL.Run(maxRecords);
-             if (result)
-             {
-                 if (fileCSVtoSQL.FailedToAllString().StartsWith("0 "))
-                 {
-                     return "True";
-
-                 } else
-                 {
-                     return fileCSVtoSQL.FailedToAllString();
-
-                 }
-             } else
-             return "False";    
-            */
-            return "";
+            SelectedOperation = null;
+            IRegionManager regionManager = _container.Resolve<IRegionManager>();
+            Operations view = _container.Resolve<Operations>();
+            IRegion region = regionManager.Regions["OperationsRegion"];
+            region.RemoveAll();
+            region.Add(view);
         }
 
     }

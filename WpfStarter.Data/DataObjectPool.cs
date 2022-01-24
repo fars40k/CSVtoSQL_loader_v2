@@ -15,12 +15,12 @@ namespace WpfStarter.Data
     public class DataObjectPool
     {
         public EntityWorker DatabaseWorker;
-        public ResourceManager _resourceManager;
+        public ResourceManager ResourceManager;
 
         public DataObjectPool(IContainerExtension container)
         {
-            _resourceManager = new ResourceManager("WpfStarter.UI.Localisation.Strings", Assembly.GetEntryAssembly());
-            container.RegisterInstance<ResourceManager>(_resourceManager);
+            ResourceManager = new ResourceManager("WpfStarter.UI.Localisation.Strings", Assembly.GetEntryAssembly());
+            container.RegisterInstance<ResourceManager>(ResourceManager);
 
             DatabaseWorker = container.Resolve<EntityWorker>();
 

@@ -36,4 +36,9 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Context\" />
+    <Folder Include="Dto\" />
+  </ItemGroup>
+
 </Project>
