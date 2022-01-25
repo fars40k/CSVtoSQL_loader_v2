@@ -29,7 +29,7 @@ namespace WpfStarter.Data.ViewModels
             OperationsItems = new ObservableCollection<Operation>();
             var eW = containerProvider.Resolve<EntityWorker>();
             OperationSelectedCommand = new DelegateCommand<Operation>(eW.OperationSelected);
-            eW.OperationsListUpdated += AddOperations;
+            if (eW.OperationsListUpdated == null) eW.OperationsListUpdated += AddOperations;
         }
 
         public void AddOperations(IList<IDatabaseAction> actions)

@@ -59,11 +59,6 @@ namespace WpfStarter.UI.Models
                 }
             };
 
-            BeginOperation += () =>
-            {
-                dbWrk.BeginOperation();
-            };
-
             dbWrk.NotifyDataAccessError += ErrorNotify.NewError;
             BeginOperation += dbWrk.BeginOperation;
 

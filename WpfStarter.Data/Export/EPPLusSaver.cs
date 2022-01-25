@@ -26,7 +26,7 @@ namespace WpfStarter.Data.Export
         public string TargetFormat { get; set; }
         public string LINQExpression { get; set; } = "";
 
-        public string Run()
+        public override string Run()
         {
             int currentRow = 1;
             using (PersonsContext pC = new PersonsContext())

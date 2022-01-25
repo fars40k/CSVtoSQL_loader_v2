@@ -12,11 +12,12 @@ using System.Threading.Tasks;
 
 namespace WpfStarter.Data.Export
 {
-    internal class CSVReader : Operation
+    internal class CSVReader : Operation, ISourceFileSelectionRequired
     {
         // sql bulk copy и создание новой таблицы
-        public string filePath { get; private set; } = "";
+        
         public int BatchLimit { get; private set; }
+        public string SourceFilePath { get; set; }
 
         private int RecordsRead;
         private int FailedRecords;
@@ -28,13 +29,7 @@ namespace WpfStarter.Data.Export
             BatchLimit = 10000;
         }
 
-        public string Run(string newPath)
-        {
-            filePath = newPath;
-            return Run();
-        }
-
-        public string Run()
+        public override string Run()
         {
             RecordsRead = 0;
             FailedRecords = 0;
@@ -42,7 +37,7 @@ namespace WpfStarter.Data.Export
             string[] SplitBuffer;
 
             // Reading records from file in batches
-            using (StreamReader sr = new StreamReader(filePath))
+            using (StreamReader sr = new StreamReader(SourceFilePath))
             {
                 while (true) 
                 {                    
@@ -83,7 +78,7 @@ namespace WpfStarter.Data.Export
                                 SplitBuffer = Line.Replace(" ", "").Split(';');
 
                                 // Fills properties of "Person" or writes that line to an error file
-                                if (ParseDateToSqlType(SplitBuffer[0]) != DateTime.MinValue)
+                                if ((ParseDateToSqlType(SplitBuffer[0]) != DateTime.MinValue))
                                 {
                                     person.Date = ParseDateToSqlType(SplitBuffer[0]);
                                 }
@@ -115,7 +110,7 @@ namespace WpfStarter.Data.Export
                                 // Saving Line with errors to file
                                 if (errorsFilePath == "")
                                 {
-                                    errorsFilePath = CreateErrorFile(filePath);
+                                    errorsFilePath = CreateErrorFile(SourceFilePath);
                                 }
                                 Add1RecordToErrorFile(errorsFilePath, Line);
                                 FailedRecords++;
@@ -177,6 +172,8 @@ namespace WpfStarter.Data.Export
         {
             try
             {
+                if (Int32.Parse(inputString.Substring(0, 4)) < 1753) return DateTime.MinValue;
+
                 return DateTime.Parse(inputString);
             } 
             catch (Exception e)

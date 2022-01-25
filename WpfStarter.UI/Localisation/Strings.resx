@@ -252,6 +252,9 @@
   <data name="OpWrongSettings" xml:space="preserve">
     <value>Неверные настройки программы</value>
   </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Готово</value>
+  </data>
   <data name="SaveBadFileData" xml:space="preserve">
     <value>Сохранить поврежденные данные</value>
   </data>

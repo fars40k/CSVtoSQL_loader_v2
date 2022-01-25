@@ -18,7 +18,7 @@ namespace WpfStarter.Data.ViewModels
         public DataFiltersViewModel(IContainerProvider container)
         {
             var eW = container.Resolve<EntityWorker>();
-            eW.GetLINQShardsRequest += GetLINQShards; 
+            if (eW.GetLINQShardsRequest == null) eW.GetLINQShardsRequest += GetLINQShards;
 
             LINQShardsToBuildExpression.AddRange<string>(new List<string>() { "", "", "", "", "", ""});
 
@@ -77,17 +77,14 @@ namespace WpfStarter.Data.ViewModels
             get => _comboBoxSelectedIndexes;
             set => SetProperty(ref _comboBoxSelectedIndexes, value);      
         }
-        
-        public List<string> GetLINQShards()
+
+        private List<string> GetLINQShards()
         {
-            int i = 0;
-            foreach (var item in ComboboxSelectedIndexes)
+            for(int i = 0; i < LINQShardsToBuildExpression.Count; i++)
             {
-                if (Convert.ToBoolean(item))
-                {
-                    dataFilterActionsPresets[i].Invoke(i++);
-                }
+                dataFilterActionsPresets[ComboboxSelectedIndexes[i]].Invoke(i);
             }
+          
             return LINQShardsToBuildExpression.ToList<string>();
         }
 

@@ -466,6 +466,15 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Готово.
+        /// </summary>
+        public static string Ready {
+            get {
+                return ResourceManager.GetString("Ready", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Сохранить поврежденные данные.
         /// </summary>
         public static string SaveBadFileData {

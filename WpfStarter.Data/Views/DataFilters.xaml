@@ -119,32 +119,46 @@
         <TextBox x:Name="Row_Param_1" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="0"
-                 Text="{Binding Path=LINQShardsToBuildExpression[0], Mode=TwoWay}"/>
+                 Text="{Binding Path=LINQShardsToBuildExpression[0], Mode=TwoWay}"
+                 Margin="0,0,30,0" 
+                 Width="200"/>
 
         <TextBox x:Name="Row_Param_2" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="1"
-                 Text="{Binding Path=LINQShardsToBuildExpression[1], Mode=TwoWay}"/>
+                 Text="{Binding Path=LINQShardsToBuildExpression[1], Mode=TwoWay}"
+                 Margin="0,0,30,0" 
+                 Width="200"/>
 
         <TextBox x:Name="Row_Param_3" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="2"
-                 Text="{Binding Path=LINQShardsToBuildExpression[2], Mode=TwoWay}"/>
+                 Text="{Binding Path=LINQShardsToBuildExpression[2], Mode=TwoWay}"
+                 Margin="0,0,30,0" 
+                 Width="200"
+                 />
 
         <TextBox x:Name="Row_Param_4" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="3"
-                 Text="{Binding Path=LINQShardsToBuildExpression[3], Mode=TwoWay}"/>
+                 Text="{Binding Path=LINQShardsToBuildExpression[3], Mode=TwoWay}"
+                 Margin="0,0,30,0" 
+                 Width="200"/>
 
         <TextBox x:Name="Row_Param_5" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="4"
-                 Text="{Binding Path=LINQShardsToBuildExpression[4], Mode=TwoWay}"/>
+                 Text="{Binding Path=LINQShardsToBuildExpression[4], Mode=TwoWay}"
+                 Margin="0,0,30,0" 
+                 Width="200"/>
 
         <TextBox x:Name="Row_Param_6" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="5"
-                 Text="{Binding Path=LINQShardsToBuildExpression[5], Mode=TwoWay}"/>
+                 Text="{Binding Path=LINQShardsToBuildExpression[5], Mode=TwoWay}" 
+                 Margin="0,0,30,0" 
+                 Width="200"
+                 />
         
         <TextBox x:Name="Row_1_Name" 
                  Style="{StaticResource CommonOutputTextBox}"
@@ -175,6 +189,14 @@
                  Style="{StaticResource CommonOutputTextBox}"
                  Text="{Binding Path=RowNames[5]}"
                  Grid.Row ="5"/>
+        
+        <TextBlock x:Name="DateClue"
+                   HorizontalAlignment="Left" 
+                   Height="19" Margin="420,12,0,0" 
+                   TextWrapping="Wrap" 
+                   Text="YEAR-MM-DD" 
+                   VerticalAlignment="Top" 
+                   Width="100"/>
     </Grid>
 
 </UserControl>

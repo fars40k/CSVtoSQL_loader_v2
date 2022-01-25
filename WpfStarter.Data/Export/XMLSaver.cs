@@ -26,7 +26,7 @@ namespace WpfStarter.Data.Export
         public string TargetFormat { get; set; }
         public string LINQExpression { get; set; } = "";
 
-        public string Run()
+        public override string Run()
         {
             string nonDuplicatefilePath = FilePath;
             try

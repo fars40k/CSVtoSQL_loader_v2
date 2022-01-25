@@ -75,7 +75,6 @@ namespace WpfStarter.Data
             {
                 using (PersonsContext pC = new PersonsContext())
                 {
-                    pC.Database.CreateIfNotExists();
                     pC.Database.Connection.Open();
                     pC.Database.Connection.Close();
                     this.DoesDatabaseConnectionInitialized = true;
@@ -89,7 +88,7 @@ namespace WpfStarter.Data
 
         private void AddDataViewsToRegions()
         {
-            if (SourceFile == null)
+            if ((SourceFile == null)&&(DoesDatabaseConnectionInitialized))
             {
                 IRegionManager regionManager = _container.Resolve<IRegionManager>();
 
@@ -105,29 +104,32 @@ namespace WpfStarter.Data
 
         private void AddOperationsToList()
         {
-            if (SourceFile == null)
+            if (DoesDatabaseConnectionInitialized)
             {
-                DatabaseOperationsServices.Add(_container.Resolve<EPPLusSaver>());
-                DatabaseOperationsServices.Add(_container.Resolve<XMLSaver>());
-            }
-            else
-            {
-                bool CanCreateFlag = true;
-                foreach (IDatabaseAction action in DatabaseOperationsServices)
+                if (SourceFile == null)
                 {
-                    if (action is CSVReader) CanCreateFlag = false;
+                    DatabaseOperationsServices.Add(_container.Resolve<EPPLusSaver>());
+                    DatabaseOperationsServices.Add(_container.Resolve<XMLSaver>());
                 }
-                if (CanCreateFlag) DatabaseOperationsServices.Add(_container.Resolve<CSVReader>());
-            }
+                else
+                {
+                    bool CanCreateFlag = true;
+                    foreach (IDatabaseAction action in DatabaseOperationsServices)
+                    {
+                        if (action is CSVReader) CanCreateFlag = false;
+                    }
+                    if (CanCreateFlag) DatabaseOperationsServices.Add(_container.Resolve<CSVReader>());
+                }
 
-            if (OperationsListUpdated != null) OperationsListUpdated.Invoke(DatabaseOperationsServices);
+                if (OperationsListUpdated != null) OperationsListUpdated.Invoke(DatabaseOperationsServices);
+            }
         }
 
         public void BeginOperation()
         {
+            var _resourceManager = _container.Resolve<ResourceManager>();
             try
-            {
-                var _resourceManager = _container.Resolve<ResourceManager>();
+            {               
                 NotifyDataAccessError(_resourceManager.GetString("Help6") ?? "missing");
 
                 if (SelectedOperation != null)
@@ -135,19 +137,23 @@ namespace WpfStarter.Data
                     if (SelectedOperation is ILinqBuildRequired)
                     {
                         ILinqBuildRequired linqBuildRequired = (ILinqBuildRequired)SelectedOperation;
-                        List<string> shards = GetLINQShardsRequest.Invoke();
+
+                        List<string> shards = new List<string>();
+                        shards = GetLINQShardsRequest.Invoke();
+
                         if (shards != null)
                         {
                             int i = 0;
                             foreach (string shard in shards)
                             {
+                                
                               if (shard != "")
                                 {
-                                    if (linqBuildRequired.LINQExpression.Length == 0)
+                                    if (linqBuildRequired.LINQExpression.Length != 0)
                                     {
                                         linqBuildRequired.LINQExpression += " && ";
                                     }
-                                    linqBuildRequired.LINQExpression += contextPropertyNames[i] + "== \"" + shard + "\"";
+                                    linqBuildRequired.LINQExpression += contextPropertyNames[i] + "== \"" + shard.Trim() + "\"";
                                 }
                                 i++;
                             }
@@ -159,6 +165,7 @@ namespace WpfStarter.Data
                         ISavePathSelectionRequired savePathSelection = (ISavePathSelectionRequired)SelectedOperation;
                         SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
                         Random random = new Random();
+
                         dlg.DefaultExt = savePathSelection.TargetFormat;
                         dlg.FileName = random.Next(0, 9000).ToString();
                         dlg.Filter = " (*" + dlg.DefaultExt + ")|*" + dlg.DefaultExt;
@@ -169,29 +176,14 @@ namespace WpfStarter.Data
                         }
                     }
 
-                    switch (SelectedOperation)
+                    if (SelectedOperation is ISourceFileSelectionRequired)
                     {
-                        case CSVReader:
-                            {
-                                CSVReader obj = SelectedOperation as CSVReader;
-                                obj.Run(SourceFile);
-                                break;
-                            }
+                        ISourceFileSelectionRequired sourceFileSelection = (ISourceFileSelectionRequired)SelectedOperation;
+                        sourceFileSelection.SourceFilePath = SourceFile;
+                    }
 
-                        case EPPLusSaver:
-                            {
-                                EPPLusSaver obj = SelectedOperation as EPPLusSaver;
-                                obj.Run();
-                                break;
-                            }
-                        case XMLSaver:
-                            {
-                                XMLSaver obj = SelectedOperation as XMLSaver;
-                                obj.Run();
-                                break;
-                            }
-
-                    }                   
+                    Operation op = (Operation)SelectedOperation;
+                    op.Run();
                 }
                 
             }
@@ -200,7 +192,7 @@ namespace WpfStarter.Data
                 MessageBox.Show(ex.ToString());
             }
         
-            NotifyDataAccessError("");
+            NotifyDataAccessError(_resourceManager.GetString("Ready") ?? "missing");
         }
 
 
@@ -208,17 +200,6 @@ namespace WpfStarter.Data
         {
             SelectedOperation = operation;
         }
-
-
-       /* private void RemoveOperationSelection()
-        {
-            SelectedOperation = null;
-            IRegionManager regionManager = _container.Resolve<IRegionManager>();
-            Operations view = _container.Resolve<Operations>();
-            IRegion region = regionManager.Regions["OperationsRegion"];
-            region.RemoveAll();
-            region.Add(view);
-        }
-       */
+       
     }
 }
