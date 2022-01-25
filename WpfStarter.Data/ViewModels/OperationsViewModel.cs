@@ -1,14 +1,9 @@
 ﻿using Prism.Commands;
 using Prism.Ioc;
 using Prism.Mvvm;
-using Prism.Regions;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WpfStarter.Data.Export;
+using System.Collections.ObjectModel;
+
 
 namespace WpfStarter.Data.ViewModels
 {
@@ -28,7 +23,9 @@ namespace WpfStarter.Data.ViewModels
         {
             OperationsItems = new ObservableCollection<Operation>();
             var eW = containerProvider.Resolve<EntityWorker>();
+
             OperationSelectedCommand = new DelegateCommand<Operation>(eW.OperationSelected);
+
             if (eW.OperationsListUpdated == null) eW.OperationsListUpdated += AddOperations;
         }
 

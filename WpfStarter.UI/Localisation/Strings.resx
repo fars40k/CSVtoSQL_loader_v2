@@ -117,15 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AcceptAndReturn" xml:space="preserve">
-    <value>Подтвердить и вернуться</value>
-  </data>
-  <data name="AnalyseFile" xml:space="preserve">
-    <value>Файл проверен. Записей:</value>
-  </data>
-  <data name="AvalableOperations" xml:space="preserve">
-    <value>Доступные операции:</value>
-  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
@@ -149,9 +140,6 @@
   </data>
   <data name="ErrorFileEmpty" xml:space="preserve">
     <value>Выбран пустой файл</value>
-  </data>
-  <data name="ErrorFileRead" xml:space="preserve">
-    <value>Ошибка при чтении файла</value>
   </data>
   <data name="File" xml:space="preserve">
     <value>Выберете файл .csv</value>
@@ -240,6 +228,9 @@
   <data name="OpenFileFormat" xml:space="preserve">
     <value>Табличные данные</value>
   </data>
+  <data name="OpError" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
   <data name="OpErrorAddRecords" xml:space="preserve">
     <value>Записи добавлены частично. Не прочитанные записи добавлены в файл Error. (ошибки / всего):</value>
   </data>
@@ -254,9 +245,6 @@
   </data>
   <data name="Ready" xml:space="preserve">
     <value>Готово</value>
-  </data>
-  <data name="SaveBadFileData" xml:space="preserve">
-    <value>Сохранить поврежденные данные</value>
   </data>
   <data name="SelectAnotherFile" xml:space="preserve">
     <value>Выберать другой файл</value>

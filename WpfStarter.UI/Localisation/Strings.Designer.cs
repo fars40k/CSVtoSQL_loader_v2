@@ -61,33 +61,6 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Подтвердить и вернуться.
-        /// </summary>
-        public static string AcceptAndReturn {
-            get {
-                return ResourceManager.GetString("AcceptAndReturn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Файл проверен. Записей:.
-        /// </summary>
-        public static string AnalyseFile {
-            get {
-                return ResourceManager.GetString("AnalyseFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Доступные операции:.
-        /// </summary>
-        public static string AvalableOperations {
-            get {
-                return ResourceManager.GetString("AvalableOperations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Отмена.
         /// </summary>
         public static string Cancel {
@@ -156,15 +129,6 @@ namespace WpfStarter.UI.Localisation {
         public static string ErrorFileEmpty {
             get {
                 return ResourceManager.GetString("ErrorFileEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ошибка при чтении файла.
-        /// </summary>
-        public static string ErrorFileRead {
-            get {
-                return ResourceManager.GetString("ErrorFileRead", resourceCulture);
             }
         }
         
@@ -430,6 +394,15 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ошибка.
+        /// </summary>
+        public static string OpError {
+            get {
+                return ResourceManager.GetString("OpError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Записи добавлены частично. Не прочитанные записи добавлены в файл Error. (ошибки / всего):.
         /// </summary>
         public static string OpErrorAddRecords {
@@ -471,15 +444,6 @@ namespace WpfStarter.UI.Localisation {
         public static string Ready {
             get {
                 return ResourceManager.GetString("Ready", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Сохранить поврежденные данные.
-        /// </summary>
-        public static string SaveBadFileData {
-            get {
-                return ResourceManager.GetString("SaveBadFileData", resourceCulture);
             }
         }
         

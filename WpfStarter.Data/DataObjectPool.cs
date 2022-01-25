@@ -1,12 +1,7 @@
-﻿using Prism.Ioc;
-using Prism.Regions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
+using Prism.Ioc;
+using Prism.Regions;
 using WpfStarter.Data.Views;
 
 namespace WpfStarter.Data
@@ -25,7 +20,6 @@ namespace WpfStarter.Data
             container.RegisterInstance<ResourceManager>(ResourceManager);
 
             DatabaseWorker = container.Resolve<EntityWorker>();
-
 
             var regionManager = container.Resolve<IRegionManager>();
             regionManager.RegisterViewWithRegion("OperationsRegion", typeof(Operations));

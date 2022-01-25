@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
-using System.Resources;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Resources;
+using System.Linq.Dynamic.Core;
 using OfficeOpenXml;
 using Prism.Ioc;
-using System.Linq.Dynamic;
-using System.Linq.Dynamic.Core;
 
 namespace WpfStarter.Data.Export
 {
@@ -28,49 +21,46 @@ namespace WpfStarter.Data.Export
 
         public override string Run()
         {
-            int currentRow = 1;
-            using (PersonsContext pC = new PersonsContext())
+            try
             {
-                using (ExcelPackage excelPackage = new ExcelPackage())
+                int currentRow = 1;
+                using (PersonsContext pC = new PersonsContext())
                 {
-                    excelPackage.Workbook.Properties.Author = Environment.UserName;
-                    ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
-
-                    // If not empty data filters changes source of items
-                    object list;
-                    if (LINQExpression == "")
+                    using (ExcelPackage excelPackage = new ExcelPackage())
                     {
-                        list = pC.Persons;
-                    }
-                    else
-                    {
-                        list = pC.Persons
-                                     .Where(LINQExpression)
-                                     .ToList();                     
-                    }
+                        excelPackage.Workbook.Properties.Author = Environment.UserName;
+                        ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
 
-                    foreach (Person person in (IEnumerable<Person>)list)
-                    {
-                        WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
-                    }
-                    excelWorksheet.Cells.AutoFitColumns();
+                        // Changes source of items if LINQ Expression contains filtering data conditions
 
-                    // Checks if file exist and save in incremental marked file
-                    string nonDuplicatefilePath = FilePath;
-                    if (File.Exists(FilePath))
-                    {
-                        int increment = 0;
-
-                        while (File.Exists(nonDuplicatefilePath))
+                        object list;
+                        if (LINQExpression == "")
                         {
-                            increment++;
-                            nonDuplicatefilePath = FilePath.Replace(".", ("_" + increment.ToString() + "."));
+                            list = pC.Persons;
                         }
-                    }                 
-                    excelPackage.SaveAs(nonDuplicatefilePath);
+                        else
+                        {
+                            list = pC.Persons
+                                         .Where(LINQExpression)
+                                         .ToList();
+                        }
+
+                        foreach (Person person in (IEnumerable<Person>)list)
+                        {
+                            WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
+                        }
+                        excelWorksheet.Cells.AutoFitColumns();
+
+                        excelPackage.SaveAs(FilePath);
+                    }
                 }
+
+                return "true";
             }
-            return "true";
+            catch (Exception ex)
+            {
+                return "false";
+            }
         }
 
         public void WritePersonToRowOfCells(int row,ExcelWorksheet sheet,Person person)

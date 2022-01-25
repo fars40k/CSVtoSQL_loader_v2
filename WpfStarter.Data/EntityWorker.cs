@@ -1,24 +1,18 @@
-﻿using WpfStarter.Data.Export;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Windows;
+using System.Resources;
+using Microsoft.Win32;
+using WpfStarter.Data.Export;
 using Prism.Ioc;
 using Prism.Regions;
 using WpfStarter.Data.Views;
-using Microsoft.Win32;
-using System.Windows;
-using System.Windows.Resources;
-using System.Resources;
-using System.Reflection;
-using WpfStarter.Data.ViewModels;
+
 
 namespace WpfStarter.Data
 {
-    public class EntityWorker
+    /// <summary>
+    /// Data Access model class
+    /// </summary>
+    public partial class EntityWorker
     {
 
         public EntityWorker(IContainerProvider container)
@@ -45,16 +39,9 @@ namespace WpfStarter.Data
         public Action<List<IDatabaseAction>> OperationsListUpdated;
         public Func<List<string>> GetLINQShardsRequest;
 
-        public IDatabaseAction SelectedOperation { get; private set; }
         private IContainerProvider _container;
-        public List<IDatabaseAction> DatabaseOperationsServices { get; private set; } = new List<IDatabaseAction>();
-
-        public List<string> contextPropertyNames { get; private set; }
-            = new List<string>()
-            {
-                nameof(Person.Date), nameof(Person.FirstName), nameof(Person.SurName),
-                nameof(Person.LastName), nameof(Person.City), nameof(Person.Country)
-            };
+        public List<IDatabaseAction> OperationsCollection { get; private set; } = new List<IDatabaseAction>();
+        public IDatabaseAction SelectedOperation { get; private set; }
 
         private string _currentError { get; set; }
         public string CurrentError 
@@ -65,10 +52,14 @@ namespace WpfStarter.Data
                 if (NotifyDataAccessError != null) NotifyDataAccessError.Invoke(value);
             }
         }    
+
         public string SourceFile { get; private set; }
 
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
 
+        /// <summary>
+        /// Checks connection to Database and
+        /// </summary>
         public void VerifyConnection()
         {
             try
@@ -86,6 +77,9 @@ namespace WpfStarter.Data
             }
         }
 
+        /// <summary>
+        /// Method for adding Views to correspondent regions
+        /// </summary>
         private void AddDataViewsToRegions()
         {
             if ((SourceFile == null)&&(DoesDatabaseConnectionInitialized))
@@ -102,29 +96,35 @@ namespace WpfStarter.Data
             }
         }
 
+        /// <summary>
+        /// Updating the list of operations according to the inner state of the EntityWorker
+        /// </summary>
         private void AddOperationsToList()
         {
             if (DoesDatabaseConnectionInitialized)
             {
                 if (SourceFile == null)
                 {
-                    DatabaseOperationsServices.Add(_container.Resolve<EPPLusSaver>());
-                    DatabaseOperationsServices.Add(_container.Resolve<XMLSaver>());
+                    OperationsCollection.Add(_container.Resolve<EPPLusSaver>());
+                    OperationsCollection.Add(_container.Resolve<XMLSaver>());
                 }
                 else
                 {
                     bool CanCreateFlag = true;
-                    foreach (IDatabaseAction action in DatabaseOperationsServices)
+                    foreach (IDatabaseAction action in OperationsCollection)
                     {
                         if (action is CSVReader) CanCreateFlag = false;
                     }
-                    if (CanCreateFlag) DatabaseOperationsServices.Add(_container.Resolve<CSVReader>());
+                    if (CanCreateFlag) OperationsCollection.Add(_container.Resolve<CSVReader>());
                 }
 
-                if (OperationsListUpdated != null) OperationsListUpdated.Invoke(DatabaseOperationsServices);
+                if (OperationsListUpdated != null) OperationsListUpdated.Invoke(OperationsCollection);
             }
         }
 
+        /// <summary>
+        /// In conformity with implemented interfaces, method doing necessary preparations and launches operation
+        /// </summary>
         public void BeginOperation()
         {
             var _resourceManager = _container.Resolve<ResourceManager>();
@@ -143,19 +143,30 @@ namespace WpfStarter.Data
 
                         if (shards != null)
                         {
-                            int i = 0;
+                             List<string> ContextPropertyNames = new List<string>() 
+                             {   nameof(Person.Date), 
+                                 nameof(Person.FirstName), 
+                                 nameof(Person.SurName),
+                                 nameof(Person.LastName), 
+                                 nameof(Person.City), 
+                                 nameof(Person.Country)
+                             };
+                              
+                            int inc = 0;
+
                             foreach (string shard in shards)
                             {
-                                
-                              if (shard != "")
+
+                                if (shard != "")
                                 {
                                     if (linqBuildRequired.LINQExpression.Length != 0)
                                     {
                                         linqBuildRequired.LINQExpression += " && ";
                                     }
-                                    linqBuildRequired.LINQExpression += contextPropertyNames[i] + "== \"" + shard.Trim() + "\"";
+                                    linqBuildRequired.LINQExpression += 
+                                        ContextPropertyNames[inc] + "== \"" + shard.Trim() + "\"";
                                 }
-                                i++;
+                                inc++;
                             }
                         }                       
                     }
@@ -168,11 +179,26 @@ namespace WpfStarter.Data
 
                         dlg.DefaultExt = savePathSelection.TargetFormat;
                         dlg.FileName = random.Next(0, 9000).ToString();
-                        dlg.Filter = " (*" + dlg.DefaultExt + ")|*" + dlg.DefaultExt;
+                        dlg.Filter = "|*" + dlg.DefaultExt;
                         dlg.ShowDialog();
                         if (dlg.FileName != "")
                         {
-                            savePathSelection.SetSavePath(dlg.FileName);
+
+                            // Checks if file exist then, to prevent override, saves extracted data in incremental marked file
+
+                            string nonDuplicatefilePath = dlg.FileName;
+                            if (File.Exists(dlg.FileName))
+                            {
+                                int increment = 0;
+
+                                while (File.Exists(nonDuplicatefilePath))
+                                {
+                                    increment++;
+                                    nonDuplicatefilePath = dlg.FileName.Replace(".", ("_" + increment.ToString() + "."));
+                                }
+                            }
+
+                            savePathSelection.SetSavePath(nonDuplicatefilePath);
                         }
                     }
 
@@ -183,7 +209,12 @@ namespace WpfStarter.Data
                     }
 
                     Operation op = (Operation)SelectedOperation;
-                    op.Run();
+                    string result = op.Run();
+                    NotifyDataAccessError.Invoke(SelectNotifyFromOperationResult(result) ?? "missing");
+
+                } else
+                {
+                    NotifyDataAccessError.Invoke(_resourceManager.GetString("Help4"));
                 }
                 
             }
@@ -191,10 +222,22 @@ namespace WpfStarter.Data
             {
                 MessageBox.Show(ex.ToString());
             }
-        
-            NotifyDataAccessError(_resourceManager.GetString("Ready") ?? "missing");
         }
 
+        public string SelectNotifyFromOperationResult(string result)
+        {
+            var _resourceManager = _container.Resolve<ResourceManager>();
+            switch (result)
+            {
+               
+                case "true": return _resourceManager.GetString("Ready");
+
+                case "false": return  _resourceManager.GetString("OpError");
+
+                default: return _resourceManager.GetString("OpErrorAddRecords") + result;
+
+            }
+        }
 
         public void OperationSelected(Operation operation)
         {

@@ -1,14 +1,8 @@
 ﻿using Prism.Ioc;
 using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Resources;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+
 
 namespace WpfStarter.Data.ViewModels
 {
@@ -17,12 +11,14 @@ namespace WpfStarter.Data.ViewModels
 
         public DataFiltersViewModel(IContainerProvider container)
         {
-            var eW = container.Resolve<EntityWorker>();
-            if (eW.GetLINQShardsRequest == null) eW.GetLINQShardsRequest += GetLINQShards;
-
-            LINQShardsToBuildExpression.AddRange<string>(new List<string>() { "", "", "", "", "", ""});
 
             var ResourceManager = container.Resolve<ResourceManager>();
+            var eW = container.Resolve<EntityWorker>();
+
+            #region Localisation_and_collections_filling
+
+            LINQShardsToBuildExpression.AddRange<string>(new List<string>() { "", "", "", "", "", "" });
+
             ComboboxEntries = new ObservableCollection<string>();
             ComboboxEntries.Add(ResourceManager.GetString("FilterDataAll") ?? "missing");
             ComboboxEntries.Add(ResourceManager.GetString("FilterDataContains") ?? "missing");
@@ -41,9 +37,14 @@ namespace WpfStarter.Data.ViewModels
 
             dataFilterActionsPresets.Add(SelectAll);
             dataFilterActionsPresets.Add(SelectParam);
+
+            #endregion
+
+            if (eW.GetLINQShardsRequest == null) eW.GetLINQShardsRequest += GetLINQShards;
+
         }
 
-        private List<Action<int>> dataFilterActionsPresets = new List<Action<int>>();
+#region Collections
 
         private ObservableCollection<string> _LINQShardsToBuildExpression = new ObservableCollection<string>();
 
@@ -77,6 +78,10 @@ namespace WpfStarter.Data.ViewModels
             get => _comboBoxSelectedIndexes;
             set => SetProperty(ref _comboBoxSelectedIndexes, value);      
         }
+
+        private List<Action<int>> dataFilterActionsPresets = new List<Action<int>>();
+
+#endregion
 
         private List<string> GetLINQShards()
         {

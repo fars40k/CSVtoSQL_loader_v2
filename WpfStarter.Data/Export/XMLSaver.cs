@@ -1,15 +1,8 @@
-﻿using Prism.Ioc;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Linq.Dynamic.Core;
 using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
-using System.Xml.Serialization;
+using Prism.Ioc;
 
 namespace WpfStarter.Data.Export
 {
@@ -31,30 +24,20 @@ namespace WpfStarter.Data.Export
             string nonDuplicatefilePath = FilePath;
             try
             {
-                // Checks if file exist and save in incremental marked file
-                if (File.Exists(FilePath))
-                {
-                    int increment = 0;
-
-                    while (File.Exists(nonDuplicatefilePath))
-                    {
-                        increment++;
-                        nonDuplicatefilePath = FilePath.Replace(".", ("_" + increment.ToString() + "."));
-                    }
-                }
 
                 XmlWriterSettings settings = new XmlWriterSettings();
                 settings.Indent = true;
                 settings.IndentChars = "\t";
 
-                using (XmlWriter xmlWriter = XmlWriter.Create(nonDuplicatefilePath, settings))
+                using (XmlWriter xmlWriter = XmlWriter.Create(FilePath, settings))
                 {
                     xmlWriter.WriteStartElement("TestProgram");
 
                     using (PersonsContext pC = new PersonsContext())
                     {
 
-                        // If not empty data filters changes source of items
+                        // Changes source of items if LINQ Expression contains filtering data conditions
+
                         object list;
                         if (LINQExpression == "")
                         {
@@ -75,16 +58,15 @@ namespace WpfStarter.Data.Export
 
                     xmlWriter.WriteEndDocument();
                     xmlWriter.Close();
-                    return ("true");
+                    return "true";
                 };
 
             }
             catch (Exception ex)
             {               
-                return ("false");
+                return "false";
             }
         }
-
 
         public void PersonToXmlRecord(XmlWriter xmlWriter,Person person)
         {

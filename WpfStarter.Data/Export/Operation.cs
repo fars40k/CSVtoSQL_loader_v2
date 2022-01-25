@@ -1,10 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace WpfStarter.Data.Export
 {
@@ -19,12 +13,12 @@ namespace WpfStarter.Data.Export
 
         public Operation()
         {
-
+            Description = "missing";
         }
 
         public override string ToString()
         {
-            return Description ?? " ";
+            return Description ?? "missing description";
         }
 
         public virtual string Run()
