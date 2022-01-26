@@ -24,36 +24,34 @@ namespace WpfStarter.Data.Export
             try
             {
                 int currentRow = 1;
-                using (PersonsContext pC = new PersonsContext())
+                PersonsContext pC = new PersonsContext();
+
+                ExcelPackage excelPackage = new ExcelPackage();
+
+                excelPackage.Workbook.Properties.Author = Environment.UserName;
+                ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
+
+                // Changes source of items if LINQ Expression contains filtering data conditions
+
+                object list;
+                if (LINQExpression == "")
                 {
-                    using (ExcelPackage excelPackage = new ExcelPackage())
-                    {
-                        excelPackage.Workbook.Properties.Author = Environment.UserName;
-                        ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
-
-                        // Changes source of items if LINQ Expression contains filtering data conditions
-
-                        object list;
-                        if (LINQExpression == "")
-                        {
-                            list = pC.Persons;
-                        }
-                        else
-                        {
-                            list = pC.Persons
-                                         .Where(LINQExpression)
-                                         .ToList();
-                        }
-
-                        foreach (Person person in (IEnumerable<Person>)list)
-                        {
-                            WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
-                        }
-                        excelWorksheet.Cells.AutoFitColumns();
-
-                        excelPackage.SaveAs(FilePath);
-                    }
+                    list = pC.Persons;
                 }
+                else
+                {
+                    list = pC.Persons
+                                 .Where(LINQExpression)
+                                 .ToList();
+                }
+
+                foreach (Person person in (IEnumerable<Person>)list)
+                {
+                    WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
+                }
+                excelWorksheet.Cells.AutoFitColumns();
+
+                excelPackage.SaveAs(FilePath);
 
                 return "true";
             }

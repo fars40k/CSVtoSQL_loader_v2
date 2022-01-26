@@ -54,7 +54,7 @@ namespace WpfStarter.UI.Models
                 }
             };
 
-            dbWrk.NotifyDataAccessError += ErrorNotify.NewError;
+            dbWrk.NotifyDataAccess += ErrorNotify.NewError;
             BeginOperation += dbWrk.BeginOperation;
 
         }

@@ -4,16 +4,16 @@ namespace WpfStarter.Data.Export
 {
     public class Operation : IDatabaseAction
     {
-        public string Description { get; set; }
+        protected string Description;
 
         public Operation(string newDescription)
         {
-            if (Description == null) Description = newDescription;
+           Description = newDescription;
         }
 
         public Operation()
         {
-            Description = "missing";
+            
         }
 
         public override string ToString()
@@ -22,9 +22,8 @@ namespace WpfStarter.Data.Export
         }
 
         public virtual string Run()
-        {
-            MessageBox.Show("Empty base class running requested");
-            return "";
+        {   
+            return "false";
         }
     }
 }

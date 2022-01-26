@@ -35,61 +35,59 @@ namespace WpfStarter.Data.Export
                     if (sr.Peek() == -1) break;
                     RecordsRead = 0;
 
-                    using (PersonsContext pC = new PersonsContext())
-                    {
-                        pC.Configuration.AutoDetectChangesEnabled = false;
+                    PersonsContext pC = new PersonsContext();                    
+                    pC.Configuration.AutoDetectChangesEnabled = false;
 
-                        // Getting maximal ID value
-                        int OldID = 1;
+                    // Getting maximal ID value
+                    int OldID = 1;
+                    try
+                    {
+                        OldID = pC.Persons.Max(e => e.ID);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    int IncrID = OldID;
+
+                    // Loop for parsing and adding records from a file in batches
+                    while (RecordsRead < BatchLimit)
+                    {
+                        Line = sr.ReadLine();
+
+                        // If end-of-file breaks cycle
+                        if (Line == null) break;
+
+                        RecordsRead++;
+
                         try
                         {
-                            OldID = pC.Persons.Max(e => e.ID);
+                            pC.Persons.Add(ParseLineToPerson(Line, IncrID));
+                            IncrID++;
+                        }
+                        catch (FormatException ex)
+                        {
+                            // Saving Line with errors to file
+                            if (errorsFilePath == "")
+                            {
+                                errorsFilePath = CreateErrorFile(SourceFilePath);
+                            }
+                            Add1RecordToErrorFile(errorsFilePath, Line);
+                            FailedRecords++;
                         }
                         catch (Exception ex)
                         {
-                        }                                            
-                        int IncrID = OldID;
-
-                        // Loop for parsing and adding records from a file in batches
-                        while (RecordsRead < BatchLimit)
-                        {
-                            Line = sr.ReadLine();
-
-                            // If end-of-file breaks cycle
-                            if (Line == null) break;
-
-                            RecordsRead++;
-
-                            try
-                            {
-                                pC.Persons.Add(ParseLineToPerson(Line, IncrID));
-                                IncrID++;
-                            }
-                            catch (FormatException ex)
-                            {
-                                // Saving Line with errors to file
-                                if (errorsFilePath == "")
-                                {
-                                    errorsFilePath = CreateErrorFile(SourceFilePath);
-                                }
-                                Add1RecordToErrorFile(errorsFilePath, Line);
-                                FailedRecords++;
-                            }
-                            catch (Exception ex)
-                            {
-                                return "false";
-                            }
-                        }                     
-
-                        pC.Configuration.AutoDetectChangesEnabled = true;
-                        pC.ChangeTracker.DetectChanges();
-                        pC.SaveChanges();
-                        pC.Configuration.AutoDetectChangesEnabled = false;
+                            return "false";
+                        }
                     }
+
+                    pC.Configuration.AutoDetectChangesEnabled = true;
+                    pC.ChangeTracker.DetectChanges();
+                    pC.SaveChanges();
+                    pC.Dispose();
 
                 }
             }
-            return FailedToAllString();
+            return FailedToAllStringFraction();
         }
 
         /// <summary>
@@ -182,7 +180,7 @@ namespace WpfStarter.Data.Export
         /// <summary>
         /// Returns a fraction representing the ratio of read errors to all rows
         /// </summary>
-        public string FailedToAllString()
+        public string FailedToAllStringFraction()
         {
             return FailedRecords.ToString() + @" / " + RecordsRead.ToString();
         }

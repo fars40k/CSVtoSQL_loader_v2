@@ -35,7 +35,7 @@ namespace WpfStarter.Data
 
         public Action UpdateDataViews;
         public Action<string> SourceFileSelected;
-        public Action<string> NotifyDataAccessError;
+        public Action<string> NotifyDataAccess;
         public Action<List<IDatabaseAction>> OperationsListUpdated;
         public Func<List<string>> GetLINQShardsRequest;
 
@@ -49,7 +49,7 @@ namespace WpfStarter.Data
             set
             {
                 _currentError = value;
-                if (NotifyDataAccessError != null) NotifyDataAccessError.Invoke(value);
+                if (NotifyDataAccess != null) NotifyDataAccess.Invoke(value);
             }
         }    
 
@@ -110,12 +110,12 @@ namespace WpfStarter.Data
                 }
                 else
                 {
-                    bool CanCreateFlag = true;
+                    bool NotHaveItem = true;
                     foreach (IDatabaseAction action in OperationsCollection)
                     {
-                        if (action is CSVReader) CanCreateFlag = false;
+                        if (action is CSVReader) NotHaveItem = false;
                     }
-                    if (CanCreateFlag) OperationsCollection.Add(_container.Resolve<CSVReader>());
+                    if (NotHaveItem) OperationsCollection.Add(_container.Resolve<CSVReader>());
                 }
 
                 if (OperationsListUpdated != null) OperationsListUpdated.Invoke(OperationsCollection);
@@ -130,7 +130,7 @@ namespace WpfStarter.Data
             var _resourceManager = _container.Resolve<ResourceManager>();
             try
             {               
-                NotifyDataAccessError(_resourceManager.GetString("Help6") ?? "missing");
+                NotifyDataAccess(_resourceManager.GetString("Help6") ?? "missing");
 
                 if (SelectedOperation != null)
                 {
@@ -208,23 +208,23 @@ namespace WpfStarter.Data
                         sourceFileSelection.SourceFilePath = SourceFile;
                     }
 
-                    Operation op = (Operation)SelectedOperation;
-                    string result = op.Run();
-                    NotifyDataAccessError.Invoke(SelectNotifyFromOperationResult(result) ?? "missing");
+                    Operation operationItem = (Operation)SelectedOperation;
+                    string result = operationItem.Run();
+                    NotifyDataAccess.Invoke(SelectNotifyByOperationResult(result) ?? "missing");
 
                 } else
                 {
-                    NotifyDataAccessError.Invoke(_resourceManager.GetString("Help4"));
+                    NotifyDataAccess.Invoke(_resourceManager.GetString("Help4"));
                 }
                 
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                NotifyDataAccess.Invoke(_resourceManager.GetString("OpError"));
             }
         }
 
-        public string SelectNotifyFromOperationResult(string result)
+        public string SelectNotifyByOperationResult(string result)
         {
             var _resourceManager = _container.Resolve<ResourceManager>();
             switch (result)

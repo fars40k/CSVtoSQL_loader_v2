@@ -8,14 +8,15 @@ namespace WpfStarter.UI.Views
     public partial class MainWindow : Window
     {
         Model model;
-        IContainerExtension _container;
         IRegionManager _regionManager;
 
+        /// <summary>
+        /// Вootstraper class
+        /// </summary>      
         public MainWindow(IContainerExtension container, IRegionManager regionManager)
         {
             InitializeComponent();
 
-            _container = container;
             _regionManager = regionManager;
 
             regionManager.RegisterViewWithRegion("HeaderRegion", typeof(Header));

@@ -29,37 +29,35 @@ namespace WpfStarter.Data.Export
                 settings.Indent = true;
                 settings.IndentChars = "\t";
 
-                using (XmlWriter xmlWriter = XmlWriter.Create(FilePath, settings))
+                XmlWriter xmlWriter = XmlWriter.Create(FilePath, settings);
+
+                xmlWriter.WriteStartElement("TestProgram");
+
+                PersonsContext pC = new PersonsContext();
+
+
+                // Changes source of items if LINQ Expression contains filtering data conditions
+
+                object list;
+                if (LINQExpression == "")
                 {
-                    xmlWriter.WriteStartElement("TestProgram");
+                    list = pC.Persons;
+                }
+                else
+                {
+                    list = pC.Persons
+                                 .Where(LINQExpression)
+                                 .ToList();
+                }
 
-                    using (PersonsContext pC = new PersonsContext())
-                    {
+                foreach (Person person in (IEnumerable)list)
+                {
+                    WritePersonToXmlRecord(xmlWriter, person);
+                }
 
-                        // Changes source of items if LINQ Expression contains filtering data conditions
+                xmlWriter.WriteEndDocument();
 
-                        object list;
-                        if (LINQExpression == "")
-                        {
-                            list = pC.Persons;
-                        }
-                        else
-                        {
-                            list = pC.Persons
-                                         .Where(LINQExpression)
-                                         .ToList();
-                        }
-
-                        foreach (Person person in (IEnumerable)list)
-                        {
-                            PersonToXmlRecord(xmlWriter, person);
-                        }
-                    }
-
-                    xmlWriter.WriteEndDocument();
-                    xmlWriter.Close();
-                    return "true";
-                };
+                return "true";
 
             }
             catch (Exception ex)
@@ -68,7 +66,7 @@ namespace WpfStarter.Data.Export
             }
         }
 
-        public void PersonToXmlRecord(XmlWriter xmlWriter,Person person)
+        public void WritePersonToXmlRecord(XmlWriter xmlWriter,Person person)
         {
             xmlWriter.WriteStartElement("Record");
             xmlWriter.WriteAttributeString("Id",person.ID.ToString().Trim());
