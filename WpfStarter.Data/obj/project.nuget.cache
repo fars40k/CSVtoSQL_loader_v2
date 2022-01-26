@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "SyyfMRWzJJsSBTGUOfZaPZnfHcQhohIzwVlGoznkJRyZImJzH8XLI2X67c35hMLM63G+17lfpg/UOhap1vHUZA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ArtyShock\\source\\repos\\WpfStarter.Data\\WpfStarter.Data.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\documentformat.openxml\\2.15.0\\documentformat.openxml.2.15.0.nupkg.sha512",
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\epplus\\5.8.5\\epplus.5.8.5.nupkg.sha512",
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\microsoft.io.recyclablememorystream\\1.4.1\\microsoft.io.recyclablememorystream.1.4.1.nupkg.sha512",
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.31\\microsoft.xaml.behaviors.wpf.1.1.31.nupkg.sha512",
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\prism.core\\8.1.97\\prism.core.8.1.97.nupkg.sha512",
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\prism.wpf\\8.1.97\\prism.wpf.8.1.97.nupkg.sha512",
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\system.componentmodel.annotations\\4.7.0\\system.componentmodel.annotations.4.7.0.nupkg.sha512",
+    "C:\\Users\\ArtyShock\\.nuget\\packages\\system.linq.dynamic.core\\1.2.15\\system.linq.dynamic.core.1.2.15.nupkg.sha512"
+  ],
+  "logs": []
+}
