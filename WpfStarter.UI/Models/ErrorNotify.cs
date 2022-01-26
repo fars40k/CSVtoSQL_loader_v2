@@ -7,7 +7,6 @@ namespace WpfStarter.UI.Models
         public static string AppErrorCurrrent { get; set; }
         private static Action<string> OnAppError;
 
-
         /// <summary>
         /// Accepts delegate and saves it as path to publish error strings
         /// </summary>
