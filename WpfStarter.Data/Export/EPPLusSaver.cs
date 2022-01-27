@@ -5,25 +5,26 @@ using Prism.Ioc;
 
 namespace WpfStarter.Data.Export
 {
-    public class EPPLusSaver : Operation, ILinqBuildRequired, ISavePathSelectionRequired
+    public class EPPLusSaver : Operation, IRequiringBuildLinq, IRequiringSavepathSelection
     {
+        public string FilePath { get; private set; } = "";
+        public string TargetFormat { get; set; }
+        public string LinqExpression { get; set; } = "";
+
         public EPPLusSaver(IContainerExtension container)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var ResourceManager = container.Resolve<ResourceManager>();
-            Description = ResourceManager.GetString("OpConvToXLSX") ?? "missing";
+            _description = ResourceManager.GetString("OpConvToXLSX") ?? "missing";
             TargetFormat = ".xlsx";
         }
-
-        public string FilePath { get; private set; } = "";
-        public string TargetFormat { get; set; }
-        public string LINQExpression { get; set; } = "";
 
         public override string Run()
         {
             try
             {
                 int currentRow = 1;
+
                 PersonsContext pC = new PersonsContext();
 
                 ExcelPackage excelPackage = new ExcelPackage();
@@ -34,34 +35,40 @@ namespace WpfStarter.Data.Export
                 // Changes source of items if LINQ Expression contains filtering data conditions
 
                 object list;
-                if (LINQExpression == "")
+                if (LinqExpression == "")
                 {
                     list = pC.Persons;
                 }
                 else
                 {
                     list = pC.Persons
-                                 .Where(LINQExpression)
+                                 .Where(LinqExpression)
                                  .ToList();
                 }
 
                 foreach (Person person in (IEnumerable<Person>)list)
                 {
                     WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        excelWorksheet.Cells[currentRow + 2, 1].Value = "Canceled";
+                        break;
+                    }
                 }
-                excelWorksheet.Cells.AutoFitColumns();
 
+                excelWorksheet.Cells.AutoFitColumns();
                 excelPackage.SaveAs(FilePath);
 
-                return "true";
+                if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
+                return (currentRow-1).ToString();
             }
             catch (Exception ex)
             {
-                return "false";
+                throw ex;
             }
         }
 
-        public void WritePersonToRowOfCells(int row,ExcelWorksheet sheet,Person person)
+        public void WritePersonToRowOfCells(int row, ExcelWorksheet sheet, Person person)
         {
             sheet.Cells[row, 1].Value = person.ID;
             sheet.Cells[row, 2].Value = person.Date.ToString();

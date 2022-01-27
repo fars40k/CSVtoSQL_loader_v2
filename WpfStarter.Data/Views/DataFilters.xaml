@@ -119,21 +119,21 @@
         <TextBox x:Name="Row_Param_1" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="0"
-                 Text="{Binding Path=LINQShardsToBuildExpression[0], Mode=TwoWay}"
+                 Text="{Binding Path=LinqShardsToBuildExpression[0], Mode=TwoWay}"
                  Margin="0,0,30,0" 
                  Width="200"/>
 
         <TextBox x:Name="Row_Param_2" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="1"
-                 Text="{Binding Path=LINQShardsToBuildExpression[1], Mode=TwoWay}"
+                 Text="{Binding Path=LinqShardsToBuildExpression[1], Mode=TwoWay}"
                  Margin="0,0,30,0" 
                  Width="200"/>
 
         <TextBox x:Name="Row_Param_3" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="2"
-                 Text="{Binding Path=LINQShardsToBuildExpression[2], Mode=TwoWay}"
+                 Text="{Binding Path=LinqShardsToBuildExpression[2], Mode=TwoWay}"
                  Margin="0,0,30,0" 
                  Width="200"
                  />
@@ -141,21 +141,21 @@
         <TextBox x:Name="Row_Param_4" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="3"
-                 Text="{Binding Path=LINQShardsToBuildExpression[3], Mode=TwoWay}"
+                 Text="{Binding Path=LinqShardsToBuildExpression[3], Mode=TwoWay}"
                  Margin="0,0,30,0" 
                  Width="200"/>
 
         <TextBox x:Name="Row_Param_5" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="4"
-                 Text="{Binding Path=LINQShardsToBuildExpression[4], Mode=TwoWay}"
+                 Text="{Binding Path=LinqShardsToBuildExpression[4], Mode=TwoWay}"
                  Margin="0,0,30,0" 
                  Width="200"/>
 
         <TextBox x:Name="Row_Param_6" 
                  Style="{StaticResource CommonInputTextBox}"
                  Grid.Row ="5"
-                 Text="{Binding Path=LINQShardsToBuildExpression[5], Mode=TwoWay}" 
+                 Text="{Binding Path=LinqShardsToBuildExpression[5], Mode=TwoWay}" 
                  Margin="0,0,30,0" 
                  Width="200"
                  />

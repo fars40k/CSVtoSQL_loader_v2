@@ -1,6 +1,6 @@
 ﻿namespace WpfStarter.Data.Export
 {
-    internal interface ISourceFileSelectionRequired
+    internal interface IRequiringSourceFileSelection
     {
         public string SourceFilePath { get; set; }
     }

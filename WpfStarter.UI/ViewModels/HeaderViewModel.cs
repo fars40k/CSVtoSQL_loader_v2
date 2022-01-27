@@ -28,7 +28,7 @@ namespace WpfStarter.UI.ViewModels
         {
             model = containerProvider.Resolve<Models.Model>();
             model.AppStateChanged += Model_AppStateChanged;
-            model.NotifyAppGlobalState();
+            model.AppStateChanged.Invoke(model.GetAppGlobalState());
         }
 
         /// <summary>

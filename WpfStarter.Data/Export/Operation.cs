@@ -1,14 +1,17 @@
-﻿using System.Windows;
+﻿using Prism.Ioc;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace WpfStarter.Data.Export
 {
     public class Operation : IDatabaseAction
     {
-        protected string Description;
+        protected string _description;
+        protected CancellationToken cancellationToken;
 
         public Operation(string newDescription)
         {
-           Description = newDescription;
+           _description = newDescription;
         }
 
         public Operation()
@@ -18,12 +21,33 @@ namespace WpfStarter.Data.Export
 
         public override string ToString()
         {
-            return Description ?? "missing description";
+            return _description ?? "missing description";
         }
 
         public virtual string Run()
         {   
             return "false";
         }
+
+        public virtual Task<string> RunAsync(IContainerProvider provider,CancellationToken newToken)
+        {
+            cancellationToken = newToken;
+
+            TaskCompletionSource<string> tcSource = provider.Resolve<TaskCompletionSource<string>>();       
+            Task.Run(() =>
+            {
+                try
+                {
+                    var result = Run();
+                }
+                catch (Exception ex)
+                {
+                    tcSource.SetException(ex);
+                }               
+            });
+
+            return tcSource.Task;
+        }
+
     }
 }

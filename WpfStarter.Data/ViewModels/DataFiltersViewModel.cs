@@ -3,7 +3,6 @@ using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using System.Resources;
 
-
 namespace WpfStarter.Data.ViewModels
 {
     internal class DataFiltersViewModel : BindableBase
@@ -12,46 +11,42 @@ namespace WpfStarter.Data.ViewModels
         public DataFiltersViewModel(IContainerProvider container)
         {
 
-            var ResourceManager = container.Resolve<ResourceManager>();
-            var eW = container.Resolve<EntityWorker>();
+            var resManager = container.Resolve<ResourceManager>();
+            var eWorker = container.Resolve<EntityWorker>();
 
             #region Localisation_and_collections_filling
 
-            LINQShardsToBuildExpression.AddRange<string>(new List<string>() { "", "", "", "", "", "" });
-
             ComboboxEntries = new ObservableCollection<string>();
-            ComboboxEntries.Add(ResourceManager.GetString("FilterDataAll") ?? "missing");
-            ComboboxEntries.Add(ResourceManager.GetString("FilterDataContains") ?? "missing");
+            ComboboxEntries.Add(resManager.GetString("FilterDataAll") ?? "missing");
+            ComboboxEntries.Add(resManager.GetString("FilterDataContains") ?? "missing");
 
             RowNames = new ObservableCollection<string>();            
-            for (int i = 1; i <= LINQShardsToBuildExpression.Count; i++)
+            for (int i = 1; i <= LinqShardsToBuildExpression.Count; i++)
             {
-                RowNames.Add(ResourceManager.GetString("FilterRow" + i.ToString()) ?? "missing");             
+                RowNames.Add(resManager.GetString("FilterRow" + i.ToString()) ?? "missing");             
             }
 
             ComboboxSelectedIndexes = new ObservableCollection<int>();
-            for (int i = 0; i < LINQShardsToBuildExpression.Count; i++)
+            for (int i = 0; i < LinqShardsToBuildExpression.Count; i++)
             {
                 ComboboxSelectedIndexes.Add(0);
             }
 
-            dataFilterActionsPresets.Add(SelectAll);
-            dataFilterActionsPresets.Add(SelectParam);
+            _dataFilterActions.Add(SelectAll);
+            _dataFilterActions.Add(SelectParam);
 
             #endregion
 
-            if (eW.GetLINQShardsRequest == null) eW.GetLINQShardsRequest += GetLINQShards;
+            if (eWorker.GetLinqShardsRequest == null) eWorker.GetLinqShardsRequest += GetLINQShards;
 
         }
 
-#region Collections
+        #region Collections
 
-        private ObservableCollection<string> _LINQShardsToBuildExpression = new ObservableCollection<string>();
-
-        public ObservableCollection<string> LINQShardsToBuildExpression
+        public ObservableCollection<string> LinqShardsToBuildExpression
         {
-            get => _LINQShardsToBuildExpression;
-            set => SetProperty(ref _LINQShardsToBuildExpression, value);
+            get => _linqShardsToBuildExpression;
+            set => SetProperty(ref _linqShardsToBuildExpression, value);
 
         }
 
@@ -79,23 +74,26 @@ namespace WpfStarter.Data.ViewModels
             set => SetProperty(ref _comboBoxSelectedIndexes, value);      
         }
 
-        private List<Action<int>> dataFilterActionsPresets = new List<Action<int>>();
+        private ObservableCollection<string> _linqShardsToBuildExpression = new ObservableCollection<string>()
+                                                                                { "", "", "", "", "", "" };
+
+        private List<Action<int>> _dataFilterActions = new List<Action<int>>();
 
 #endregion
 
         private List<string> GetLINQShards()
         {
-            for(int i = 0; i < LINQShardsToBuildExpression.Count; i++)
+            for(int i = 0; i < LinqShardsToBuildExpression.Count; i++)
             {
-                dataFilterActionsPresets[ComboboxSelectedIndexes[i]].Invoke(i);
+                _dataFilterActions[ComboboxSelectedIndexes[i]].Invoke(i);
             }
           
-            return LINQShardsToBuildExpression.ToList<string>();
+            return LinqShardsToBuildExpression.ToList<string>();
         }
 
         private void SelectAll(int rowNumber)
         {
-            LINQShardsToBuildExpression[rowNumber] = "";
+            LinqShardsToBuildExpression[rowNumber] = "";
         }
 
         private void SelectParam(int rowNumber)

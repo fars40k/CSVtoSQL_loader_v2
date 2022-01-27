@@ -14,10 +14,24 @@ namespace WpfStarter.Data
     /// </summary>
     public partial class EntityWorker
     {
+        private IContainerProvider container;
+
+        public string SourceFile { get; private set; }
+
+        public List<IDatabaseAction> OperationsCollection { get; private set; } = new List<IDatabaseAction>();
+        public IDatabaseAction SelectedOperation { get; private set; }
+        public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
+
+        public Action UpdateDataViews;
+        public Action<bool> NotifyIsAsyncRunned;
+        public Action<string> SourceFileSelected;
+        public Action<string> NotifyMessageFromData;
+        public Action<List<IDatabaseAction>> OperationsListUpdated;
+        public Func<List<string>> GetLinqShardsRequest;
 
         public EntityWorker(IContainerProvider container)
         {
-            _container = container;
+            this.container = container;
             VerifyConnection();
 
             UpdateDataViews += () =>
@@ -33,29 +47,6 @@ namespace WpfStarter.Data
             };
         }
 
-        public Action UpdateDataViews;
-        public Action<string> SourceFileSelected;
-        public Action<string> NotifyDataAccess;
-        public Action<List<IDatabaseAction>> OperationsListUpdated;
-        public Func<List<string>> GetLINQShardsRequest;
-
-        private IContainerProvider _container;
-        public List<IDatabaseAction> OperationsCollection { get; private set; } = new List<IDatabaseAction>();
-        public IDatabaseAction SelectedOperation { get; private set; }
-
-        private string _currentError { get; set; }
-        public string CurrentError 
-        { get => _currentError;
-            set
-            {
-                _currentError = value;
-                if (NotifyDataAccess != null) NotifyDataAccess.Invoke(value);
-            }
-        }    
-
-        public string SourceFile { get; private set; }
-
-        public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
 
         /// <summary>
         /// Checks connection to Database and
@@ -84,13 +75,13 @@ namespace WpfStarter.Data
         {
             if ((SourceFile == null)&&(DoesDatabaseConnectionInitialized))
             {
-                IRegionManager regionManager = _container.Resolve<IRegionManager>();
+                IRegionManager regionManager = container.Resolve<IRegionManager>();
 
-                Operations view = _container.Resolve<Operations>();
+                Operations view = container.Resolve<Operations>();
                 IRegion region = regionManager.Regions["OperationsRegion"];
                 if (region.ActiveViews.Count() == 0) region.Add(view);
 
-                DataFilters filters = _container.Resolve<DataFilters>();
+                DataFilters filters = container.Resolve<DataFilters>();
                 region = regionManager.Regions["FiltersRegion"];
                 if (region.ActiveViews.Count() == 0) region.Add(filters);
             }
@@ -105,8 +96,8 @@ namespace WpfStarter.Data
             {
                 if (SourceFile == null)
                 {
-                    OperationsCollection.Add(_container.Resolve<EPPLusSaver>());
-                    OperationsCollection.Add(_container.Resolve<XMLSaver>());
+                    OperationsCollection.Add(container.Resolve<EPPLusSaver>());
+                    OperationsCollection.Add(container.Resolve<XMLSaver>());
                 }
                 else
                 {
@@ -115,7 +106,7 @@ namespace WpfStarter.Data
                     {
                         if (action is CSVReader) NotHaveItem = false;
                     }
-                    if (NotHaveItem) OperationsCollection.Add(_container.Resolve<CSVReader>());
+                    if (NotHaveItem) OperationsCollection.Add(container.Resolve<CSVReader>());
                 }
 
                 if (OperationsListUpdated != null) OperationsListUpdated.Invoke(OperationsCollection);
@@ -125,23 +116,20 @@ namespace WpfStarter.Data
         /// <summary>
         /// In conformity with implemented interfaces, method doing necessary preparations and launches operation
         /// </summary>
-        public void BeginOperation()
+        public async void BeginOperation()
         {
-            var _resourceManager = _container.Resolve<ResourceManager>();
+            var _resourceManager = container.Resolve<ResourceManager>();
             try
-            {               
-                NotifyDataAccess(_resourceManager.GetString("Help6") ?? "missing");
-
+            {              
                 if (SelectedOperation != null)
                 {
-                    if (SelectedOperation is ILinqBuildRequired)
+                    if (SelectedOperation is IRequiringBuildLinq)
                     {
-                        ILinqBuildRequired linqBuildRequired = (ILinqBuildRequired)SelectedOperation;
+                        IRequiringBuildLinq BuildLinqService = (IRequiringBuildLinq)SelectedOperation;
 
-                        List<string> shards = new List<string>();
-                        shards = GetLINQShardsRequest.Invoke();
+                        List<string> shardsCollection = GetLinqShardsRequest.Invoke();
 
-                        if (shards != null)
+                        if (shardsCollection != null)
                         {
                              List<string> ContextPropertyNames = new List<string>() 
                              {   nameof(Person.Date), 
@@ -154,16 +142,15 @@ namespace WpfStarter.Data
                               
                             int inc = 0;
 
-                            foreach (string shard in shards)
+                            foreach (string shard in shardsCollection)
                             {
-
                                 if (shard != "")
                                 {
-                                    if (linqBuildRequired.LINQExpression.Length != 0)
+                                    if (BuildLinqService.LinqExpression.Length != 0)
                                     {
-                                        linqBuildRequired.LINQExpression += " && ";
+                                        BuildLinqService.LinqExpression += " && ";
                                     }
-                                    linqBuildRequired.LINQExpression += 
+                                    BuildLinqService.LinqExpression += 
                                         ContextPropertyNames[inc] + "== \"" + shard.Trim() + "\"";
                                 }
                                 inc++;
@@ -171,62 +158,65 @@ namespace WpfStarter.Data
                         }                       
                     }
 
-                    if (SelectedOperation is ISavePathSelectionRequired)
+                    if (SelectedOperation is IRequiringSavepathSelection)
                     {
-                        ISavePathSelectionRequired savePathSelection = (ISavePathSelectionRequired)SelectedOperation;
-                        SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+                        IRequiringSavepathSelection savepathService = (IRequiringSavepathSelection)SelectedOperation;
+                        SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
                         Random random = new Random();
 
-                        dlg.DefaultExt = savePathSelection.TargetFormat;
-                        dlg.FileName = random.Next(0, 9000).ToString();
-                        dlg.Filter = "|*" + dlg.DefaultExt;
-                        dlg.ShowDialog();
-                        if (dlg.FileName != "")
+                        dialog.DefaultExt = savepathService.TargetFormat;
+                        dialog.FileName = random.Next(0, 9000).ToString();
+                        dialog.Filter = "|*" + dialog.DefaultExt;
+                        dialog.ShowDialog();
+                        if (dialog.FileName != "")
                         {
 
                             // Checks if file exist then, to prevent override, saves extracted data in incremental marked file
 
-                            string nonDuplicatefilePath = dlg.FileName;
-                            if (File.Exists(dlg.FileName))
+                            string nonDuplicatefilePath = dialog.FileName;
+                            if (File.Exists(dialog.FileName))
                             {
                                 int increment = 0;
 
                                 while (File.Exists(nonDuplicatefilePath))
                                 {
                                     increment++;
-                                    nonDuplicatefilePath = dlg.FileName.Replace(".", ("_" + increment.ToString() + "."));
+                                    nonDuplicatefilePath = dialog.FileName.Replace(".", ("_" + increment.ToString() + "."));
                                 }
                             }
 
-                            savePathSelection.SetSavePath(nonDuplicatefilePath);
+                            savepathService.SetSavePath(nonDuplicatefilePath);
                         }
                     }
 
-                    if (SelectedOperation is ISourceFileSelectionRequired)
+                    if (SelectedOperation is IRequiringSourceFileSelection)
                     {
-                        ISourceFileSelectionRequired sourceFileSelection = (ISourceFileSelectionRequired)SelectedOperation;
-                        sourceFileSelection.SourceFilePath = SourceFile;
+                        IRequiringSourceFileSelection sourceFileService = (IRequiringSourceFileSelection)SelectedOperation;
+                        sourceFileService.SourceFilePath = SourceFile;
                     }
 
                     Operation operationItem = (Operation)SelectedOperation;
-                    string result = operationItem.Run();
-                    NotifyDataAccess.Invoke(SelectNotifyByOperationResult(result) ?? "missing");
+                    if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
+                    string result = await operationItem.RunAsync(container,new CancellationToken());
+                    if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
+                    NotifyMessageFromData.Invoke(SelectNotifyByOperationResult(result) ?? "missing");
 
                 } else
                 {
-                    NotifyDataAccess.Invoke(_resourceManager.GetString("Help4"));
+                    NotifyMessageFromData.Invoke(_resourceManager.GetString("Help4"));
                 }
                 
             }
             catch (Exception ex)
             {
-                NotifyDataAccess.Invoke(_resourceManager.GetString("OpError"));
+                NotifyMessageFromData.Invoke(ex.ToString());
             }
+
         }
 
         public string SelectNotifyByOperationResult(string result)
         {
-            var _resourceManager = _container.Resolve<ResourceManager>();
+            var _resourceManager = container.Resolve<ResourceManager>();
             switch (result)
             {
                

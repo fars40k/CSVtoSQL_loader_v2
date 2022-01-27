@@ -7,10 +7,10 @@ namespace WpfStarter.UI.ViewModels
 {
     internal class FooterViewModel : BindableBase
     {
-        private Model model;
+        private Model _model;
+
 
         private string _errorString;
-
         public string ErrorString
         {
             get => _errorString;
@@ -21,15 +21,16 @@ namespace WpfStarter.UI.ViewModels
 
         public FooterViewModel(IContainerProvider containerProvider)
         {
-            model = containerProvider.Resolve<Models.Model>();
+            _model = containerProvider.Resolve<Models.Model>();
             ErrorNotify.SetUINotifyMethod(ShowError);
             OperationLaunchCommand = new DelegateCommand(OperationLaunch);
-            model.AppStateChanged += Model_AppStateChanged;
+            _model.AppStateChanged += Model_AppStateChanged;
+            _model.AppStateChanged.Invoke(_model.GetAppGlobalState());
         }
 
         public void OperationLaunch()
         {
-            model.BeginOperation.Invoke();
+            _model.BeginOperation.Invoke();
         }
 
         public void ShowError(string newError)

@@ -11,15 +11,15 @@ namespace WpfStarter.Data
     /// </summary>
     public class DataObjectPool
     {
-        public EntityWorker DatabaseWorker;
-        public ResourceManager ResourceManager;
+        private EntityWorker _databaseWorker;
+        private ResourceManager _resourceManager;
 
         public DataObjectPool(IContainerExtension container)
         {
-            ResourceManager = new ResourceManager("WpfStarter.UI.Localisation.Strings", Assembly.GetEntryAssembly());
-            container.RegisterInstance<ResourceManager>(ResourceManager);
+            _resourceManager = new ResourceManager("WpfStarter.UI.Localisation.Strings", Assembly.GetEntryAssembly());
+            container.RegisterInstance<ResourceManager>(_resourceManager);
 
-            DatabaseWorker = container.Resolve<EntityWorker>();
+            _databaseWorker = container.Resolve<EntityWorker>();
 
             var regionManager = container.Resolve<IRegionManager>();
             regionManager.RegisterViewWithRegion("OperationsRegion", typeof(Operations));

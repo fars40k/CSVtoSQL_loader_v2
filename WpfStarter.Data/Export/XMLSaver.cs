@@ -6,18 +6,18 @@ using Prism.Ioc;
 
 namespace WpfStarter.Data.Export
 {
-    public class XMLSaver : Operation, ILinqBuildRequired, ISavePathSelectionRequired
+    public class XMLSaver : Operation, IRequiringBuildLinq, IRequiringSavepathSelection
     {
-        public XMLSaver(IContainerExtension container)
-        {
-            var ResourceManager = container.Resolve<ResourceManager>();
-            Description = ResourceManager.GetString("OpConvToXML") ?? "missing";
-            TargetFormat = ".xml";
-        }
-
         public string FilePath { get; private set; } = "";
         public string TargetFormat { get; set; }
-        public string LINQExpression { get; set; } = "";
+        public string LinqExpression { get; set; } = "";
+
+        public XMLSaver(IContainerExtension container)
+        {
+            var resourceManager = container.Resolve<ResourceManager>();
+            _description = resourceManager.GetString("OpConvToXML") ?? "missing";
+            TargetFormat = ".xml";
+        }
 
         public override string Run()
         {
@@ -39,30 +39,33 @@ namespace WpfStarter.Data.Export
                 // Changes source of items if LINQ Expression contains filtering data conditions
 
                 object list;
-                if (LINQExpression == "")
+                if (LinqExpression == "")
                 {
                     list = pC.Persons;
                 }
                 else
                 {
                     list = pC.Persons
-                                 .Where(LINQExpression)
+                                 .Where(LinqExpression)
                                  .ToList();
                 }
 
+                int iterationsSum = 0;
                 foreach (Person person in (IEnumerable)list)
                 {
                     WritePersonToXmlRecord(xmlWriter, person);
+                    iterationsSum++;
+                    if (cancellationToken.IsCancellationRequested) break;
                 }
 
                 xmlWriter.WriteEndDocument();
-
-                return "true";
+                if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
+                return iterationsSum.ToString();
 
             }
             catch (Exception ex)
-            {               
-                return "false";
+            {
+                throw ex;
             }
         }
 

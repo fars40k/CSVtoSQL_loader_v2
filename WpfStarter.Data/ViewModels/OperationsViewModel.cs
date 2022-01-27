@@ -9,12 +9,12 @@ namespace WpfStarter.Data.ViewModels
 {
     internal class OperationsViewModel : BindableBase
     {
-        private ObservableCollection<Operation> _operationsItems;
+        private ObservableCollection<Operation> operationsItems;
 
         public ObservableCollection<Operation> OperationsItems
         {
-            get { return _operationsItems; }
-            set { SetProperty(ref _operationsItems, value); }
+            get { return operationsItems; }
+            set { SetProperty(ref operationsItems, value); }
         }
 
         public DelegateCommand<Operation> OperationSelectedCommand { get; private set; }

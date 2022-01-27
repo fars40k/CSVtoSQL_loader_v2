@@ -15,15 +15,15 @@ namespace WpfStarter.UI.Models
             ApplyDefaultEventRouting();
 
             var dbWrk = container.Resolve<EntityWorker>();
-            DatabaseInitialized(dbWrk.DoesDatabaseConnectionInitialized);
-
+            DatabaseInitialized(dbWrk.DoesDatabaseConnectionInitialized);          
         }
 
         public Action BeginOperation;
         public Action<string> AppStateChanged;
         public Action<string> FileSelected;
 
-        public EnumGlobalState _appGlobalState { get; private set; }
+        private GlobalState _previousApplicationGlobalState;
+        public GlobalState ApplicationGlobalState { get; private set; }
 
         private IContainerProvider _containerProvider;
 
@@ -31,16 +31,16 @@ namespace WpfStarter.UI.Models
         {
             if (IsInitialized)
             {
-                SetAppGlobalState(EnumGlobalState.DbConnected);
+                SetAppGlobalState(GlobalState.DbConnected);
             } else
             {
-                SetAppGlobalState(EnumGlobalState.DbConnectionFailed);                
+                SetAppGlobalState(GlobalState.DbConnectionFailed);                
             }
         }
 
         public void ApplyDefaultEventRouting()
         {
-            var dbWrk = _containerProvider.Resolve<EntityWorker>();
+            var dataWorker = _containerProvider.Resolve<EntityWorker>();
             FileSelected += (value) =>
             {
                 if (new FileInfo(value).Length <= 64)
@@ -49,32 +49,39 @@ namespace WpfStarter.UI.Models
                 }
                 else
                 {
-                    SetAppGlobalState(EnumGlobalState.FileSelected);
-                    dbWrk.SourceFileSelected(value);
+                    SetAppGlobalState(GlobalState.FileSelected);
+                    dataWorker.SourceFileSelected(value);
                 }
             };
 
-            dbWrk.NotifyDataAccess += ErrorNotify.NewError;
-            BeginOperation += dbWrk.BeginOperation;
-
-        }
-            private string GetAppGlobalState()
-        {
-            return _appGlobalState.ToString();
-        }
-
-        public void NotifyAppGlobalState()
-        {
-            if (AppStateChanged != null)
+            dataWorker.NotifyMessageFromData += ErrorNotify.NewError;
+            BeginOperation += dataWorker.BeginOperation;
+            dataWorker.NotifyIsAsyncRunned += (isRunned) =>
             {
-                AppStateChanged.Invoke(_appGlobalState.ToString());
-            }
+                if (isRunned)
+                {
+                    _previousApplicationGlobalState = ApplicationGlobalState;
+                    SetAppGlobalState(GlobalState.Disabled);
+                }
+                else
+                {
+                    SetAppGlobalState(_previousApplicationGlobalState);
+                }
+            };
+
+        }
+            
+        
+        public string GetAppGlobalState()
+        {
+            return ApplicationGlobalState.ToString();
         }
 
-        public void SetAppGlobalState(EnumGlobalState newState)
+
+        public void SetAppGlobalState(GlobalState newState)
         {
-            _appGlobalState = newState;
-            this.NotifyAppGlobalState();
+            ApplicationGlobalState = newState;
+            if (AppStateChanged != null) AppStateChanged.Invoke(ApplicationGlobalState.ToString());
         }
     }
 }

@@ -3,37 +3,38 @@ using System.Resources;
 
 namespace WpfStarter.Data.Export
 {
-    internal class CSVReader : Operation, ISourceFileSelectionRequired
-    {      
-
-        private int RecordsRead;
-        private int FailedRecords;
-        string Line;
+    public class CSVReader : Operation, IRequiringSourceFileSelection
+    {
+        public int BatchLimit { get; set; }
+        public string SourceFilePath { get; set; }
+        private int _totalRecords;
+        private int _failedRecords;
+        private string _lineFromFile;
 
         public CSVReader(IContainerExtension container)
         {
             var ResourceManager = container.Resolve<ResourceManager>();
-            Description = ResourceManager.GetString("OpCSVtoSQLExist") ?? "missing";
+            _description = ResourceManager.GetString("OpCSVtoSQLExist") ?? "missing";
             BatchLimit = 10000;
         }
 
-        public int BatchLimit { get; private set; }
-        public string SourceFilePath { get; set; }
-
         public override string Run()
         {
-            RecordsRead = 0;
-            FailedRecords = 0;
+            int recordsReadInThisBatch = 0;
+            string errorsFilePath = "";
+
+            _lineFromFile = string.Empty;
+            _failedRecords = 0;
+            _totalRecords = 0;
 
             // Reading records from file in batches
-            using (StreamReader sr = new StreamReader(SourceFilePath))
+            using (StreamReader rStream = new StreamReader(SourceFilePath))
             {
                 while (true) 
                 {                    
-                    string errorsFilePath = "";
                     // If end-of-file leaves iteration
-                    if (sr.Peek() == -1) break;
-                    RecordsRead = 0;
+                    if (rStream.Peek() == -1) break;
+                    recordsReadInThisBatch = 0;
 
                     PersonsContext pC = new PersonsContext();                    
                     pC.Configuration.AutoDetectChangesEnabled = false;
@@ -47,38 +48,47 @@ namespace WpfStarter.Data.Export
                     catch (Exception ex)
                     {
                     }
-                    int IncrID = OldID;
+                    int IncrimentalID = OldID;
 
                     // Loop for parsing and adding records from a file in batches
-                    while (RecordsRead < BatchLimit)
+                    while (recordsReadInThisBatch < BatchLimit)
                     {
-                        Line = sr.ReadLine();
+                        _lineFromFile = rStream.ReadLine();
 
                         // If end-of-file breaks cycle
-                        if (Line == null) break;
+                        if (_lineFromFile == null) break;
 
-                        RecordsRead++;
+                        recordsReadInThisBatch++;
 
                         try
                         {
-                            pC.Persons.Add(ParseLineToPerson(Line, IncrID));
-                            IncrID++;
+                            IncrimentalID++;
+                            pC.Persons.Add(ParseLineToPerson(_lineFromFile, IncrimentalID));    
+                            if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
                         }
+                        catch (OperationCanceledException)
+                        {
+                            RevertChanges();
+                        }
+
                         catch (FormatException ex)
                         {
-                            // Saving Line with errors to file
+                            // Save Line with errors to file
+
                             if (errorsFilePath == "")
                             {
                                 errorsFilePath = CreateErrorFile(SourceFilePath);
                             }
-                            Add1RecordToErrorFile(errorsFilePath, Line);
-                            FailedRecords++;
+                            AddRecordToErrorFile(errorsFilePath, _lineFromFile);
+                            _failedRecords++;
                         }
                         catch (Exception ex)
                         {
-                            return "false";
+                            throw ex;
                         }
                     }
+
+                    _totalRecords += recordsReadInThisBatch;
 
                     pC.Configuration.AutoDetectChangesEnabled = true;
                     pC.ChangeTracker.DetectChanges();
@@ -87,11 +97,11 @@ namespace WpfStarter.Data.Export
 
                 }
             }
-            return FailedToAllStringFraction();
+            return _failedRecords.ToString() + @" / " + _totalRecords.ToString();
         }
 
         /// <summary>
-        ///  Writies to a file or creates a new one in the path based on the argument string
+        ///  Blanks a file or creates a new one in the path based on the argument string
         /// </summary>
         private string CreateErrorFile(string targetPath)
         {
@@ -114,36 +124,36 @@ namespace WpfStarter.Data.Export
         /// </summary>
         private Person ParseLineToPerson(string line, int newPersonID)
         {
-            string[] SplitBuffer;
+            string[] splitBuffer;
             Person person = new Person() { FirstName = "", SurName = "", LastName = "", City = "", Country = "" };
 
-            SplitBuffer = Line.Replace(" ", "")
+            splitBuffer = this._lineFromFile.Replace(" ", "")
                               .Split(';');
 
             // Fills properties of "Person" or writes that line to an error file
-            if ((ParseDateToSqlType(SplitBuffer[0]) != DateTime.MinValue))
+            if ((ParseDateToSqlType(splitBuffer[0]) != DateTime.MinValue))
             {
-                person.Date = ParseDateToSqlType(SplitBuffer[0]);
+                person.Date = ParseDateToSqlType(splitBuffer[0]);
             }
             else
             {
                 throw new FormatException();
             }
 
-            for (int i = 1; i < SplitBuffer.Length; i++)
+            for (int i = 1; i < splitBuffer.Length; i++)
             {
-                if ((SplitBuffer[i].Length > 50) || (SplitBuffer[i].Length <= 1)
-                   || (SplitBuffer[i] == null))
+                if ((splitBuffer[i].Length > 50) || (splitBuffer[i].Length <= 1)
+                   || (splitBuffer[i] == null))
                 {
                     throw new FormatException();
                 }
             }
 
-            person.FirstName = SplitBuffer[1];
-            person.SurName = SplitBuffer[2];
-            person.LastName = SplitBuffer[3];
-            person.City = SplitBuffer[4];
-            person.Country = SplitBuffer[5];
+            person.FirstName = splitBuffer[1];
+            person.SurName = splitBuffer[2];
+            person.LastName = splitBuffer[3];
+            person.City = splitBuffer[4];
+            person.Country = splitBuffer[5];
             person.ID = newPersonID;
 
             return person;
@@ -152,7 +162,7 @@ namespace WpfStarter.Data.Export
         /// <summary>
         /// Adds an unrecognized entry to a file with err entries
         /// </summary>
-        private void Add1RecordToErrorFile(string targetPath,string line)
+        private void AddRecordToErrorFile(string targetPath,string line)
         {
             using (StreamWriter sw = new StreamWriter(targetPath, true, System.Text.Encoding.Default))
             {               
@@ -176,15 +186,10 @@ namespace WpfStarter.Data.Export
                 return DateTime.MinValue;
             }     
         }
-
-        /// <summary>
-        /// Returns a fraction representing the ratio of read errors to all rows
-        /// </summary>
-        public string FailedToAllStringFraction()
-        {
-            return FailedRecords.ToString() + @" / " + RecordsRead.ToString();
-        }
-
         
+        private void RevertChanges()
+        {
+
+        }
     }
 }

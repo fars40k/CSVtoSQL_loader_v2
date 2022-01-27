@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WpfStarter.UI.Models
+﻿namespace WpfStarter.UI.Models
 {
     public partial class Model
     {
-        public enum EnumGlobalState
+        public enum GlobalState
         {
             DbConnectionFailed,
             DbConnected,
