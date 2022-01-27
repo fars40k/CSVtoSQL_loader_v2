@@ -7,7 +7,9 @@ namespace WpfStarter.Data.Export
     public class Operation : IDatabaseAction
     {
         protected string _description;
-        protected CancellationToken cancellationToken;
+        protected IProgress<string> _progress = new Progress<string>();
+        protected CancellationToken cancellationToken = new CancellationToken(false);
+        
 
         public Operation(string newDescription)
         {
@@ -29,9 +31,10 @@ namespace WpfStarter.Data.Export
             return "false";
         }
 
-        public virtual Task<string> RunAsync(IContainerProvider provider,CancellationToken newToken)
+        public virtual Task<string> RunAsync(IContainerProvider provider, CancellationToken newToken, IProgress<string> newReporter)
         {
             cancellationToken = newToken;
+            _progress = newReporter;
 
             TaskCompletionSource<string> tcSource = provider.Resolve<TaskCompletionSource<string>>();       
             Task.Run(() =>

@@ -20,6 +20,8 @@ namespace WpfStarter.Data.Export
 
         public override string Run()
         {
+            int beforeBatchID = 0;
+            int beforeOperationID = -1;
             int recordsReadInThisBatch = 0;
             string errorsFilePath = "";
 
@@ -34,21 +36,25 @@ namespace WpfStarter.Data.Export
                 {                    
                     // If end-of-file leaves iteration
                     if (rStream.Peek() == -1) break;
+
                     recordsReadInThisBatch = 0;
+                    beforeBatchID = 0;
 
                     PersonsContext pC = new PersonsContext();                    
                     pC.Configuration.AutoDetectChangesEnabled = false;
 
                     // Getting maximal ID value
-                    int OldID = 1;
                     try
                     {
-                        OldID = pC.Persons.Max(e => e.ID);
+                        beforeBatchID = pC.Persons.Max(e => e.ID);
                     }
                     catch (Exception ex)
                     {
                     }
-                    int IncrimentalID = OldID;
+
+                    // Setting initial IDs before operation and batch start
+                    if (beforeOperationID == -1) beforeOperationID = beforeBatchID;
+                    int IncrimentalID = beforeBatchID;
 
                     // Loop for parsing and adding records from a file in batches
                     while (recordsReadInThisBatch < BatchLimit)
@@ -63,14 +69,16 @@ namespace WpfStarter.Data.Export
                         try
                         {
                             IncrimentalID++;
-                            pC.Persons.Add(ParseLineToPerson(_lineFromFile, IncrimentalID));    
+                            pC.Persons.Add(ParseLineToPerson(_lineFromFile, IncrimentalID));
+                            if (IncrimentalID % 100 == 0) _progress.Report(_totalRecords + " / ???");
                             if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
                         }
                         catch (OperationCanceledException)
                         {
-                            RevertChanges();
-                        }
 
+                            RevertChanges(pC, beforeBatchID);
+
+                        }
                         catch (FormatException ex)
                         {
                             // Save Line with errors to file
@@ -97,7 +105,8 @@ namespace WpfStarter.Data.Export
 
                 }
             }
-            return _failedRecords.ToString() + @" / " + _totalRecords.ToString();
+            _progress.Report(_totalRecords + " / ???");
+            return  _failedRecords.ToString();
         }
 
         /// <summary>
@@ -187,9 +196,15 @@ namespace WpfStarter.Data.Export
             }     
         }
         
-        private void RevertChanges()
-        {
-
+        private void RevertChanges(PersonsContext context, int deleteFrom)
+        {/*
+            var list = context.Persons
+                              .Where(p => p.ID > deleteFrom)
+                                .Remove
+            
+          
+            */
+            context.SaveChanges();
         }
     }
 }

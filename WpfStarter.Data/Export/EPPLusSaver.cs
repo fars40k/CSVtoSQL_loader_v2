@@ -34,16 +34,20 @@ namespace WpfStarter.Data.Export
 
                 // Changes source of items if LINQ Expression contains filtering data conditions
 
+                int totalEntries = 0;
                 object list;
                 if (LinqExpression == "")
                 {
                     list = pC.Persons;
+                    totalEntries = pC.Persons.Count();
                 }
                 else
                 {
                     list = pC.Persons
                                  .Where(LinqExpression)
                                  .ToList();
+                    List<Person> persons = (List<Person>)list;
+                    totalEntries = persons.Count();
                 }
 
                 foreach (Person person in (IEnumerable<Person>)list)
@@ -54,12 +58,15 @@ namespace WpfStarter.Data.Export
                         excelWorksheet.Cells[currentRow + 2, 1].Value = "Canceled";
                         break;
                     }
+
+                    if (currentRow % 100 == 0) _progress.Report((currentRow-1) + " / " + totalEntries);
                 }
 
                 excelWorksheet.Cells.AutoFitColumns();
                 excelPackage.SaveAs(FilePath);
 
                 if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
+                _progress.Report((currentRow - 1) + " / " + totalEntries);
                 return (currentRow-1).ToString();
             }
             catch (Exception ex)

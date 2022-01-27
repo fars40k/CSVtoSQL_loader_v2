@@ -38,28 +38,36 @@ namespace WpfStarter.Data.Export
 
                 // Changes source of items if LINQ Expression contains filtering data conditions
 
+
+                int totalEntries = 0;
                 object list;
                 if (LinqExpression == "")
                 {
                     list = pC.Persons;
+                    totalEntries = pC.Persons.Count();
                 }
                 else
                 {
                     list = pC.Persons
                                  .Where(LinqExpression)
                                  .ToList();
+                    List<Person> persons = (List<Person>)list;
+                    totalEntries = persons.Count();
                 }
 
                 int iterationsSum = 0;
                 foreach (Person person in (IEnumerable)list)
                 {
                     WritePersonToXmlRecord(xmlWriter, person);
-                    iterationsSum++;
                     if (cancellationToken.IsCancellationRequested) break;
+                    if (iterationsSum % 100 == 0) _progress.Report(iterationsSum + " / " + totalEntries);
+                    iterationsSum++;
                 }
 
                 xmlWriter.WriteEndDocument();
+
                 if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
+                _progress.Report(iterationsSum + " / " + totalEntries);
                 return iterationsSum.ToString();
 
             }
