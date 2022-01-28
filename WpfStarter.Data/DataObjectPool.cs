@@ -23,7 +23,7 @@ namespace WpfStarter.Data
             _databaseWorker = container.Resolve<EntityWorker>();
 
             _progress = container.Resolve<Progress<string>>();
-            container.RegisterInstance<IProgress<string>>(_progress, "DataProgress");
+            container.RegisterInstance<Progress<string>>(_progress, "DataProgress");
 
             var regionManager = container.Resolve<IRegionManager>();
             regionManager.RegisterViewWithRegion("OperationsRegion", typeof(Operations));

@@ -10,12 +10,14 @@ namespace WpfStarter.UI.Models
         public Model(IContainerProvider container)
         {
             _containerProvider = container;
-            var dataPool = container.Resolve<DataObjectPool>();
+   /*         var dataPool = container.Resolve<DataObjectPool>();
+            Progress<string> dataProgress = container.Resolve<Progress<string>>("DataProgress");
+            dataProgress.ProgressChanged.Subscribe(progress => {*/
 
             ApplyDefaultEventRouting();
 
-            var dbWrk = container.Resolve<EntityWorker>();
-            DatabaseInitialized(dbWrk.DoesDatabaseConnectionInitialized);          
+            var eWorker = container.Resolve<EntityWorker>();
+            DatabaseInitialized(eWorker.DoesDatabaseConnectionInitialized);           
         }
 
         public Action BeginOperation;
@@ -35,11 +37,13 @@ namespace WpfStarter.UI.Models
             {
                 if (Enum.TryParse(value,out _applicationGlobalState))
                 {
-                   // Enum.Format
+                    _applicationGlobalState = (GlobalState)Enum.Parse(typeof(GlobalState), value, true);
+
                 } else
                 {
                     _applicationGlobalState = GlobalState.CriticalError;
                 }
+
                 if (AppStateChanged != null) AppStateChanged.Invoke(ApplicationGlobalState.ToString());
             }
         }
@@ -50,10 +54,11 @@ namespace WpfStarter.UI.Models
         {
             if (IsInitialized)
             {
-                SetAppGlobalState(GlobalState.DbConnected);
+                ApplicationGlobalState = "DbConnected";
+
             } else
             {
-                SetAppGlobalState(GlobalState.DbConnectionFailed);                
+                ApplicationGlobalState = "DbConnectionFailed";                
             }
         }
 
@@ -68,7 +73,7 @@ namespace WpfStarter.UI.Models
                 }
                 else
                 {
-                    SetAppGlobalState(GlobalState.FileSelected);
+                    ApplicationGlobalState = "FileSelected";
                     dataWorker.SourceFileSelected(value);
                 }
             };
@@ -79,28 +84,16 @@ namespace WpfStarter.UI.Models
             {
                 if (isRunned)
                 {
-                    _previousApplicationGlobalState = ApplicationGlobalState;
-                    SetAppGlobalState(GlobalState.Disabled);
+                    _previousApplicationGlobalState = _applicationGlobalState;
+                    ApplicationGlobalState = "Disabled";
                 }
                 else
                 {
-                    SetAppGlobalState(_previousApplicationGlobalState);
+                    ApplicationGlobalState = _previousApplicationGlobalState.ToString();
                 }
             };
 
-        }
-            
-        
-        public string GetAppGlobalState()
-        {
-            return ApplicationGlobalState.ToString();
-        }
+        }          
 
-
-        public void SetAppGlobalState(GlobalState newState)
-        {
-            ApplicationGlobalState = newState;
-            if (AppStateChanged != null) AppStateChanged.Invoke(ApplicationGlobalState.ToString());
-        }
     }
 }
