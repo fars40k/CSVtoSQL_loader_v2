@@ -35,7 +35,10 @@ namespace WpfStarter.UI.Models
             {
                 if (Enum.TryParse(value,out _applicationGlobalState))
                 {
-                    Enum.Parse(_applicationGlobalState, value);
+                   // Enum.Format
+                } else
+                {
+                    _applicationGlobalState = GlobalState.CriticalError;
                 }
                 if (AppStateChanged != null) AppStateChanged.Invoke(ApplicationGlobalState.ToString());
             }
