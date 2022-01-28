@@ -36,9 +36,7 @@ namespace WpfStarter.Data.Export
                 PersonsContext pC = new PersonsContext();
 
 
-                // Changes source of items if LINQ Expression contains filtering data conditions
-
-
+                // Changes source of items if the LINQ Expression contains filtering data conditions and gets the total value of the records
                 int totalEntries = 0;
                 object list;
                 if (LinqExpression == "")
@@ -59,11 +57,19 @@ namespace WpfStarter.Data.Export
                 foreach (Person person in (IEnumerable)list)
                 {
                     WritePersonToXmlRecord(xmlWriter, person);
-                    if (cancellationToken.IsCancellationRequested) break;
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        xmlWriter.WriteStartElement("!");
+                        xmlWriter.WriteString("Canceled");
+                        xmlWriter.WriteEndElement();
+
+                        break;
+                    }                    
                     if (iterationsSum % 100 == 0) _progress.Report(iterationsSum + " / " + totalEntries);
                     iterationsSum++;
                 }
 
+                pC.Dispose();
                 xmlWriter.WriteEndDocument();
 
                 if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();

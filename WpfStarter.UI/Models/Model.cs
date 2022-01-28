@@ -23,7 +23,23 @@ namespace WpfStarter.UI.Models
         public Action<string> FileSelected;
 
         private GlobalState _previousApplicationGlobalState;
-        public GlobalState ApplicationGlobalState { get; private set; }
+        private GlobalState _applicationGlobalState;
+        public string ApplicationGlobalState
+        {
+            get
+            {
+                return _applicationGlobalState.ToString();
+            }
+
+            set
+            {
+                if (Enum.TryParse(value,out _applicationGlobalState))
+                {
+                    Enum.Parse(_applicationGlobalState, value);
+                }
+                if (AppStateChanged != null) AppStateChanged.Invoke(ApplicationGlobalState.ToString());
+            }
+        }
 
         private IContainerProvider _containerProvider;
 

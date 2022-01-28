@@ -5,7 +5,7 @@ using WpfStarter.Data.Export;
 using Prism.Ioc;
 using Prism.Regions;
 using WpfStarter.Data.Views;
-
+using System;
 
 namespace WpfStarter.Data
 {
@@ -14,6 +14,8 @@ namespace WpfStarter.Data
     /// </summary>
     public partial class EntityWorker
     {
+        private CancellationTokenSource cancellationTokenSource;
+        private CancellationToken cancellationToken;
         private IContainerProvider container;
 
         public string SourceFile { get; private set; }
@@ -195,17 +197,37 @@ namespace WpfStarter.Data
                         sourceFileService.SourceFilePath = SourceFile;
                     }
 
-                    Operation operationItem = (Operation)SelectedOperation;
-                    if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
-                    string result = await operationItem.RunAsync(container,new CancellationToken());
-                    if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
-                    NotifyMessageFromData.Invoke(SelectNotifyByOperationResult(result) ?? "missing");
+                    if (SelectedOperation is Operation)
+                    {
+                        Operation operationItem = (Operation)SelectedOperation;
+                        IProgress<string> progressReporter = container.Resolve<IProgress<string>>("DataProgress");
+                        
+                        RefreshCancelationTokenAndSource();
+                        if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
+
+                        string result = await operationItem.RunAsync(container,
+                                                                     cancellationToken,
+                                                                     progressReporter);
+
+                        if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
+
+                        // If the result string starts with 'E' char it contains total read errors value, when not the total records processed
+                        result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
+                                                        : _resourceManager.GetString("OpRecordsAdded");
+                        NotifyMessageFromData.Invoke(result ?? "missing");
+                    }
+                    
 
                 } else
                 {
                     NotifyMessageFromData.Invoke(_resourceManager.GetString("Help4"));
                 }
                 
+            }
+            catch (OperationCanceledException) 
+            {
+                if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
+
             }
             catch (Exception ex)
             {
@@ -214,25 +236,24 @@ namespace WpfStarter.Data
 
         }
 
-        public string SelectNotifyByOperationResult(string result)
-        {
-            var _resourceManager = container.Resolve<ResourceManager>();
-            switch (result)
-            {
-               
-                case "true": return _resourceManager.GetString("Ready");
-
-                case "false": return  _resourceManager.GetString("OpError");
-
-                default: return _resourceManager.GetString("OpErrorAddRecords") + result;
-
-            }
-        }
-
         public void OperationSelected(Operation operation)
         {
             SelectedOperation = operation;
         }
-       
+
+        /// <summary>
+        /// Rewrites the registered instance of a cancellation token if cancellation were requested or not yet created
+        /// </summary>
+        public void RefreshCancelationTokenAndSource()
+        {
+            IContainerExtension extension= container.Resolve<IContainerExtension>();
+            if ((cancellationTokenSource.IsCancellationRequested) || (cancellationTokenSource == null))
+            {
+                cancellationTokenSource = container.Resolve<CancellationTokenSource>();
+                extension.RegisterInstance<CancellationTokenSource>(cancellationTokenSource, "DataCancellationSource");
+                cancellationToken = cancellationTokenSource.Token;
+                extension.RegisterInstance<CancellationToken>(cancellationToken, "DataCancellationToken");
+            }
+        }
     }
 }

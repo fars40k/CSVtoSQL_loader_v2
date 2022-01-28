@@ -231,11 +231,11 @@
   <data name="OpError" xml:space="preserve">
     <value>Ошибка</value>
   </data>
-  <data name="OpErrorAddRecords" xml:space="preserve">
-    <value>Записи добавлены частично. Не прочитанные записи добавлены в файл Error. (ошибки / всего):</value>
-  </data>
   <data name="OpLoadFromFileError" xml:space="preserve">
     <value>Ошибка загрузки из CSV файла</value>
+  </data>
+  <data name="OpReadyWithErrors" xml:space="preserve">
+    <value>Записи добавлены частично. Ошибок чтения: </value>
   </data>
   <data name="OpRecordsAdded" xml:space="preserve">
     <value>Все записи успешно добавлены</value>

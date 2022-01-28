@@ -32,7 +32,7 @@ namespace WpfStarter.Data.Export
                 excelPackage.Workbook.Properties.Author = Environment.UserName;
                 ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
 
-                // Changes source of items if LINQ Expression contains filtering data conditions
+                // Changes source of items if the LINQ Expression contains filtering data conditions and gets the total value of the records
 
                 int totalEntries = 0;
                 object list;
@@ -62,8 +62,9 @@ namespace WpfStarter.Data.Export
                     if (currentRow % 100 == 0) _progress.Report((currentRow-1) + " / " + totalEntries);
                 }
 
+                pC.Dispose();
                 excelWorksheet.Cells.AutoFitColumns();
-                excelPackage.SaveAs(FilePath);
+                excelPackage.SaveAs(FilePath);  
 
                 if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
                 _progress.Report((currentRow - 1) + " / " + totalEntries);

@@ -75,9 +75,8 @@ namespace WpfStarter.Data.Export
                         }
                         catch (OperationCanceledException)
                         {
-
                             RevertChanges(pC, beforeBatchID);
-
+                            throw new OperationCanceledException();
                         }
                         catch (FormatException ex)
                         {
@@ -106,7 +105,7 @@ namespace WpfStarter.Data.Export
                 }
             }
             _progress.Report(_totalRecords + " / ???");
-            return  _failedRecords.ToString();
+            return  "E" + _failedRecords.ToString();
         }
 
         /// <summary>
@@ -197,13 +196,12 @@ namespace WpfStarter.Data.Export
         }
         
         private void RevertChanges(PersonsContext context, int deleteFrom)
-        {/*
+        {
             var list = context.Persons
-                              .Where(p => p.ID > deleteFrom)
-                                .Remove
-            
-          
-            */
+                              .Where(p => p.ID > deleteFrom);
+            context.Configuration.AutoDetectChangesEnabled = false;
+            context.Persons.RemoveRange(list);
+            context.Configuration.AutoDetectChangesEnabled = true;
             context.SaveChanges();
         }
     }

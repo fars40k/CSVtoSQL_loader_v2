@@ -13,6 +13,7 @@ namespace WpfStarter.Data
     {
         private EntityWorker _databaseWorker;
         private ResourceManager _resourceManager;
+        private Progress<string> _progress;
 
         public DataObjectPool(IContainerExtension container)
         {
@@ -20,6 +21,9 @@ namespace WpfStarter.Data
             container.RegisterInstance<ResourceManager>(_resourceManager);
 
             _databaseWorker = container.Resolve<EntityWorker>();
+
+            _progress = container.Resolve<Progress<string>>();
+            container.RegisterInstance<IProgress<string>>(_progress, "DataProgress");
 
             var regionManager = container.Resolve<IRegionManager>();
             regionManager.RegisterViewWithRegion("OperationsRegion", typeof(Operations));

@@ -4,11 +4,11 @@
     {
         public enum GlobalState
         {
-            DbConnectionFailed,
-            DbConnected,
-            FileSelected,
-            Disabled,
-            CriticalError
+            DbConnectionFailed = 10,
+            DbConnected = 11,
+            FileSelected = 21,
+            Disabled = 30,
+            CriticalError = 40
         }
     }
 }

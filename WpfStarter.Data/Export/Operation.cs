@@ -35,6 +35,7 @@ namespace WpfStarter.Data.Export
         {
             cancellationToken = newToken;
             _progress = newReporter;
+            _progress.Report("0 / ???");
 
             TaskCompletionSource<string> tcSource = provider.Resolve<TaskCompletionSource<string>>();       
             Task.Run(() =>
