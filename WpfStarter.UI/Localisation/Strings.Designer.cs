@@ -340,7 +340,7 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ожидайте завершения.
+        ///   Looks up a localized string similar to Запущена операция.
         /// </summary>
         public static string Help6 {
             get {

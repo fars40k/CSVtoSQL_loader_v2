@@ -23,6 +23,7 @@ namespace WpfStarter.Data
         public List<IDatabaseAction> OperationsCollection { get; private set; } = new List<IDatabaseAction>();
         public IDatabaseAction SelectedOperation { get; private set; }
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
+        public bool IsAsyncOperationsMode = true;
 
         public Action UpdateDataViews;
         public Action<bool> NotifyIsAsyncRunned;
@@ -118,7 +119,7 @@ namespace WpfStarter.Data
         /// <summary>
         /// In conformity with implemented interfaces, method doing necessary preparations and launches operation
         /// </summary>
-        public async void BeginOperation()
+        public void PreprocessAndBeginOperation()
         {
             var _resourceManager = container.Resolve<ResourceManager>();
             try
@@ -168,7 +169,7 @@ namespace WpfStarter.Data
 
                         dialog.DefaultExt = savepathService.TargetFormat;
                         dialog.FileName = random.Next(0, 9000).ToString();
-                        dialog.Filter = "|*" + dialog.DefaultExt;
+                        dialog.Filter ="(*" + dialog.DefaultExt + ")|*" + dialog.DefaultExt;
                         dialog.ShowDialog();
                         if (dialog.FileName != "")
                         {
@@ -180,11 +181,12 @@ namespace WpfStarter.Data
                             {
                                 int increment = 0;
 
-                                while (File.Exists(nonDuplicatefilePath))
+                                while (File.Exists(dialog.FileName))
                                 {
                                     increment++;
-                                    nonDuplicatefilePath = dialog.FileName.Replace(".", ("_" + increment.ToString() + "."));
+                                    dialog.FileName = nonDuplicatefilePath.Replace(".", ("_" + increment.ToString() + "."));
                                 }
+                                nonDuplicatefilePath = dialog.FileName;
                             }
 
                             savepathService.SetSavePath(nonDuplicatefilePath);
@@ -197,26 +199,8 @@ namespace WpfStarter.Data
                         sourceFileService.SourceFilePath = SourceFile;
                     }
 
-                    if (SelectedOperation is Operation)
-                    {
-                        Operation operationItem = (Operation)SelectedOperation;
-                        IProgress<string> progressReporter = container.Resolve<IProgress<string>>("DataProgress");
-                        
-                        RefreshCancelationTokenAndSource();
-                        if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
-
-                        string result = await operationItem.RunAsync(container,
-                                                                     cancellationToken,
-                                                                     progressReporter);
-
-                        if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
-
-                        // If the result string starts with 'E' char it contains total read errors value, when not the total records processed
-                        result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
-                                                        : _resourceManager.GetString("OpRecordsAdded");
-                        NotifyMessageFromData.Invoke(result ?? "missing");
-                    }
                     
+
 
                 } else
                 {
@@ -224,16 +208,64 @@ namespace WpfStarter.Data
                 }
                 
             }
-            catch (OperationCanceledException) 
-            {
-                if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
-
-            }
             catch (Exception ex)
             {
-                NotifyMessageFromData.Invoke(ex.ToString());
+                NotifyMessageFromData.Invoke(ex.Message);
             }
 
+        }
+
+        private void BeginOperation()
+        {
+            var _resourceManager = container.Resolve<ResourceManager>();
+
+            if (SelectedOperation is Operation)
+            {
+                Operation operationItem = (Operation)SelectedOperation;
+
+                if (IsAsyncOperationsMode)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            RefreshCancelationTokenAndSource();
+
+                            if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
+                            Task<string> task;
+                            task = operationItem.RunAsync(container);
+
+                            if (task.Status == TaskStatus.Canceled) throw new OperationCanceledException();
+                            if (task.Status == TaskStatus.Faulted) throw task.Exception.GetRootException();
+
+                            string result = task.Result ?? "";
+
+                            if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
+
+                        // If the result string starts with 'E' char it contains total read errors value, when not the total records processed
+                        result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
+                                                                : _resourceManager.GetString("OpRecordsAdded");
+                            NotifyMessageFromData.Invoke(result ?? "missing");
+
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            NotifyMessageFromData.Invoke(ex.Message);
+                        }
+                    });
+                }
+                else
+                {
+                    string result = operationItem.Run();
+                    result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
+                                                    : _resourceManager.GetString("OpRecordsAdded");
+                    NotifyMessageFromData.Invoke(result ?? "missing");
+                }
+            }
         }
 
         public void OperationSelected(Operation operation)
@@ -247,7 +279,7 @@ namespace WpfStarter.Data
         public void RefreshCancelationTokenAndSource()
         {
             IContainerExtension extension= container.Resolve<IContainerExtension>();
-            if ((cancellationTokenSource.IsCancellationRequested) || (cancellationTokenSource == null))
+            if ((cancellationTokenSource == null) || (cancellationTokenSource.IsCancellationRequested))
             {
                 cancellationTokenSource = container.Resolve<CancellationTokenSource>();
                 extension.RegisterInstance<CancellationTokenSource>(cancellationTokenSource, "DataCancellationSource");

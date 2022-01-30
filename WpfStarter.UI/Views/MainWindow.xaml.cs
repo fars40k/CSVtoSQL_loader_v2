@@ -28,7 +28,6 @@ namespace WpfStarter.UI.Views
         private void OnWindowClosing(object sender, CancelEventArgs e)
         {
             // Put cancellation request here
-            throw new NotImplementedException();
         }
     }
     

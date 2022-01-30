@@ -10,7 +10,6 @@ namespace WpfStarter.Data.ViewModels
 
         public DataFiltersViewModel(IContainerProvider container)
         {
-
             var resManager = container.Resolve<ResourceManager>();
             var eWorker = container.Resolve<EntityWorker>();
 

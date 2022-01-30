@@ -8,7 +8,7 @@ namespace WpfStarter.Data.Export
     {
         protected string _description;
         protected IProgress<string> _progress = new Progress<string>();
-        protected CancellationToken cancellationToken = new CancellationToken(false);
+        protected CancellationToken _cancelToken = new CancellationToken(false);
         
 
         public Operation(string newDescription)
@@ -28,29 +28,15 @@ namespace WpfStarter.Data.Export
 
         public virtual string Run()
         {   
-            return "false";
+            throw new NotImplementedException();
         }
 
-        public virtual Task<string> RunAsync(IContainerProvider provider, CancellationToken newToken, IProgress<string> newReporter)
+        public virtual async Task<string> RunAsync(IContainerProvider provider)
         {
-            cancellationToken = newToken;
-            _progress = newReporter;
+            _cancelToken = provider.Resolve<CancellationToken>("DataCancellationToken");
+            _progress = provider.Resolve<Progress<string>>("DataProgress");
             _progress.Report("0 / ???");
-
-            TaskCompletionSource<string> tcSource = provider.Resolve<TaskCompletionSource<string>>();       
-            Task.Run(() =>
-            {
-                try
-                {
-                    var result = Run();
-                }
-                catch (Exception ex)
-                {
-                    tcSource.SetException(ex);
-                }               
-            });
-
-            return tcSource.Task;
+            return Run();
         }
 
     }

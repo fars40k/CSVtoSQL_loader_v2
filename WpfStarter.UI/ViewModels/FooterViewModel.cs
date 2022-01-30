@@ -24,8 +24,8 @@ namespace WpfStarter.UI.ViewModels
             _model = containerProvider.Resolve<Models.Model>();
             ErrorNotify.SetUINotifyMethod(ShowError);
             OperationLaunchCommand = new DelegateCommand(OperationLaunch);
-            _model.AppStateChanged += Model_AppStateChanged;
-            _model.AppStateChanged.Invoke(_model.GetAppGlobalState());
+            _model.AppStateChanged += ChangeUIControlStrings;
+            ChangeUIControlStrings(_model.ApplicationGlobalState);
         }
 
         public void OperationLaunch()
@@ -37,7 +37,11 @@ namespace WpfStarter.UI.ViewModels
         {
             ErrorString = newError;
         }
-        private void Model_AppStateChanged(string newState)
+
+        /// <summary>
+        /// Changes operations information string in accordance with an input string
+        /// </summary>
+        private void ChangeUIControlStrings(string newState)
         {
             switch (newState)
             {

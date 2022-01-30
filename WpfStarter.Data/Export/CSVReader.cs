@@ -71,7 +71,7 @@ namespace WpfStarter.Data.Export
                             IncrimentalID++;
                             pC.Persons.Add(ParseLineToPerson(_lineFromFile, IncrimentalID));
                             if (IncrimentalID % 100 == 0) _progress.Report(_totalRecords + " / ???");
-                            if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
+                            if (_cancelToken.IsCancellationRequested) throw new OperationCanceledException();
                         }
                         catch (OperationCanceledException)
                         {

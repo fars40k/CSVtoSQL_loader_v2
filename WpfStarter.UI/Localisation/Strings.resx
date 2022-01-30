@@ -211,7 +211,7 @@
     <value>Нажмите "Запуск" </value>
   </data>
   <data name="Help6" xml:space="preserve">
-    <value>Ожидайте завершения</value>
+    <value>Запущена операция</value>
   </data>
   <data name="OpConvToXLSX" xml:space="preserve">
     <value>Сохранить таблицу как файл Excel</value>

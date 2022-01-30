@@ -30,11 +30,9 @@ namespace WpfStarter.Data.Export
                 settings.IndentChars = "\t";
 
                 XmlWriter xmlWriter = XmlWriter.Create(FilePath, settings);
-
                 xmlWriter.WriteStartElement("TestProgram");
 
                 PersonsContext pC = new PersonsContext();
-
 
                 // Changes source of items if the LINQ Expression contains filtering data conditions and gets the total value of the records
                 int totalEntries = 0;
@@ -57,22 +55,21 @@ namespace WpfStarter.Data.Export
                 foreach (Person person in (IEnumerable)list)
                 {
                     WritePersonToXmlRecord(xmlWriter, person);
-                    if (cancellationToken.IsCancellationRequested)
+                    if (_cancelToken.IsCancellationRequested)
                     {
                         xmlWriter.WriteStartElement("!");
                         xmlWriter.WriteString("Canceled");
                         xmlWriter.WriteEndElement();
 
                         break;
-                    }                    
+                    }
                     if (iterationsSum % 100 == 0) _progress.Report(iterationsSum + " / " + totalEntries);
                     iterationsSum++;
                 }
-
                 pC.Dispose();
                 xmlWriter.WriteEndDocument();
-
-                if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
+                throw new FormatException();
+                if (_cancelToken.IsCancellationRequested) throw new OperationCanceledException();
                 _progress.Report(iterationsSum + " / " + totalEntries);
                 return iterationsSum.ToString();
 

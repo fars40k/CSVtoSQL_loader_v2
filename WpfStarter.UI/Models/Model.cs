@@ -10,9 +10,10 @@ namespace WpfStarter.UI.Models
         public Model(IContainerProvider container)
         {
             _containerProvider = container;
-   /*         var dataPool = container.Resolve<DataObjectPool>();
+            var dataPool = container.Resolve<DataObjectPool>();
+            
             Progress<string> dataProgress = container.Resolve<Progress<string>>("DataProgress");
-            dataProgress.ProgressChanged.Subscribe(progress => {*/
+            dataProgress.ProgressChanged += (sender, e) => ErrorNotify.NewError(e);
 
             ApplyDefaultEventRouting();
 
@@ -79,7 +80,7 @@ namespace WpfStarter.UI.Models
             };
 
             dataWorker.NotifyMessageFromData += ErrorNotify.NewError;
-            BeginOperation += dataWorker.BeginOperation;
+            BeginOperation += dataWorker.PreprocessAndBeginOperation;
             dataWorker.NotifyIsAsyncRunned += (isRunned) =>
             {
                 if (isRunned)
@@ -92,8 +93,8 @@ namespace WpfStarter.UI.Models
                     ApplicationGlobalState = _previousApplicationGlobalState.ToString();
                 }
             };
-
-        }          
+   
+        }
 
     }
 }

@@ -23,8 +23,7 @@ namespace WpfStarter.Data.Export
         {
             try
             {
-                int currentRow = 1;
-
+                int currentRow = 1;   
                 PersonsContext pC = new PersonsContext();
 
                 ExcelPackage excelPackage = new ExcelPackage();
@@ -50,10 +49,12 @@ namespace WpfStarter.Data.Export
                     totalEntries = persons.Count();
                 }
 
+                WriteHeadLine(excelWorksheet);
+
                 foreach (Person person in (IEnumerable<Person>)list)
                 {
                     WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
-                    if (cancellationToken.IsCancellationRequested)
+                    if (_cancelToken.IsCancellationRequested)
                     {
                         excelWorksheet.Cells[currentRow + 2, 1].Value = "Canceled";
                         break;
@@ -66,13 +67,35 @@ namespace WpfStarter.Data.Export
                 excelWorksheet.Cells.AutoFitColumns();
                 excelPackage.SaveAs(FilePath);  
 
-                if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
-                _progress.Report((currentRow - 1) + " / " + totalEntries);
+                if (_cancelToken.IsCancellationRequested) throw new OperationCanceledException();
+                _progress.Report((currentRow) + " / " + totalEntries);
                 return (currentRow-1).ToString();
             }
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Writes table header
+        /// </summary>
+        public void WriteHeadLine(ExcelWorksheet sheet)
+        {
+            List<string> ContextPropertyNames = new List<string>()
+                             {
+                                 nameof(Person.ID),
+                                 nameof(Person.Date),
+                                 nameof(Person.FirstName),
+                                 nameof(Person.SurName),
+                                 nameof(Person.LastName),
+                                 nameof(Person.City),
+                                 nameof(Person.Country)
+                             };
+            int column = 1;
+            foreach(string Property in ContextPropertyNames)
+            {
+                sheet.Cells[1, column++].Value = Property;
             }
         }
 

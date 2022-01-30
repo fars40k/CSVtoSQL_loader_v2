@@ -27,14 +27,14 @@ namespace WpfStarter.UI.ViewModels
         public HeaderViewModel(IContainerProvider containerProvider)
         {
             model = containerProvider.Resolve<Models.Model>();
-            model.AppStateChanged += Model_AppStateChanged;
-            model.AppStateChanged.Invoke(model.GetAppGlobalState());
+            model.AppStateChanged += ChangeUIControlStrings;
+            ChangeUIControlStrings(model.ApplicationGlobalState);
         }
 
         /// <summary>
-        /// Changes user help string in accordance with input string
+        /// Changes user help string in accordance with an input string
         /// </summary>
-        private void Model_AppStateChanged(string newState)
+        private void ChangeUIControlStrings(string newState)
         {
             switch (newState)
             {
@@ -82,7 +82,9 @@ namespace WpfStarter.UI.ViewModels
             if (dlg.FileName != "")
             {
                 ErrorNotify.ClearError();
+
                 model.FileSelected(dlg.FileName);
+
                 string str = dlg.FileName;
                 str = " " + str.Substring((str.LastIndexOf(@"\") + 1), str.Length - (str.LastIndexOf(@"\") + 1));
                 FileNameString = str;
