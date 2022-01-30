@@ -7,20 +7,6 @@ namespace WpfStarter.UI.Models
 {
     public partial class Model
     {
-        public Model(IContainerProvider container)
-        {
-            _containerProvider = container;
-            var dataPool = container.Resolve<DataObjectPool>();
-            
-            Progress<string> dataProgress = container.Resolve<Progress<string>>("DataProgress");
-            dataProgress.ProgressChanged += (sender, e) => ErrorNotify.NewError(e);
-
-            ApplyDefaultEventRouting();
-
-            var eWorker = container.Resolve<EntityWorker>();
-            DatabaseInitialized(eWorker.DoesDatabaseConnectionInitialized);           
-        }
-
         public Action BeginOperation;
         public Action<string> AppStateChanged;
         public Action<string> FileSelected;
@@ -50,6 +36,20 @@ namespace WpfStarter.UI.Models
         }
 
         private IContainerProvider _containerProvider;
+
+        public Model(IContainerProvider container)
+        {
+            _containerProvider = container;
+            var dataPool = container.Resolve<DataObjectPool>();
+
+            Progress<string> dataProgress = container.Resolve<Progress<string>>("DataProgress");
+            dataProgress.ProgressChanged += (sender, e) => ErrorNotify.NewError(e);
+
+            ApplyDefaultEventRouting();
+
+            var eWorker = container.Resolve<EntityWorker>();
+            DatabaseInitialized(eWorker.DoesDatabaseConnectionInitialized);
+        }
 
         private void DatabaseInitialized(bool IsInitialized)
         {

@@ -68,7 +68,7 @@ namespace WpfStarter.Data.Export
                 }
                 pC.Dispose();
                 xmlWriter.WriteEndDocument();
-                throw new FormatException();
+                //throw new FormatException();
                 if (_cancelToken.IsCancellationRequested) throw new OperationCanceledException();
                 _progress.Report(iterationsSum + " / " + totalEntries);
                 return iterationsSum.ToString();

@@ -213,6 +213,9 @@
   <data name="Help6" xml:space="preserve">
     <value>Запущена операция</value>
   </data>
+  <data name="OpCanceled" xml:space="preserve">
+    <value>Операция отменена</value>
+  </data>
   <data name="OpConvToXLSX" xml:space="preserve">
     <value>Сохранить таблицу как файл Excel</value>
   </data>

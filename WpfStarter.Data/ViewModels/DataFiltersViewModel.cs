@@ -7,6 +7,45 @@ namespace WpfStarter.Data.ViewModels
 {
     internal class DataFiltersViewModel : BindableBase
     {
+        #region Collections
+
+        public ObservableCollection<string> LinqShardsToBuildExpression
+        {
+            get => _linqShardsToBuildExpression;
+            set => SetProperty(ref _linqShardsToBuildExpression, value);
+
+        }
+
+        private ObservableCollection<string> _rowNames;
+
+        public ObservableCollection<string> RowNames
+        {
+            get => _rowNames;
+            set => SetProperty(ref _rowNames, value);
+        }
+
+        private ObservableCollection<string> _comboboxEntries;
+
+        public ObservableCollection<string> ComboboxEntries
+        {
+            get => _comboboxEntries;
+            set => SetProperty(ref _comboboxEntries, value);
+        }
+
+        private ObservableCollection<int> _comboBoxSelectedIndexes = new ObservableCollection<int>();
+
+        public ObservableCollection<int> ComboboxSelectedIndexes
+        {
+            get => _comboBoxSelectedIndexes;
+            set => SetProperty(ref _comboBoxSelectedIndexes, value);
+        }
+
+        private ObservableCollection<string> _linqShardsToBuildExpression = new ObservableCollection<string>()
+                                                                                { "", "", "", "", "", "" };
+
+        private List<Action<int>> _dataFilterActions = new List<Action<int>>();
+
+        #endregion
 
         public DataFiltersViewModel(IContainerProvider container)
         {
@@ -39,46 +78,6 @@ namespace WpfStarter.Data.ViewModels
             if (eWorker.GetLinqShardsRequest == null) eWorker.GetLinqShardsRequest += GetLINQShards;
 
         }
-
-        #region Collections
-
-        public ObservableCollection<string> LinqShardsToBuildExpression
-        {
-            get => _linqShardsToBuildExpression;
-            set => SetProperty(ref _linqShardsToBuildExpression, value);
-
-        }
-
-        private ObservableCollection<string> _rowNames;
-
-        public ObservableCollection<string> RowNames
-        {
-            get => _rowNames;
-            set => SetProperty(ref _rowNames, value);
-        }
-
-        private ObservableCollection<string> _comboboxEntries;
-
-        public ObservableCollection<string> ComboboxEntries
-        {
-            get => _comboboxEntries;
-            set => SetProperty(ref _comboboxEntries, value);
-        }
-
-        private ObservableCollection<int> _comboBoxSelectedIndexes = new ObservableCollection<int>();
-
-        public ObservableCollection<int> ComboboxSelectedIndexes
-        {
-            get => _comboBoxSelectedIndexes;
-            set => SetProperty(ref _comboBoxSelectedIndexes, value);      
-        }
-
-        private ObservableCollection<string> _linqShardsToBuildExpression = new ObservableCollection<string>()
-                                                                                { "", "", "", "", "", "" };
-
-        private List<Action<int>> _dataFilterActions = new List<Action<int>>();
-
-#endregion
 
         private List<string> GetLINQShards()
         {

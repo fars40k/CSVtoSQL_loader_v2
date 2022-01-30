@@ -9,7 +9,6 @@ namespace WpfStarter.UI.ViewModels
     {
         private Model _model;
 
-
         private string _errorString;
         public string ErrorString
         {

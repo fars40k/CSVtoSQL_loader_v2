@@ -349,6 +349,15 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Операция отменена.
+        /// </summary>
+        public static string OpCanceled {
+            get {
+                return ResourceManager.GetString("OpCanceled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Сохранить таблицу как файл Excel.
         /// </summary>
         public static string OpConvToXLSX {

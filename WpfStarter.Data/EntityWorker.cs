@@ -23,7 +23,6 @@ namespace WpfStarter.Data
         public List<IDatabaseAction> OperationsCollection { get; private set; } = new List<IDatabaseAction>();
         public IDatabaseAction SelectedOperation { get; private set; }
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
-        public bool IsAsyncOperationsMode = true;
 
         public Action UpdateDataViews;
         public Action<bool> NotifyIsAsyncRunned;
@@ -222,49 +221,38 @@ namespace WpfStarter.Data
             if (SelectedOperation is Operation)
             {
                 Operation operationItem = (Operation)SelectedOperation;
-
-                if (IsAsyncOperationsMode)
+                Task.Factory.StartNew(() =>
                 {
-                    Task.Factory.StartNew(() =>
+                    try
                     {
-                        try
-                        {
-                            RefreshCancelationTokenAndSource();
+                        RefreshCancelationTokenAndSource();
 
-                            if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
-                            Task<string> task;
-                            task = operationItem.RunAsync(container);
+                        if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
+                        Task<string> task;
+                        task = operationItem.RunAsync(container);
 
-                            if (task.Status == TaskStatus.Canceled) throw new OperationCanceledException();
-                            if (task.Status == TaskStatus.Faulted) throw task.Exception.GetRootException();
+                        if (task.IsCanceled) throw new OperationCanceledException();
+                        if (task.IsFaulted) throw task.Exception.GetRootException();
 
-                            string result = task.Result ?? "";
+                        string result = task.Result ?? "";
 
-                            if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
-
-                        // If the result string starts with 'E' char it contains total read errors value, when not the total records processed
+                        // If the result string starts with 'E' char it contains total read errors value, when not all records processed correctly
                         result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
                                                                 : _resourceManager.GetString("OpRecordsAdded");
-                            NotifyMessageFromData.Invoke(result ?? "missing");
+                        NotifyMessageFromData.Invoke(result ?? "missing");
 
-                        }
-                        catch (OperationCanceledException)
-                        {
-                            if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
-                        }
-                        catch (Exception ex)
-                        {
-                            NotifyMessageFromData.Invoke(ex.Message);
-                        }
-                    });
-                }
-                else
-                {
-                    string result = operationItem.Run();
-                    result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
-                                                    : _resourceManager.GetString("OpRecordsAdded");
-                    NotifyMessageFromData.Invoke(result ?? "missing");
-                }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        NotifyMessageFromData.Invoke(_resourceManager.GetString("OpCanceled"));
+                    }
+                    catch (Exception ex)
+                    {
+                        NotifyMessageFromData.Invoke(ex.Message);
+                    }
+                });
+                if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
+
             }
         }
 
