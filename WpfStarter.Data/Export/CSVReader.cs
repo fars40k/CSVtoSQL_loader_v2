@@ -159,11 +159,11 @@ namespace WpfStarter.Data.Export
                 }
             }
 
-            person.FirstName = splitBuffer[1];
-            person.SurName = splitBuffer[2];
-            person.LastName = splitBuffer[3];
-            person.City = splitBuffer[4];
-            person.Country = splitBuffer[5];
+            person.FirstName = splitBuffer[1].Trim();
+            person.SurName = splitBuffer[2].Trim();
+            person.LastName = splitBuffer[3].Trim();
+            person.City = splitBuffer[4].Trim();
+            person.Country = splitBuffer[5].TrimEnd();
             person.ID = newPersonID;
 
             return person;

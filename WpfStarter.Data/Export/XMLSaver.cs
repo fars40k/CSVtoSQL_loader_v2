@@ -56,16 +56,17 @@ namespace WpfStarter.Data.Export
                     WritePersonToXmlRecord(xmlWriter, person);
                     if (_cancelToken.IsCancellationRequested)
                     {
-                        xmlWriter.WriteStartElement("!");
+                        xmlWriter.WriteStartElement("Operation");
                         xmlWriter.WriteString("Canceled");
                         xmlWriter.WriteEndElement();
-
+                        xmlWriter.Flush();
+                        Thread.Sleep(30);
                         break;
                     }
-
                     if (iterationsSum % 100 == 0)
                     {   
                         _progress.Report(iterationsSum + " / " + totalEntries);
+                        throw new OperationCanceledException();
                     }
                     iterationsSum++;
                 }

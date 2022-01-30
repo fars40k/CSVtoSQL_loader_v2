@@ -31,7 +31,7 @@ namespace WpfStarter.Data.Export
             throw new NotImplementedException();
         }
 
-        public virtual async Task<string> RunAsync(IContainerProvider provider)
+        public virtual async Task<string> RunTask(IContainerProvider provider)
         {
             _cancelToken = provider.Resolve<CancellationToken>("DataCancellationToken");
             _progress = provider.Resolve<Progress<string>>("DataProgress");

@@ -214,14 +214,17 @@ namespace WpfStarter.Data
 
         }
 
+        /// <summary>
+        /// Launches a selected operation asynchronously
+        /// </summary>
         private void BeginOperation()
         {
             var _resourceManager = container.Resolve<ResourceManager>();
-            string result = " ";
+
             if (SelectedOperation is Operation)
             {
                 Operation operationItem = (Operation)SelectedOperation;
-                Task.Factory.StartNew(() =>
+                Task.Factory.StartNew<string>(() =>
                 {
                     try
                     {
@@ -229,12 +232,13 @@ namespace WpfStarter.Data
 
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
                         Task<string> task;
-                        task = operationItem.RunAsync(container);
+                        task = operationItem.RunTask(container);
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
+
                         // Raises exeptions from the callstack to be handled in caller code
                         if (task.IsCanceled) throw new OperationCanceledException();
                         if (task.IsFaulted) throw task.Exception.InnerException;
-                        result = task.Result ?? "";
+                        return task.Result;
                     }
                     catch (OperationCanceledException)
                     {
@@ -244,12 +248,20 @@ namespace WpfStarter.Data
                     {
                         NotifyMessageFromData.Invoke(ex.Message);
                     }
+                    return "faulted";
                 }).ContinueWith(t =>
                 {
-                    // If the result string starts with 'E' char it contains total read errors value, when not all records processed correctly
-                    result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
-                                                    : _resourceManager.GetString("OpRecordsAdded");
-                    NotifyMessageFromData.Invoke(result ?? "missing");
+                   
+                    // If the result string starts with 'E' char it contains total read errors value,
+                    // when not all records processed correctly
+                    if ((NotifyMessageFromData != null) && (t.Result != "faulted"))
+                    {
+                        string result = t.Result;
+                        result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") 
+                                                          + result.Replace('E', ' ')
+                                                        : _resourceManager.GetString("OpRecordsAdded");
+                        NotifyMessageFromData.Invoke(result ?? "missing");
+                    }
                 });
             }
         }

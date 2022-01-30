@@ -105,11 +105,11 @@ namespace WpfStarter.Data.Export
         {
             sheet.Cells[row, 1].Value = person.ID;
             sheet.Cells[row, 2].Value = person.Date.ToString();
-            sheet.Cells[row, 3].Value = person.FirstName;
-            sheet.Cells[row, 4].Value = person.LastName;
-            sheet.Cells[row, 5].Value = person.SurName;
-            sheet.Cells[row, 6].Value = person.City;
-            sheet.Cells[row, 7].Value = person.Country;
+            sheet.Cells[row, 3].Value = person.FirstName.Trim();
+            sheet.Cells[row, 4].Value = person.SurName.Trim();
+            sheet.Cells[row, 5].Value = person.LastName.Trim();
+            sheet.Cells[row, 6].Value = person.City.Trim();
+            sheet.Cells[row, 7].Value = person.Country.Trim();
         }
 
         public void SetSavePath(string newFilePath)
