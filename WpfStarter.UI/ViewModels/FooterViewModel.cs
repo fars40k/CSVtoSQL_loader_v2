@@ -1,6 +1,8 @@
 ﻿using Prism.Commands;
 using Prism.Ioc;
 using Prism.Mvvm;
+using System;
+using System.Threading;
 using WpfStarter.UI.Models;
 
 namespace WpfStarter.UI.ViewModels
@@ -8,6 +10,7 @@ namespace WpfStarter.UI.ViewModels
     internal class FooterViewModel : BindableBase
     {
         private Model _model;
+        private IContainerProvider container;
 
         private string _errorString;
         public string ErrorString
@@ -17,14 +20,30 @@ namespace WpfStarter.UI.ViewModels
         }
 
         public DelegateCommand OperationLaunchCommand { get; private set; }
+        public DelegateCommand OperationCancelCommand { get; private set; }
 
         public FooterViewModel(IContainerProvider containerProvider)
         {
+            container = containerProvider;
             _model = containerProvider.Resolve<Models.Model>();
             ErrorNotify.SetUINotifyMethod(ShowError);
             OperationLaunchCommand = new DelegateCommand(OperationLaunch);
+            OperationCancelCommand = new DelegateCommand(OperationsCancel);
             _model.AppStateChanged += ChangeUIControlStrings;
             ChangeUIControlStrings(_model.ApplicationGlobalState);
+        }
+
+        private void OperationsCancel()
+        {
+            try
+            {
+                CancellationTokenSource source = container.Resolve<CancellationTokenSource>("DataCancellationSource");
+                source.Cancel();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public void OperationLaunch()

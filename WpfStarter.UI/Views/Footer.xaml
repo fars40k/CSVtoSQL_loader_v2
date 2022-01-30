@@ -14,23 +14,37 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
+    
     <StackPanel>
 
         <TextBlock x:Name="ErrorText" 
-                 Text="{Binding ErrorString}"
-                 Style="{StaticResource TextError}" 
-                 HorizontalAlignment="Left"
-                 Height="50"
-                 TextWrapping="Wrap"
-                 VerticalAlignment="Top"
-                 Margin="0,3,0,0"
-                 Width="270"/>
+                   Text="{Binding ErrorString}"
+                   Style="{StaticResource TextError}" 
+                   HorizontalAlignment="Left"
+                   Height="50"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Top"
+                   Margin="0,3,0,0"
+                   Width="270"/>
+        <StackPanel Orientation="Horizontal">
         <Button x:Name="GoButton" 
                 Style="{StaticResource ButtonGo}" 
-                Width="270"
+                Width="230"
                 Height="30"
+                Margin="3,0,0,0"
                 Content="{x:Static p:Strings.Go}"
                 Command="{Binding OperationLaunchCommand}"
+                HorizontalAlignment="Left"
                 />
+        <Button x:Name="StopButton" 
+                Style="{StaticResource ButtonCancel}" 
+                Width="30"
+                Height="30"
+                Content="✕"
+                Margin="3,0,0,0"
+                Command="{Binding OperationCancelCommand}"
+                HorizontalAlignment="Left"
+                />
+        </StackPanel>
     </StackPanel>
 </UserControl>
