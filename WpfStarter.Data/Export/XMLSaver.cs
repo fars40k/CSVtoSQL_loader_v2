@@ -62,11 +62,10 @@ namespace WpfStarter.Data.Export
 
                         break;
                     }
-                    
+
                     if (iterationsSum % 100 == 0)
                     {   
                         _progress.Report(iterationsSum + " / " + totalEntries);
-                        Thread.Sleep(30);
                     }
                     iterationsSum++;
                 }

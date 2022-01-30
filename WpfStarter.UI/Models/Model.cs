@@ -43,9 +43,10 @@ namespace WpfStarter.UI.Models
             var dataPool = container.Resolve<DataObjectPool>();
 
             Progress<string> dataProgress = container.Resolve<Progress<string>>("DataProgress");
-            dataProgress.ProgressChanged += (sender, e) =>
+            dataProgress.ProgressChanged += async (sender, e) =>
             {
                ErrorNotify.NewError(e);
+               await System.Threading.Tasks.Task.Delay(30);
             };
             ApplyDefaultEventRouting();
 

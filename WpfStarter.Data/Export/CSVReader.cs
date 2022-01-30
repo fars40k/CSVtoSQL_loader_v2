@@ -81,6 +81,7 @@ namespace WpfStarter.Data.Export
                         catch (FormatException ex)
                         {
                             IncrimentalID--;
+
                             // Save Line with errors to file
 
                             if (errorsFilePath == "")

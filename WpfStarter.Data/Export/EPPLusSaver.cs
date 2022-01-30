@@ -63,7 +63,6 @@ namespace WpfStarter.Data.Export
                     if (currentRow % 100 == 0)
                     {
                         _progress.Report((currentRow) + " / " + totalEntries);
-                        Thread.Sleep(30);
                     }
                 }
 
