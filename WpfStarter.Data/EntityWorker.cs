@@ -35,6 +35,7 @@ namespace WpfStarter.Data
         {
             this.container = container;
             VerifyConnection();
+            RefreshCancelationTokenAndSource();
 
             UpdateDataViews += () =>
             {
@@ -198,8 +199,7 @@ namespace WpfStarter.Data
                         sourceFileService.SourceFilePath = SourceFile;
                     }
 
-                    
-
+                    BeginOperation();
 
                 } else
                 {
@@ -217,7 +217,7 @@ namespace WpfStarter.Data
         private void BeginOperation()
         {
             var _resourceManager = container.Resolve<ResourceManager>();
-
+            string result = " ";
             if (SelectedOperation is Operation)
             {
                 Operation operationItem = (Operation)SelectedOperation;
@@ -230,17 +230,11 @@ namespace WpfStarter.Data
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
                         Task<string> task;
                         task = operationItem.RunAsync(container);
-
+                        if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
+                        // Raises exeptions from the callstack to be handled in caller code
                         if (task.IsCanceled) throw new OperationCanceledException();
-                        if (task.IsFaulted) throw task.Exception.GetRootException();
-
-                        string result = task.Result ?? "";
-
-                        // If the result string starts with 'E' char it contains total read errors value, when not all records processed correctly
-                        result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
-                                                                : _resourceManager.GetString("OpRecordsAdded");
-                        NotifyMessageFromData.Invoke(result ?? "missing");
-
+                        if (task.IsFaulted) throw task.Exception.InnerException;
+                        result = task.Result ?? "";
                     }
                     catch (OperationCanceledException)
                     {
@@ -250,9 +244,13 @@ namespace WpfStarter.Data
                     {
                         NotifyMessageFromData.Invoke(ex.Message);
                     }
+                }).ContinueWith(t =>
+                {
+                    // If the result string starts with 'E' char it contains total read errors value, when not all records processed correctly
+                    result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") + result.Replace('E', ' ')
+                                                    : _resourceManager.GetString("OpRecordsAdded");
+                    NotifyMessageFromData.Invoke(result ?? "missing");
                 });
-                if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
-
             }
         }
 

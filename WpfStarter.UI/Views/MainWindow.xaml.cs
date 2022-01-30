@@ -4,6 +4,7 @@ using Prism.Ioc;
 using WpfStarter.UI.Models;
 using System.ComponentModel;
 using System;
+using System.Threading;
 
 namespace WpfStarter.UI.Views
 {
@@ -11,6 +12,7 @@ namespace WpfStarter.UI.Views
     {
         private Model model;
         private IRegionManager regionManager;
+        private IContainerExtension container;
   
         public MainWindow(IContainerExtension container, IRegionManager regionManager)
         {
@@ -22,12 +24,22 @@ namespace WpfStarter.UI.Views
             regionManager.RegisterViewWithRegion("FooterRegion", typeof(Footer));
 
             model = container.Resolve<Model>();
+            this.container = container;
             Closing += OnWindowClosing;
         }
 
         private void OnWindowClosing(object sender, CancelEventArgs e)
         {
-            // Put cancellation request here
+            try
+            {
+                CancellationTokenSource source = container.Resolve<CancellationTokenSource>("DataCancellationSource");
+                source.Cancel();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            Thread.Sleep(500);
         }
     }
     

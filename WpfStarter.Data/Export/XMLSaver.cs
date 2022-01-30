@@ -21,7 +21,6 @@ namespace WpfStarter.Data.Export
 
         public override string Run()
         {
-            string nonDuplicatefilePath = FilePath;
             try
             {
 
@@ -39,7 +38,7 @@ namespace WpfStarter.Data.Export
                 object list;
                 if (LinqExpression == "")
                 {
-                    list = pC.Persons;
+                    list = pC.Persons.ToList();
                     totalEntries = pC.Persons.Count();
                 }
                 else
@@ -63,14 +62,20 @@ namespace WpfStarter.Data.Export
 
                         break;
                     }
-                    if (iterationsSum % 100 == 0) _progress.Report(iterationsSum + " / " + totalEntries);
+
+                    if (iterationsSum % 100 == 0)
+                    {   
+                        _progress.Report(iterationsSum + " / " + totalEntries);
+                        Thread.Sleep(30);
+                    }
                     iterationsSum++;
                 }
                 pC.Dispose();
                 xmlWriter.WriteEndDocument();
-                //throw new FormatException();
+                Thread.Sleep(30);
+                xmlWriter.Flush();
+
                 if (_cancelToken.IsCancellationRequested) throw new OperationCanceledException();
-                _progress.Report(iterationsSum + " / " + totalEntries);
                 return iterationsSum.ToString();
 
             }
@@ -110,6 +115,7 @@ namespace WpfStarter.Data.Export
             xmlWriter.WriteEndElement();
 
             xmlWriter.WriteEndElement();
+            xmlWriter.Flush();
         }
 
         public void SetSavePath(string newFilePath)

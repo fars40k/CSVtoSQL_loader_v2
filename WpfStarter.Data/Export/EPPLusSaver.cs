@@ -60,7 +60,11 @@ namespace WpfStarter.Data.Export
                         break;
                     }
 
-                    if (currentRow % 100 == 0) _progress.Report((currentRow-1) + " / " + totalEntries);
+                    if (currentRow % 100 == 0)
+                    {
+                        _progress.Report((currentRow) + " / " + totalEntries);
+                        Thread.Sleep(30);
+                    }
                 }
 
                 pC.Dispose();
@@ -68,7 +72,6 @@ namespace WpfStarter.Data.Export
                 excelPackage.SaveAs(FilePath);  
 
                 if (_cancelToken.IsCancellationRequested) throw new OperationCanceledException();
-                _progress.Report((currentRow) + " / " + totalEntries);
                 return (currentRow-1).ToString();
             }
             catch (Exception ex)

@@ -80,6 +80,7 @@ namespace WpfStarter.Data.Export
                         }
                         catch (FormatException ex)
                         {
+                            IncrimentalID--;
                             // Save Line with errors to file
 
                             if (errorsFilePath == "")
@@ -104,8 +105,8 @@ namespace WpfStarter.Data.Export
 
                 }
             }
-            _progress.Report(_totalRecords + " / ???");
-            return  "E" + _failedRecords.ToString();
+
+            return _failedRecords != 0 ? "E" + _failedRecords.ToString() : " ";
         }
 
         /// <summary>
@@ -185,7 +186,7 @@ namespace WpfStarter.Data.Export
         {
             try
             {
-                if (Int32.Parse(inputString.Substring(0, 4)) < 1753) return DateTime.MinValue;
+                if (Int32.Parse(inputString.Substring(inputString.LastIndexOf("/")+1, 4)) < 1753) return DateTime.MinValue;
 
                 return DateTime.Parse(inputString);
             } 

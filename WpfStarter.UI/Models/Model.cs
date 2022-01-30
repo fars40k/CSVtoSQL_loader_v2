@@ -43,8 +43,10 @@ namespace WpfStarter.UI.Models
             var dataPool = container.Resolve<DataObjectPool>();
 
             Progress<string> dataProgress = container.Resolve<Progress<string>>("DataProgress");
-            dataProgress.ProgressChanged += (sender, e) => ErrorNotify.NewError(e);
-
+            dataProgress.ProgressChanged += (sender, e) =>
+            {
+               ErrorNotify.NewError(e);
+            };
             ApplyDefaultEventRouting();
 
             var eWorker = container.Resolve<EntityWorker>();
@@ -81,19 +83,7 @@ namespace WpfStarter.UI.Models
 
             dataWorker.NotifyMessageFromData += ErrorNotify.NewError;
             BeginOperation += dataWorker.PreprocessAndBeginOperation;
-            dataWorker.NotifyIsAsyncRunned += (isRunned) =>
-            {
-                if (isRunned)
-                {
-                    _previousApplicationGlobalState = _applicationGlobalState;
-                    ApplicationGlobalState = "Disabled";
-                }
-                else
-                {
-                    ApplicationGlobalState = _previousApplicationGlobalState.ToString();
-                }
-            };
-   
+            //dataWorker.NotifyIsAsyncRunned += (isRunned) =>   
         }
 
     }
