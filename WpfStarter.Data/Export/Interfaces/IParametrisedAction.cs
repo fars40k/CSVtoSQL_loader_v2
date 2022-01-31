@@ -1,6 +1,6 @@
 ﻿namespace WpfStarter.Data.Export
 {
-    internal interface IParametrisedAction<T>
+    public interface IParametrisedAction<T>
     {
         T Settings { get; set; }
     }

@@ -34,7 +34,9 @@ namespace WpfStarter.Data.Export
 
                 PersonsContext pC = new PersonsContext();
 
-                // Changes source of items if the LINQ Expression contains filtering data conditions and gets the total value of the records
+                // Changes source of items if the LINQ Expression contains filtering
+                // data conditions and gets the total value of the records
+
                 int totalEntries = 0;
                 object list;
                 if (LinqExpression == "")

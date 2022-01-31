@@ -1,6 +1,6 @@
 ﻿namespace WpfStarter.Data.Export
 {
-    internal interface IPostprocessingObject
+    public interface IPostprocessingObject
     {
 
     }

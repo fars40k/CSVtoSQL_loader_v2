@@ -31,7 +31,8 @@ namespace WpfStarter.Data.Export
                 excelPackage.Workbook.Properties.Author = Environment.UserName;
                 ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
 
-                // Changes source of items if the LINQ Expression contains filtering data conditions and gets the total value of the records
+                // Changes source of items if the LINQ Expression contains filtering data
+                // conditions and gets the total value of the records
 
                 int totalEntries = 0;
                 object list;

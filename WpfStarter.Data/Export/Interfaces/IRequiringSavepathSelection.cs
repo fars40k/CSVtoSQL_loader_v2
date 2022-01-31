@@ -1,6 +1,6 @@
 ﻿namespace WpfStarter.Data.Export
 {
-    internal interface IRequiringSavepathSelection : IDatabaseAction
+    public interface IRequiringSavepathSelection : IDatabaseAction
     {
         public string TargetFormat { get; set; } 
 

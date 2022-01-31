@@ -29,6 +29,5 @@ namespace WpfStarter.Data
             regionManager.RegisterViewWithRegion("OperationsRegion", typeof(Operations));
             regionManager.RegisterViewWithRegion("FiltersRegion", typeof(DataFilters));
         }
-
     }
 }

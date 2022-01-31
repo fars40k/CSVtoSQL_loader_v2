@@ -17,9 +17,9 @@ namespace WpfStarter.Data.Export
             TotalFailed = 0;
         }
 
-        public string ToString(string afore)
+        public string ToString()
         {
-            return (TotalFailed != 0) ? afore + TotalFailed.ToString() + " / " + TotalProcessed.ToString()
+            return (TotalFailed != 0) ? TotalFailed.ToString() + " / " + TotalProcessed.ToString()
                                       : TotalProcessed.ToString() + " / " + TotalProcessed.ToString();
         }
     }

@@ -50,7 +50,6 @@ namespace WpfStarter.Data
             };
         }
 
-
         /// <summary>
         /// Checks connection to Database and
         /// </summary>
@@ -122,10 +121,7 @@ namespace WpfStarter.Data
             var resourceManager = container.Resolve<ResourceManager>();
            
             PreprocessOperation(resourceManager);
-
             BeginOperationAsync(resourceManager);
-
-            PostprocessOperation(resourceManager);
 
         }
 
@@ -211,10 +207,11 @@ namespace WpfStarter.Data
                         sourceFileService.SourceFilePath = SourceFile;
                     }
 
-                    if (SelectedOperation is IParametrisedAction<object>)
+                    if ((SelectedOperation is IParametrisedAction<Inference>))
                     {
-                        IParametrisedAction<object> parametrisedAction = (IParametrisedAction<object>)SelectedOperation;
-                        parametrisedAction.Settings = container.Resolve(parametrisedAction.Settings.GetType());
+                        IParametrisedAction<Inference> action = (IParametrisedAction<Inference>)SelectedOperation;
+                        Inference obj = container.Resolve<Inference>();
+                        action.Settings = obj;
                     }
                 }
                 else
@@ -260,23 +257,34 @@ namespace WpfStarter.Data
                     {
                         NotifyMessageFromData.Invoke(ex.Message);
                     }
-                });               
+                }).ContinueWith((t) =>
+                {
+                    PostprocessOperation(resourceManager);
+                });              
             } else
             {
                 NotifyMessageFromData.Invoke(resourceManager.GetString("OpNotProcessed"));
             }
         }
 
+        /// <summary>
+        /// By operation resulsts makes smth
+        /// </summary>
         private void PostprocessOperation(ResourceManager resourceManager)
         {
-            if (SelectedOperation is IParametrisedAction<object>)
+            if (SelectedOperation is IParametrisedAction<Inference>)
             {
-                IParametrisedAction<object> parametrisedAction = (IParametrisedAction<object>)SelectedOperation;
-                if (parametrisedAction.Settings.GetType() == typeof(Inference))
+                IParametrisedAction<Inference> parametrisedAction = (IParametrisedAction<Inference>)SelectedOperation;
+                Inference inference = (Inference)parametrisedAction.Settings;
+                string result = inference.ToString();
+                if (inference.TotalFailed != 0)
                 {
-                    Inference inference = (Inference)parametrisedAction.Settings;// resolve or ?
-                    inference.ToString(resourceManager.GetString("OpReadyWithErrors"));
+                    result = resourceManager.GetString("OpReadyWithErrors") + " " + result;
+                } else
+                {
+                    result = resourceManager.GetString("OpRecordsAdded") + " " + result;
                 }
+                NotifyMessageFromData.Invoke(result);
             }
         }
 

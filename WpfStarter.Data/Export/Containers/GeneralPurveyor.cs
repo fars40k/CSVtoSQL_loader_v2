@@ -16,5 +16,6 @@ namespace WpfStarter.Data.Export
         public string TargetFormat { get; set; }
         public string SourceFilePath { get; set; }    
         public Inference PostOperationInference { get; set; }
+        public Exception CurrentExeption { get; set; }
     }
 }
