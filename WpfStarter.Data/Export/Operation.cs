@@ -10,7 +10,6 @@ namespace WpfStarter.Data.Export
         protected IProgress<string> _progress = new Progress<string>();
         protected CancellationToken _cancelToken = new CancellationToken(false);
         
-
         public Operation(string newDescription)
         {
            _description = newDescription;

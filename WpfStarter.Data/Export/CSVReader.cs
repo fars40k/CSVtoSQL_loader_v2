@@ -3,10 +3,12 @@ using System.Resources;
 
 namespace WpfStarter.Data.Export
 {
-    public class CSVReader : Operation, IRequiringSourceFileSelection
+    public class CSVReader : Operation, IRequiringSourceFileSelection, IParametrisedAction<Inference>
     {
         public int BatchLimit { get; set; }
         public string SourceFilePath { get; set; }
+        public Inference Settings { get; set; }
+
         private int _totalRecords;
         private int _failedRecords;
         private string _lineFromFile;
@@ -106,8 +108,12 @@ namespace WpfStarter.Data.Export
 
                 }
             }
-
-            return _failedRecords != 0 ? "E" + _failedRecords.ToString() : " ";
+            if (Settings != null)
+            {
+                Settings.TotalProcessed = _totalRecords;
+                Settings.TotalFailed = _failedRecords;
+            }            
+            return "";
         }
 
         /// <summary>

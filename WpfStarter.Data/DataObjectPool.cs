@@ -29,5 +29,13 @@ namespace WpfStarter.Data
             regionManager.RegisterViewWithRegion("OperationsRegion", typeof(Operations));
             regionManager.RegisterViewWithRegion("FiltersRegion", typeof(DataFilters));
         }
+
+        /// <summary>
+        /// Constructor for external creation module classes
+        /// </summary>
+        public DataObjectPool()
+        {
+
+        }
     }
 }

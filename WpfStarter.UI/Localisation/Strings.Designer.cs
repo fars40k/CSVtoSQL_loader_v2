@@ -421,6 +421,15 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Операция не была запущена, т.к. неверно обработана.
+        /// </summary>
+        public static string OpNotProcessed {
+            get {
+                return ResourceManager.GetString("OpNotProcessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Записи добавлены частично. Ошибок чтения: .
         /// </summary>
         public static string OpReadyWithErrors {
@@ -435,15 +444,6 @@ namespace WpfStarter.UI.Localisation {
         public static string OpRecordsAdded {
             get {
                 return ResourceManager.GetString("OpRecordsAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Неверные настройки программы.
-        /// </summary>
-        public static string OpWrongSettings {
-            get {
-                return ResourceManager.GetString("OpWrongSettings", resourceCulture);
             }
         }
         

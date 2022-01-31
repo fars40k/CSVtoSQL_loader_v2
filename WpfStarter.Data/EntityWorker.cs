@@ -116,14 +116,26 @@ namespace WpfStarter.Data
             }
         }
 
-        /// <summary>
-        /// In conformity with implemented interfaces, method doing necessary preparations and launches operation
-        /// </summary>
+
         public void PreprocessAndBeginOperation()
         {
-            var _resourceManager = container.Resolve<ResourceManager>();
+            var resourceManager = container.Resolve<ResourceManager>();
+           
+            PreprocessOperation(resourceManager);
+
+            BeginOperationAsync(resourceManager);
+
+            PostprocessOperation(resourceManager);
+
+        }
+
+        /// <summary>
+        /// In conformity with implemented interfaces, method doing necessary preparations before launching operation
+        /// </summary>
+        private void PreprocessOperation(ResourceManager resourceManager)
+        {
             try
-            {              
+            {
                 if (SelectedOperation != null)
                 {
                     if (SelectedOperation is IRequiringBuildLinq)
@@ -134,15 +146,15 @@ namespace WpfStarter.Data
 
                         if (shardsCollection != null)
                         {
-                             List<string> ContextPropertyNames = new List<string>() 
-                             {   nameof(Person.Date), 
-                                 nameof(Person.FirstName), 
+                            List<string> ContextPropertyNames = new List<string>()
+                             {   nameof(Person.Date),
+                                 nameof(Person.FirstName),
                                  nameof(Person.SurName),
-                                 nameof(Person.LastName), 
-                                 nameof(Person.City), 
+                                 nameof(Person.LastName),
+                                 nameof(Person.City),
                                  nameof(Person.Country)
                              };
-                              
+
                             int inc = 0;
 
                             foreach (string shard in shardsCollection)
@@ -153,12 +165,12 @@ namespace WpfStarter.Data
                                     {
                                         BuildLinqService.LinqExpression += " && ";
                                     }
-                                    BuildLinqService.LinqExpression += 
+                                    BuildLinqService.LinqExpression +=
                                         ContextPropertyNames[inc] + "== \"" + shard.Trim() + "\"";
                                 }
                                 inc++;
                             }
-                        }                       
+                        }
                     }
 
                     if (SelectedOperation is IRequiringSavepathSelection)
@@ -169,7 +181,7 @@ namespace WpfStarter.Data
 
                         dialog.DefaultExt = savepathService.TargetFormat;
                         dialog.FileName = random.Next(0, 9000).ToString();
-                        dialog.Filter ="(*" + dialog.DefaultExt + ")|*" + dialog.DefaultExt;
+                        dialog.Filter = "(*" + dialog.DefaultExt + ")|*" + dialog.DefaultExt;
                         dialog.ShowDialog();
                         if (dialog.FileName != "")
                         {
@@ -199,13 +211,16 @@ namespace WpfStarter.Data
                         sourceFileService.SourceFilePath = SourceFile;
                     }
 
-                    BeginOperation();
-
-                } else
-                {
-                    NotifyMessageFromData.Invoke(_resourceManager.GetString("Help4"));
+                    if (SelectedOperation is IParametrisedAction<object>)
+                    {
+                        IParametrisedAction<object> parametrisedAction = (IParametrisedAction<object>)SelectedOperation;
+                        parametrisedAction.Settings = container.Resolve(parametrisedAction.Settings.GetType());
+                    }
                 }
-                
+                else
+                {
+                    NotifyMessageFromData.Invoke(resourceManager.GetString("Help4"));
+                }
             }
             catch (Exception ex)
             {
@@ -217,14 +232,12 @@ namespace WpfStarter.Data
         /// <summary>
         /// Launches a selected operation asynchronously
         /// </summary>
-        private void BeginOperation()
-        {
-            var _resourceManager = container.Resolve<ResourceManager>();
-
+        private void BeginOperationAsync(ResourceManager resourceManager)
+        {         
             if (SelectedOperation is Operation)
             {
                 Operation operationItem = (Operation)SelectedOperation;
-                Task.Factory.StartNew<string>(() =>
+                Task.Factory.StartNew(() =>
                 {
                     try
                     {
@@ -238,31 +251,31 @@ namespace WpfStarter.Data
                         // Raises exeptions from the callstack to be handled in caller code
                         if (task.IsCanceled) throw new OperationCanceledException();
                         if (task.IsFaulted) throw task.Exception.InnerException;
-                        return task.Result;
                     }
                     catch (OperationCanceledException)
                     {
-                        NotifyMessageFromData.Invoke(_resourceManager.GetString("OpCanceled"));
+                        NotifyMessageFromData.Invoke(resourceManager.GetString("OpCanceled"));
                     }
                     catch (Exception ex)
                     {
                         NotifyMessageFromData.Invoke(ex.Message);
                     }
-                    return "faulted";
-                }).ContinueWith(t =>
+                });               
+            } else
+            {
+                NotifyMessageFromData.Invoke(resourceManager.GetString("OpNotProcessed"));
+            }
+        }
+
+        private void PostprocessOperation(ResourceManager resourceManager)
+        {
+            if (SelectedOperation is IParametrisedAction<object>)
+            {
+                IParametrisedAction<object> parametrisedAction = (IParametrisedAction<object>)SelectedOperation;
+                if (parametrisedAction.Settings.GetType() == typeof(Inference))
                 {
-                   
-                    // If the result string starts with 'E' char it contains total read errors value,
-                    // when not all records processed correctly
-                    if ((NotifyMessageFromData != null) && (t.Result != "faulted"))
-                    {
-                        string result = t.Result;
-                        result = result.StartsWith("E") ? _resourceManager.GetString("OpReadyWithErrors") 
-                                                          + result.Replace('E', ' ')
-                                                        : _resourceManager.GetString("OpRecordsAdded");
-                        NotifyMessageFromData.Invoke(result ?? "missing");
-                    }
-                });
+                     (Inference)parametrisedAction.Settings // resolve or ?
+                }
             }
         }
 

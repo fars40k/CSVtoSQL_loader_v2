@@ -237,14 +237,14 @@
   <data name="OpLoadFromFileError" xml:space="preserve">
     <value>Ошибка загрузки из CSV файла</value>
   </data>
+  <data name="OpNotProcessed" xml:space="preserve">
+    <value>Операция не была запущена, т.к. неверно обработана</value>
+  </data>
   <data name="OpReadyWithErrors" xml:space="preserve">
     <value>Записи добавлены частично. Ошибок чтения: </value>
   </data>
   <data name="OpRecordsAdded" xml:space="preserve">
     <value>Все записи успешно добавлены</value>
-  </data>
-  <data name="OpWrongSettings" xml:space="preserve">
-    <value>Неверные настройки программы</value>
   </data>
   <data name="Ready" xml:space="preserve">
     <value>Готово</value>
