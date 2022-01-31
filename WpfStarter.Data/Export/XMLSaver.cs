@@ -67,7 +67,6 @@ namespace WpfStarter.Data.Export
                     if (iterationsSum % 100 == 0)
                     {   
                         _progress.Report(iterationsSum + " / " + totalEntries);
-                        throw new OperationCanceledException();
                     }
                     iterationsSum++;
                 }

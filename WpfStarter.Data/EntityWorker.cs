@@ -274,7 +274,8 @@ namespace WpfStarter.Data
                 IParametrisedAction<object> parametrisedAction = (IParametrisedAction<object>)SelectedOperation;
                 if (parametrisedAction.Settings.GetType() == typeof(Inference))
                 {
-                     (Inference)parametrisedAction.Settings // resolve or ?
+                    Inference inference = (Inference)parametrisedAction.Settings;// resolve or ?
+                    inference.ToString(resourceManager.GetString("OpReadyWithErrors"));
                 }
             }
         }
