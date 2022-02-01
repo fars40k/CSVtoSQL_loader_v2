@@ -72,10 +72,11 @@ namespace WpfStarter.Data.Export
                     }
                     iterationsSum++;
                 }
+
                 pC.Dispose();
                 xmlWriter.WriteEndDocument();
-                Thread.Sleep(30);
                 xmlWriter.Flush();
+                Thread.Sleep(30);
 
                 if (Settings != null) Settings.TotalProcessed = totalEntries;
 

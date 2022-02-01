@@ -10,7 +10,7 @@ namespace WpfStarter.UI.ViewModels
     internal class FooterViewModel : BindableBase
     {
         private Model _model;
-        private IContainerProvider container;
+        private IContainerProvider _container;
 
         private string _errorString;
         public string ErrorString
@@ -24,7 +24,7 @@ namespace WpfStarter.UI.ViewModels
 
         public FooterViewModel(IContainerProvider containerProvider)
         {
-            container = containerProvider;
+            _container = containerProvider;
             _model = containerProvider.Resolve<Models.Model>();
             ErrorNotify.SetUINotifyMethod(ShowError);
             OperationLaunchCommand = new DelegateCommand(OperationLaunch);
@@ -37,7 +37,7 @@ namespace WpfStarter.UI.ViewModels
         {
             try
             {
-                CancellationTokenSource source = container.Resolve<CancellationTokenSource>("DataCancellationSource");
+                CancellationTokenSource source = _container.Resolve<CancellationTokenSource>("DataCancellationSource");
                 source.Cancel();
             }
             catch (Exception ex)

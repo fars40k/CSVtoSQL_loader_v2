@@ -8,7 +8,7 @@ namespace WpfStarter.UI.ViewModels
 {
     internal class HeaderViewModel : BindableBase
     {
-        private Model model;
+        private Model _model;
         private string _helpString;
         private string _fileNameString;
 
@@ -26,9 +26,9 @@ namespace WpfStarter.UI.ViewModels
 
         public HeaderViewModel(IContainerProvider containerProvider)
         {
-            model = containerProvider.Resolve<Models.Model>();
-            model.AppStateChanged += ChangeUIControlStrings;
-            ChangeUIControlStrings(model.ApplicationGlobalState);
+            _model = containerProvider.Resolve<Models.Model>();
+            _model.AppStateChanged += ChangeUIControlStrings;
+            ChangeUIControlStrings(_model.ApplicationGlobalState);
         }
 
         /// <summary>
@@ -79,11 +79,11 @@ namespace WpfStarter.UI.ViewModels
             dlg.DefaultExt = ".csv";
             dlg.Filter = Localisation.Strings.OpenFileFormat + " (*.csv)|*csv";
             dlg.ShowDialog();
-            if (dlg.FileName != "")
+            if ((dlg.FileName != "") && (dlg.FileName.Contains(".csv")))
             {
                 ErrorNotify.ClearError();
 
-                model.FileSelected(dlg.FileName);
+                _model.FileSelected(dlg.FileName);
 
                 string str = dlg.FileName;
                 str = " " + str.Substring((str.LastIndexOf(@"\") + 1), str.Length - (str.LastIndexOf(@"\") + 1));

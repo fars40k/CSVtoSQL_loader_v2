@@ -5,11 +5,12 @@ using Prism.Ioc;
 
 namespace WpfStarter.Data.Export
 {
-    public class EPPLusSaver : Operation, IRequiringBuildLinq, IRequiringSavepathSelection
+    public class EPPLusSaver : Operation, IRequiringBuildLinq, IRequiringSavepathSelection, IParametrisedAction<Inference>
     {
         public string FilePath { get; private set; } = "";
         public string TargetFormat { get; set; }
         public string LinqExpression { get; set; } = "";
+        public Inference Settings { get; set; }
 
         public EPPLusSaver(IContainerExtension container)
         {
@@ -69,10 +70,12 @@ namespace WpfStarter.Data.Export
 
                 pC.Dispose();
                 excelWorksheet.Cells.AutoFitColumns();
-                excelPackage.SaveAs(FilePath);  
+                excelPackage.SaveAs(FilePath);
+
+                if (Settings != null) Settings.TotalProcessed = totalEntries;
 
                 if (_cancelToken.IsCancellationRequested) throw new OperationCanceledException();
-                return (currentRow-1).ToString();
+                return "";
             }
             catch (Exception ex)
             {

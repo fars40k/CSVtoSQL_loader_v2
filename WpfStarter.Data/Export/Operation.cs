@@ -4,6 +4,9 @@ using System.Windows;
 
 namespace WpfStarter.Data.Export
 {
+    /// <summary>
+    /// Base class for any database operation
+    /// </summary>
     public class Operation : IDatabaseAction
     {
         protected string _description;

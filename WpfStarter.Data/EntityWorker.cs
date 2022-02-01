@@ -20,9 +20,11 @@ namespace WpfStarter.Data
 
         public string SourceFile { get; private set; }
 
-        public List<IDatabaseAction> OperationsCollection { get; private set; } = new List<IDatabaseAction>();
-        public IDatabaseAction SelectedOperation { get; private set; }
+        public List<IDatabaseAction> ActionsCollection { get; private set; } = new List<IDatabaseAction>();
+        public IDatabaseAction SelectedAction { get; private set; }
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
+
+        private bool _operationSetToProcessing = false;
 
         public Action UpdateDataViews;
         public Action<bool> NotifyIsAsyncRunned;
@@ -98,45 +100,56 @@ namespace WpfStarter.Data
             {
                 if (SourceFile == null)
                 {
-                    OperationsCollection.Add(container.Resolve<EPPLusSaver>());
-                    OperationsCollection.Add(container.Resolve<XMLSaver>());
+                    ActionsCollection.Add(container.Resolve<EPPLusSaver>());
+                    ActionsCollection.Add(container.Resolve<XMLSaver>());
                 }
                 else
                 {
                     bool NotHaveItem = true;
-                    foreach (IDatabaseAction action in OperationsCollection)
+                    foreach (IDatabaseAction action in ActionsCollection)
                     {
                         if (action is CSVReader) NotHaveItem = false;
                     }
-                    if (NotHaveItem) OperationsCollection.Add(container.Resolve<CSVReader>());
+                    if (NotHaveItem) ActionsCollection.Add(container.Resolve<CSVReader>());
                 }
 
-                if (OperationsListUpdated != null) OperationsListUpdated.Invoke(OperationsCollection);
+                if (OperationsListUpdated != null) OperationsListUpdated.Invoke(ActionsCollection);
             }
         }
 
-
+        /// <summary>
+        /// Launches a database operation
+        /// </summary>
         public void PreprocessAndBeginOperation()
         {
             var resourceManager = container.Resolve<ResourceManager>();
-           
-            PreprocessOperation(resourceManager);
-            BeginOperationAsync(resourceManager);
+            _operationSetToProcessing = true;
+            DoPreprocessingForOperation(resourceManager);
+            if (_operationSetToProcessing) BeginOperationAsync(resourceManager);
 
+        }
+
+        /// <summary>
+        /// Launches a database operation from an argument
+        /// </summary>
+        public void PreprocessAndBeginOperation(IDatabaseAction newAction)
+        {
+            SelectedAction = newAction;
+            PreprocessAndBeginOperation();
         }
 
         /// <summary>
         /// In conformity with implemented interfaces, method doing necessary preparations before launching operation
         /// </summary>
-        private void PreprocessOperation(ResourceManager resourceManager)
+        private void DoPreprocessingForOperation(ResourceManager resourceManager)
         {
             try
             {
-                if (SelectedOperation != null)
+                if (SelectedAction != null)
                 {
-                    if (SelectedOperation is IRequiringBuildLinq)
+                    if (SelectedAction is IRequiringBuildLinq)
                     {
-                        IRequiringBuildLinq BuildLinqService = (IRequiringBuildLinq)SelectedOperation;
+                        IRequiringBuildLinq BuildLinqService = (IRequiringBuildLinq)SelectedAction;
 
                         List<string> shardsCollection = GetLinqShardsRequest.Invoke();
 
@@ -153,9 +166,11 @@ namespace WpfStarter.Data
 
                             int inc = 0;
 
+                            BuildLinqService.LinqExpression = "";
+
                             foreach (string shard in shardsCollection)
                             {
-                                if (shard != "")
+                                if (shard.Trim() != "")
                                 {
                                     if (BuildLinqService.LinqExpression.Length != 0)
                                     {
@@ -164,14 +179,15 @@ namespace WpfStarter.Data
                                     BuildLinqService.LinqExpression +=
                                         ContextPropertyNames[inc] + "== \"" + shard.Trim() + "\"";
                                 }
+
                                 inc++;
                             }
                         }
                     }
 
-                    if (SelectedOperation is IRequiringSavepathSelection)
+                    if (SelectedAction is IRequiringSavepathSelection)
                     {
-                        IRequiringSavepathSelection savepathService = (IRequiringSavepathSelection)SelectedOperation;
+                        IRequiringSavepathSelection savepathService = (IRequiringSavepathSelection)SelectedAction;
                         SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
                         Random random = new Random();
 
@@ -179,7 +195,7 @@ namespace WpfStarter.Data
                         dialog.FileName = random.Next(0, 9000).ToString();
                         dialog.Filter = "(*" + dialog.DefaultExt + ")|*" + dialog.DefaultExt;
                         dialog.ShowDialog();
-                        if (dialog.FileName != "")
+                        if ((dialog.FileName != "") && (dialog.FileName.Contains("." + dialog.DefaultExt)))
                         {
 
                             // Checks if file exist then, to prevent override, saves extracted data in incremental marked file
@@ -198,18 +214,21 @@ namespace WpfStarter.Data
                             }
 
                             savepathService.SetSavePath(nonDuplicatefilePath);
+                        } else
+                        {
+                            throw new ArgumentException();
                         }
                     }
 
-                    if (SelectedOperation is IRequiringSourceFileSelection)
+                    if (SelectedAction is IRequiringSourceFileSelection)
                     {
-                        IRequiringSourceFileSelection sourceFileService = (IRequiringSourceFileSelection)SelectedOperation;
+                        IRequiringSourceFileSelection sourceFileService = (IRequiringSourceFileSelection)SelectedAction;
                         sourceFileService.SourceFilePath = SourceFile;
                     }
 
-                    if ((SelectedOperation is IParametrisedAction<Inference>))
+                    if ((SelectedAction is IParametrisedAction<Inference>))
                     {
-                        IParametrisedAction<Inference> action = (IParametrisedAction<Inference>)SelectedOperation;
+                        IParametrisedAction<Inference> action = (IParametrisedAction<Inference>)SelectedAction;
                         Inference obj = container.Resolve<Inference>();
                         action.Settings = obj;
                     }
@@ -219,8 +238,13 @@ namespace WpfStarter.Data
                     NotifyMessageFromData.Invoke(resourceManager.GetString("Help4"));
                 }
             }
+            catch (ArgumentException ex)
+            {
+                _operationSetToProcessing = false;
+            }
             catch (Exception ex)
             {
+                _operationSetToProcessing = false;
                 NotifyMessageFromData.Invoke(ex.Message);
             }
 
@@ -231,9 +255,9 @@ namespace WpfStarter.Data
         /// </summary>
         private void BeginOperationAsync(ResourceManager resourceManager)
         {         
-            if (SelectedOperation is Operation)
+            if (SelectedAction is Operation)
             {
-                Operation operationItem = (Operation)SelectedOperation;
+                Operation operationItem = (Operation)SelectedAction;
                 Task.Factory.StartNew(() =>
                 {
                     try
@@ -259,7 +283,7 @@ namespace WpfStarter.Data
                     }
                 }).ContinueWith((t) =>
                 {
-                    PostprocessOperation(resourceManager);
+                    DoPostprocessingForOperation(resourceManager);
                 });              
             } else
             {
@@ -268,13 +292,13 @@ namespace WpfStarter.Data
         }
 
         /// <summary>
-        /// By operation resulsts makes smth
+        /// Doing some actions after operation, derived from implemented interfaces
         /// </summary>
-        private void PostprocessOperation(ResourceManager resourceManager)
+        private void DoPostprocessingForOperation(ResourceManager resourceManager)
         {
-            if (SelectedOperation is IParametrisedAction<Inference>)
+            if (SelectedAction is IParametrisedAction<Inference>)
             {
-                IParametrisedAction<Inference> parametrisedAction = (IParametrisedAction<Inference>)SelectedOperation;
+                IParametrisedAction<Inference> parametrisedAction = (IParametrisedAction<Inference>)SelectedAction;
                 Inference inference = (Inference)parametrisedAction.Settings;
                 string result = inference.ToString();
                 if (inference.TotalFailed != 0)
@@ -290,7 +314,7 @@ namespace WpfStarter.Data
 
         public void OperationSelected(Operation operation)
         {
-            SelectedOperation = operation;
+            SelectedAction = operation;
         }
 
         /// <summary>

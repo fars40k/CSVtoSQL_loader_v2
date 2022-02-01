@@ -96,7 +96,7 @@ namespace WpfStarter.Data.ViewModels
 
         private void SelectParam(int rowNumber)
         {
-
+            
         }
     }
 }

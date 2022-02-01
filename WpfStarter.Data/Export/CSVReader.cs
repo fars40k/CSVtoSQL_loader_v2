@@ -36,7 +36,7 @@ namespace WpfStarter.Data.Export
             {
                 while (true) 
                 {                    
-                    // If end-of-file leaves iteration
+                    // If end-of-file breaks iteration
                     if (rStream.Peek() == -1) break;
 
                     recordsReadInThisBatch = 0;
@@ -54,7 +54,7 @@ namespace WpfStarter.Data.Export
                     {
                     }
 
-                    // Setting initial IDs before operation and batch start
+                    // Setting initial IDs before starting operation and batch 
                     if (beforeOperationID == -1) beforeOperationID = beforeBatchID;
                     int IncrimentalID = beforeBatchID;
 
@@ -84,7 +84,7 @@ namespace WpfStarter.Data.Export
                         {
                             IncrimentalID--;
 
-                            // Save Line with errors to file
+                            // Saving line with errors to a file
 
                             if (errorsFilePath == "")
                             {
@@ -207,6 +207,7 @@ namespace WpfStarter.Data.Export
         {
             var list = context.Persons
                               .Where(p => p.ID > deleteFrom);
+
             context.Configuration.AutoDetectChangesEnabled = false;
             context.Persons.RemoveRange(list);
             context.Configuration.AutoDetectChangesEnabled = true;

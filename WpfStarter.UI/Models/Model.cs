@@ -13,6 +13,7 @@ namespace WpfStarter.UI.Models
 
         private GlobalState _previousApplicationGlobalState;
         private GlobalState _applicationGlobalState;
+
         public string ApplicationGlobalState
         {
             get
@@ -54,6 +55,9 @@ namespace WpfStarter.UI.Models
             DatabaseInitialized(eWorker.DoesDatabaseConnectionInitialized);
         }
 
+        /// <summary>
+        /// Turns window in a blocked state due to a database connection failure
+        /// </summary>
         private void DatabaseInitialized(bool IsInitialized)
         {
             if (IsInitialized)
@@ -71,6 +75,7 @@ namespace WpfStarter.UI.Models
             var dataWorker = _containerProvider.Resolve<EntityWorker>();
             FileSelected += (value) =>
             {
+                /// If the selected file is empty, throws an error to UI
                 if (new FileInfo(value).Length <= 64)
                 {
                     ErrorNotify.NewError(Localisation.Strings.ErrorFileEmpty);
