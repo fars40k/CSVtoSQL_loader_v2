@@ -430,6 +430,15 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Операция не выбрана.
+        /// </summary>
+        public static string OpNotSelected {
+            get {
+                return ResourceManager.GetString("OpNotSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Записи добавлены частично. Ошибок чтения: .
         /// </summary>
         public static string OpReadyWithErrors {

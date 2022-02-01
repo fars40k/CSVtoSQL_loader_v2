@@ -24,7 +24,7 @@ namespace WpfStarter.Data
         public IDatabaseAction SelectedAction { get; private set; }
         public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
 
-        private bool _operationSetToProcessing = false;
+        public bool DoesAnyOperationSetToProcessing { get; private set; } = false;
 
         public Action UpdateDataViews;
         public Action<bool> NotifyIsAsyncRunned;
@@ -123,9 +123,10 @@ namespace WpfStarter.Data
         public void PreprocessAndBeginOperation()
         {
             var resourceManager = container.Resolve<ResourceManager>();
-            _operationSetToProcessing = true;
+            DoesAnyOperationSetToProcessing = true;
+
             DoPreprocessingForOperation(resourceManager);
-            if (_operationSetToProcessing) BeginOperationAsync(resourceManager);
+            if (DoesAnyOperationSetToProcessing) BeginOperationAsync(resourceManager);
 
         }
 
@@ -145,17 +146,21 @@ namespace WpfStarter.Data
         {
             try
             {
-                if (SelectedAction != null)
+                if (SelectedAction == null)
                 {
-                    if (SelectedAction is IRequiringBuildLinq)
+                    throw new ArgumentException();
+                }
+
+                if (SelectedAction is IRequiringBuildLinq)
+                {
+                    IRequiringBuildLinq BuildLinqService = (IRequiringBuildLinq)SelectedAction;
+
+                    // Getting linq shards from Datafilters view
+                    List<string> shardsCollection = GetLinqShardsRequest.Invoke();
+
+                    if (shardsCollection != null)
                     {
-                        IRequiringBuildLinq BuildLinqService = (IRequiringBuildLinq)SelectedAction;
-
-                        List<string> shardsCollection = GetLinqShardsRequest.Invoke();
-
-                        if (shardsCollection != null)
-                        {
-                            List<string> ContextPropertyNames = new List<string>()
+                        List<string> ContextPropertyNames = new List<string>()
                              {   nameof(Person.Date),
                                  nameof(Person.FirstName),
                                  nameof(Person.SurName),
@@ -164,87 +169,87 @@ namespace WpfStarter.Data
                                  nameof(Person.Country)
                              };
 
-                            int inc = 0;
+                        int inc = 0;
 
-                            BuildLinqService.LinqExpression = "";
+                        BuildLinqService.LinqExpression = "";
 
-                            foreach (string shard in shardsCollection)
-                            {
-                                if (shard.Trim() != "")
-                                {
-                                    if (BuildLinqService.LinqExpression.Length != 0)
-                                    {
-                                        BuildLinqService.LinqExpression += " && ";
-                                    }
-                                    BuildLinqService.LinqExpression +=
-                                        ContextPropertyNames[inc] + "== \"" + shard.Trim() + "\"";
-                                }
-
-                                inc++;
-                            }
-                        }
-                    }
-
-                    if (SelectedAction is IRequiringSavepathSelection)
-                    {
-                        IRequiringSavepathSelection savepathService = (IRequiringSavepathSelection)SelectedAction;
-                        SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
-                        Random random = new Random();
-
-                        dialog.DefaultExt = savepathService.TargetFormat;
-                        dialog.FileName = random.Next(0, 9000).ToString();
-                        dialog.Filter = "(*" + dialog.DefaultExt + ")|*" + dialog.DefaultExt;
-                        dialog.ShowDialog();
-                        if ((dialog.FileName != "") && (dialog.FileName.Contains("." + dialog.DefaultExt)))
+                        foreach (string shard in shardsCollection)
                         {
-
-                            // Checks if file exist then, to prevent override, saves extracted data in incremental marked file
-
-                            string nonDuplicatefilePath = dialog.FileName;
-                            if (File.Exists(dialog.FileName))
+                            if (shard.Trim() != "")
                             {
-                                int increment = 0;
-
-                                while (File.Exists(dialog.FileName))
+                                if (BuildLinqService.LinqExpression.Length != 0)
                                 {
-                                    increment++;
-                                    dialog.FileName = nonDuplicatefilePath.Replace(".", ("_" + increment.ToString() + "."));
+                                    BuildLinqService.LinqExpression += " && ";
                                 }
-                                nonDuplicatefilePath = dialog.FileName;
+                                BuildLinqService.LinqExpression +=
+                                    ContextPropertyNames[inc] + "== \"" + shard.Trim() + "\"";
                             }
 
-                            savepathService.SetSavePath(nonDuplicatefilePath);
-                        } else
-                        {
-                            throw new ArgumentException();
+                            inc++;
                         }
-                    }
-
-                    if (SelectedAction is IRequiringSourceFileSelection)
-                    {
-                        IRequiringSourceFileSelection sourceFileService = (IRequiringSourceFileSelection)SelectedAction;
-                        sourceFileService.SourceFilePath = SourceFile;
-                    }
-
-                    if ((SelectedAction is IParametrisedAction<Inference>))
-                    {
-                        IParametrisedAction<Inference> action = (IParametrisedAction<Inference>)SelectedAction;
-                        Inference obj = container.Resolve<Inference>();
-                        action.Settings = obj;
                     }
                 }
-                else
+
+                if (SelectedAction is IRequiringSavepathSelection)
                 {
-                    NotifyMessageFromData.Invoke(resourceManager.GetString("Help4"));
+                    IRequiringSavepathSelection savepathService = (IRequiringSavepathSelection)SelectedAction;
+                    SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+                    Random random = new Random();
+
+                    dialog.DefaultExt = savepathService.TargetFormat;
+                    dialog.FileName = random.Next(0, 9000).ToString();
+                    dialog.Filter = "(*" + dialog.DefaultExt + ")|*" + dialog.DefaultExt;
+                    dialog.ShowDialog();
+                    if ((dialog.FileName != "") && (dialog.FileName.Contains("." + dialog.DefaultExt)))
+                    {
+
+                        // Checks if file exist then, to prevent override, saves extracted data in
+                        // incremental marked file
+
+                        string nonDuplicatefilePath = dialog.FileName;
+                        if (File.Exists(dialog.FileName))
+                        {
+                            int increment = 0;
+
+                            while (File.Exists(dialog.FileName))
+                            {
+                                increment++;
+                                dialog.FileName = nonDuplicatefilePath
+                                                  .Replace(".", ("_" + increment.ToString() + "."));
+                            }
+                            nonDuplicatefilePath = dialog.FileName;
+                        }
+
+                        savepathService.SetSavePath(nonDuplicatefilePath);
+                    }
+                    else
+                    {
+                        throw new ArgumentException();
+                    }
                 }
+
+                if (SelectedAction is IRequiringSourceFileSelection)
+                {
+                    IRequiringSourceFileSelection sourceFileService = (IRequiringSourceFileSelection)SelectedAction;
+                    sourceFileService.SourceFilePath = SourceFile;
+                }
+
+                if ((SelectedAction is IParametrisedAction<Inference>))
+                {
+                    IParametrisedAction<Inference> action = (IParametrisedAction<Inference>)SelectedAction;
+                    Inference obj = container.Resolve<Inference>();
+                    action.Settings = obj;
+                }
+
             }
             catch (ArgumentException ex)
             {
-                _operationSetToProcessing = false;
+                DoesAnyOperationSetToProcessing = false;
+                NotifyMessageFromData.Invoke(resourceManager.GetString("OpNotSelected"));
             }
             catch (Exception ex)
             {
-                _operationSetToProcessing = false;
+                DoesAnyOperationSetToProcessing = false;
                 NotifyMessageFromData.Invoke(ex.Message);
             }
 

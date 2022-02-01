@@ -240,6 +240,9 @@
   <data name="OpNotProcessed" xml:space="preserve">
     <value>Операция не была запущена, т.к. неверно обработана</value>
   </data>
+  <data name="OpNotSelected" xml:space="preserve">
+    <value>Операция не выбрана</value>
+  </data>
   <data name="OpReadyWithErrors" xml:space="preserve">
     <value>Записи добавлены частично. Ошибок чтения: </value>
   </data>
