@@ -27,7 +27,8 @@ namespace WpfStarter.UI.ViewModels
         public HeaderViewModel(IContainerProvider containerProvider)
         {
             _model = containerProvider.Resolve<Models.Model>();
-            _model.AppStateChanged += ChangeUIControlStrings;
+            _model.ApplicationStateChanged += ChangeUIControlStrings;
+
             ChangeUIControlStrings(_model.ApplicationGlobalState);
         }
 
@@ -78,17 +79,20 @@ namespace WpfStarter.UI.ViewModels
         /// </summary>
         public void SelectFile()
         {
-            OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.DefaultExt = ".csv";
-            dlg.Filter = Localisation.Strings.OpenFileFormat + " (*.csv)|*csv";
-            dlg.ShowDialog();
-            if ((dlg.FileName != "") && (dlg.FileName.Contains(".csv")))
+            OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+
+            dialog.DefaultExt = ".csv";
+            dialog.Filter = Localisation.Strings.OpenFileFormat + " (*.csv)|*csv";
+            dialog.ShowDialog();
+
+            if ((dialog.FileName != "") && (dialog.FileName.Contains(".csv")))
             {
                 ErrorNotify.ClearError();
 
-                _model.FileSelected(dlg.FileName);
+                _model.FileSelected(dialog.FileName);
+                string str = dialog.FileName;
 
-                string str = dlg.FileName;
+                // Cutting a name of the seleccted file to show on UI
                 str = " " + str.Substring((str.LastIndexOf(@"\") + 1), str.Length - (str.LastIndexOf(@"\") + 1));
                 FileNameString = str;
             }

@@ -36,25 +36,25 @@ namespace WpfStarter.Data.Export
 
                 // Changes source of items if the LINQ Expression contains filtering
                 // data conditions and gets the total value of the records
-
                 int totalEntries = 0;
-                object list;
+                object recordsList;
                 if (LinqExpression == "")
                 {
-                    list = pC.Persons.ToList();
+                    recordsList = pC.Persons.ToList();
                     totalEntries = pC.Persons.Count();
                 }
                 else
                 {
-                    list = pC.Persons
+                    recordsList = pC.Persons
                                  .Where(LinqExpression)
                                  .ToList();
-                    List<Person> persons = (List<Person>)list;
+
+                    List<Person> persons = (List<Person>)recordsList;
                     totalEntries = persons.Count();
                 }
 
                 int iterationsSum = 0;
-                foreach (Person person in (IEnumerable)list)
+                foreach (Person person in (IEnumerable)recordsList)
                 {
                     WritePersonToXmlRecord(xmlWriter, person);
                     if (_cancelToken.IsCancellationRequested)
@@ -63,6 +63,7 @@ namespace WpfStarter.Data.Export
                         xmlWriter.WriteString("Canceled");
                         xmlWriter.WriteEndElement();
                         xmlWriter.Flush();
+
                         Thread.Sleep(30);
                         break;
                     }
@@ -81,6 +82,7 @@ namespace WpfStarter.Data.Export
                 if (Settings != null) Settings.TotalProcessed = totalEntries;
 
                 if (_cancelToken.IsCancellationRequested) throw new OperationCanceledException();
+
                 return "";
 
             }

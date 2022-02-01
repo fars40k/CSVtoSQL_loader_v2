@@ -32,7 +32,8 @@ namespace WpfStarter.UI.Views
         {
             try
             {
-                CancellationTokenSource source = _container.Resolve<CancellationTokenSource>("DataCancellationSource");
+                CancellationTokenSource source = 
+                    _container.Resolve<CancellationTokenSource>("DataCancellationSource");
                 source.Cancel();
             }
             catch (Exception ex)

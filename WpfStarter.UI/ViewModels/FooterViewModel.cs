@@ -26,10 +26,13 @@ namespace WpfStarter.UI.ViewModels
         {
             _container = containerProvider;
             _model = containerProvider.Resolve<Models.Model>();
+
             ErrorNotify.SetUINotifyMethod(ShowError);
+
             OperationLaunchCommand = new DelegateCommand(LaunchOperation);
             OperationCancelCommand = new DelegateCommand(CancelOperations);
-            _model.AppStateChanged += ChangeUIControlStrings;
+
+            _model.ApplicationStateChanged += ChangeUIControlStrings;
             ChangeUIControlStrings(_model.ApplicationGlobalState);
         }
 

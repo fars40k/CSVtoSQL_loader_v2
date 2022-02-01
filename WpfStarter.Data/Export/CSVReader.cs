@@ -141,7 +141,14 @@ namespace WpfStarter.Data.Export
         private Person ParseLineToPerson(string line, int newPersonID)
         {
             string[] splitBuffer;
-            Person person = new Person() { FirstName = "", SurName = "", LastName = "", City = "", Country = "" };
+            Person person = new Person() 
+            { 
+                FirstName = "", 
+                SurName = "", 
+                LastName = "", 
+                City = "", 
+                Country = "" 
+            };
 
             splitBuffer = this._lineFromFile.Replace(" ", "")
                               .Split(';');
@@ -187,13 +194,17 @@ namespace WpfStarter.Data.Export
         }
 
         /// <summary>
-        /// Converts a string to a DateTime type suituable for adding to a SQL DateTime type, or returns the minimum value
+        /// Converts a string to a DateTime type suituable for adding to a SQL DateTime type,
+        /// or returns the minimum value
         /// </summary>
         private DateTime ParseDateToSqlType(string inputString)
         {
             try
             {
-                if (Int32.Parse(inputString.Substring(inputString.LastIndexOf("/")+1, 4)) < 1753) return DateTime.MinValue;
+                if (Int32.Parse(inputString.Substring(inputString.LastIndexOf("/") + 1, 4)) < 1753)
+                {
+                    return DateTime.MinValue;
+                }
 
                 return DateTime.Parse(inputString);
             } 

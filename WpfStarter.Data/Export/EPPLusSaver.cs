@@ -30,32 +30,33 @@ namespace WpfStarter.Data.Export
                 ExcelPackage excelPackage = new ExcelPackage();
 
                 excelPackage.Workbook.Properties.Author = Environment.UserName;
-                ExcelWorksheet excelWorksheet = excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
+                ExcelWorksheet excelWorksheet = 
+                    excelPackage.Workbook.Worksheets.Add("Querry " + DateTime.Now.ToString());
 
                 // Changes source of items if the LINQ Expression contains filtering data
                 // conditions and gets the total value of the records
-
                 int totalEntries = 0;
-                object list;
+                object recordsList;
                 if (LinqExpression == "")
                 {
-                    list = pC.Persons;
+                    recordsList = pC.Persons;
                     totalEntries = pC.Persons.Count();
                 }
                 else
                 {
-                    list = pC.Persons
-                                 .Where(LinqExpression)
-                                 .ToList();
-                    List<Person> persons = (List<Person>)list;
+                    recordsList = pC.Persons.Where(LinqExpression)
+                                     .ToList();
+
+                    List<Person> persons = (List<Person>)recordsList;
                     totalEntries = persons.Count();
                 }
 
                 WriteHeadLine(excelWorksheet);
 
-                foreach (Person person in (IEnumerable<Person>)list)
+                foreach (Person person in (IEnumerable<Person>)recordsList)
                 {
                     WritePersonToRowOfCells(++currentRow, excelWorksheet, person);
+
                     if (_cancelToken.IsCancellationRequested)
                     {
                         excelWorksheet.Cells[currentRow + 2, 1].Value = "Canceled";
@@ -69,6 +70,7 @@ namespace WpfStarter.Data.Export
                 }
 
                 pC.Dispose();
+
                 excelWorksheet.Cells.AutoFitColumns();
                 excelPackage.SaveAs(FilePath);
 

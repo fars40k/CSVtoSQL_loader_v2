@@ -199,11 +199,12 @@ namespace WpfStarter.Data
                     dialog.FileName = random.Next(0, 9000).ToString();
                     dialog.Filter = "(*" + dialog.DefaultExt + ")|*" + dialog.DefaultExt;
                     dialog.ShowDialog();
+
                     if ((dialog.FileName != "") && (dialog.FileName.Contains("." + dialog.DefaultExt)))
                     {
 
-                        // Checks if file exist then, to prevent override, saves extracted data in
-                        // incremental marked file
+                        // Checks if a file exist, then, to prevent override, set new savepath to save
+                        // extracted data in incremental marked file
 
                         string nonDuplicatefilePath = dialog.FileName;
                         if (File.Exists(dialog.FileName))
@@ -233,6 +234,7 @@ namespace WpfStarter.Data
                     sourceFileService.SourceFilePath = SourceFile;
                 }
 
+                // Creates new instances for class fields in a selected operation
                 if ((SelectedAction is IParametrisedAction<Inference>))
                 {
                     IParametrisedAction<Inference> action = (IParametrisedAction<Inference>)SelectedAction;
@@ -262,6 +264,7 @@ namespace WpfStarter.Data
             if (SelectedAction is Operation)
             {
                 Operation operationItem = (Operation)SelectedAction;
+
                 Task.Factory.StartNew(() =>
                 {
                     try
@@ -269,8 +272,7 @@ namespace WpfStarter.Data
                         RefreshCancelationTokenAndSource();
 
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
-                        Task<string> task;
-                        task = operationItem.RunTask(_container);
+                        Task<string> task = operationItem.RunTask(_container);
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
 
                         // Raises exeptions from the callstack to be handled in caller code
@@ -290,6 +292,7 @@ namespace WpfStarter.Data
                     // Starting this method here with the method operationItem variable
                     // to prevent postprocessing a changed selectedAction item
                     DoPostprocessingForOperation(resourceManager,operationItem);
+                    if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
                 });              
             } else
             {
@@ -306,14 +309,21 @@ namespace WpfStarter.Data
             {
                 IParametrisedAction<Inference> parametrisedAction = (IParametrisedAction<Inference>)completedAction;
                 Inference inference = (Inference)parametrisedAction.Settings;
+
                 string result = inference.ToString();
+
                 if (inference.TotalFailed != 0)
                 {
+
                     result = resourceManager.GetString("OpReadyWithErrors") + " " + result;
+
                 } else
                 {
+
                     result = resourceManager.GetString("OpRecordsAdded") + " " + result;
+
                 }
+
                 NotifyMessageFromData.Invoke(result);
             }
         }
@@ -331,10 +341,12 @@ namespace WpfStarter.Data
             IContainerExtension extension= _container.Resolve<IContainerExtension>();
             if ((_cancellationTokenSource == null) || (_cancellationTokenSource.IsCancellationRequested))
             {
+
                 _cancellationTokenSource = _container.Resolve<CancellationTokenSource>();
                 extension.RegisterInstance<CancellationTokenSource>(_cancellationTokenSource, "DataCancellationSource");
                 _cancellationToken = _cancellationTokenSource.Token;
                 extension.RegisterInstance<CancellationToken>(_cancellationToken, "DataCancellationToken");
+
             }
         }
     }

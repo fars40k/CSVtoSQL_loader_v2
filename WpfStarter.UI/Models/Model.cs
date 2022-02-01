@@ -1,10 +1,6 @@
 ﻿using Prism.Ioc;
 using System;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Forms;
 using WpfStarter.Data;
 
 namespace WpfStarter.UI.Models
@@ -12,7 +8,7 @@ namespace WpfStarter.UI.Models
     public partial class Model
     {
         public Action BeginOperation;
-        public Action<string> AppStateChanged;
+        public Action<string> ApplicationStateChanged;
         public Action<string> FileSelected;
 
         private GlobalState _applicationGlobalState;
@@ -35,7 +31,7 @@ namespace WpfStarter.UI.Models
                     _applicationGlobalState = GlobalState.CriticalError;
                 }
 
-                if (AppStateChanged != null) AppStateChanged.Invoke(ApplicationGlobalState.ToString());
+                if (ApplicationStateChanged != null) ApplicationStateChanged.Invoke(ApplicationGlobalState.ToString());
             }
         }
 
@@ -46,6 +42,7 @@ namespace WpfStarter.UI.Models
             _containerProvider = container;  
             var dataPool = container.Resolve<DataObjectPool>();
 
+            // Showing asynchronious operations progress on UI
             Progress<string> dataProgress = container.Resolve<Progress<string>>("DataProgress");
             dataProgress.ProgressChanged += async (sender, e) =>
             {
@@ -55,8 +52,9 @@ namespace WpfStarter.UI.Models
 
             ApplyDefaultEventRouting();
 
+            // Resolving Data Access model to check database connection
             var eWorker = container.Resolve<EntityWorker>();
-            DatabaseInitialized(eWorker.DoesTheDatabaseConnectionInitialized);               
+            DatabaseInitialized(eWorker.DoesTheDatabaseConnectionInitialized);
         }
 
         /// <summary>
@@ -66,17 +64,22 @@ namespace WpfStarter.UI.Models
         {
             if (IsInitialized)
             {
+
                 ApplicationGlobalState = "DbConnected";
 
             } else
             {
-                ApplicationGlobalState = "DbConnectionFailed";                
+
+                ApplicationGlobalState = "DbConnectionFailed";      
+                
             }
         }
 
         public void ApplyDefaultEventRouting()
         {
             var dataWorker = _containerProvider.Resolve<EntityWorker>();
+
+            // Changing application state and UI if file not empty
             FileSelected += (value) =>
             {
                 /// If the selected file is empty, throws an error to UI
@@ -92,8 +95,9 @@ namespace WpfStarter.UI.Models
             };
 
             dataWorker.NotifyMessageFromData += ErrorNotify.NewError;
+
+            // Binds method to begin operation command from UI
             BeginOperation += dataWorker.PreprocessAndBeginOperation;
-            //dataWorker.NotifyIsAsyncRunned += (isRunned) =>   
         }
     }
 }
