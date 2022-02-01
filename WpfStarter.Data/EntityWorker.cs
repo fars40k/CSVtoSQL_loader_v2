@@ -283,7 +283,7 @@ namespace WpfStarter.Data
                     }
                 }).ContinueWith((t) =>
                 {
-                    DoPostprocessingForOperation(resourceManager);
+                    DoPostprocessingForOperation(resourceManager,operationItem);
                 });              
             } else
             {
@@ -294,11 +294,11 @@ namespace WpfStarter.Data
         /// <summary>
         /// Doing some actions after operation, derived from implemented interfaces
         /// </summary>
-        private void DoPostprocessingForOperation(ResourceManager resourceManager)
+        private void DoPostprocessingForOperation(ResourceManager resourceManager,IDatabaseAction completedAction)
         {
-            if (SelectedAction is IParametrisedAction<Inference>)
+            if (completedAction is IParametrisedAction<Inference>)
             {
-                IParametrisedAction<Inference> parametrisedAction = (IParametrisedAction<Inference>)SelectedAction;
+                IParametrisedAction<Inference> parametrisedAction = (IParametrisedAction<Inference>)completedAction;
                 Inference inference = (Inference)parametrisedAction.Settings;
                 string result = inference.ToString();
                 if (inference.TotalFailed != 0)
