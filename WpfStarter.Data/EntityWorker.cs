@@ -14,9 +14,9 @@ namespace WpfStarter.Data
     /// </summary>
     public partial class EntityWorker
     {
-        private CancellationTokenSource cancellationTokenSource;
-        private CancellationToken cancellationToken;
-        private IContainerProvider container;
+        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken _cancellationToken;
+        private IContainerProvider _container;
 
         public string SourceFile { get; private set; }
 
@@ -34,7 +34,7 @@ namespace WpfStarter.Data
 
         public EntityWorker(IContainerProvider container)
         {
-            this.container = container;
+            this._container = container;
             VerifyConnection();
             RefreshCancelationTokenAndSource();
 
@@ -78,13 +78,13 @@ namespace WpfStarter.Data
         {
             if ((SourceFile == null)&&(DoesTheDatabaseConnectionInitialized))
             {
-                IRegionManager regionManager = container.Resolve<IRegionManager>();
+                IRegionManager regionManager = _container.Resolve<IRegionManager>();
 
-                Operations view = container.Resolve<Operations>();
+                Operations view = _container.Resolve<Operations>();
                 IRegion region = regionManager.Regions["OperationsRegion"];
                 if (region.ActiveViews.Count() == 0) region.Add(view);
 
-                DataFilters filters = container.Resolve<DataFilters>();
+                DataFilters filters = _container.Resolve<DataFilters>();
                 region = regionManager.Regions["FiltersRegion"];
                 if (region.ActiveViews.Count() == 0) region.Add(filters);
             }
@@ -99,8 +99,8 @@ namespace WpfStarter.Data
             {
                 if (SourceFile == null)
                 {
-                    ActionsCollection.Add(container.Resolve<EPPLusSaver>());
-                    ActionsCollection.Add(container.Resolve<XMLSaver>());
+                    ActionsCollection.Add(_container.Resolve<EPPLusSaver>());
+                    ActionsCollection.Add(_container.Resolve<XMLSaver>());
                 }
                 else
                 {
@@ -109,7 +109,7 @@ namespace WpfStarter.Data
                     {
                         if (action is CSVReader) NotHaveItem = false;
                     }
-                    if (NotHaveItem) ActionsCollection.Add(container.Resolve<CSVReader>());
+                    if (NotHaveItem) ActionsCollection.Add(_container.Resolve<CSVReader>());
                 }
 
                 if (OperationsListUpdated != null) OperationsListUpdated.Invoke(ActionsCollection);
@@ -121,7 +121,7 @@ namespace WpfStarter.Data
         /// </summary>
         public void PreprocessAndBeginOperation()
         {
-            var resourceManager = container.Resolve<ResourceManager>();
+            var resourceManager = _container.Resolve<ResourceManager>();
             DoesAnyOperationBeenSetToProcessing = true;
 
             DoPreprocessingForOperation(resourceManager);
@@ -236,7 +236,7 @@ namespace WpfStarter.Data
                 if ((SelectedAction is IParametrisedAction<Inference>))
                 {
                     IParametrisedAction<Inference> action = (IParametrisedAction<Inference>)SelectedAction;
-                    Inference obj = container.Resolve<Inference>();
+                    Inference obj = _container.Resolve<Inference>();
                     action.Settings = obj;
                 }
 
@@ -270,7 +270,7 @@ namespace WpfStarter.Data
 
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
                         Task<string> task;
-                        task = operationItem.RunTask(container);
+                        task = operationItem.RunTask(_container);
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
 
                         // Raises exeptions from the callstack to be handled in caller code
@@ -328,13 +328,13 @@ namespace WpfStarter.Data
         /// </summary>
         public void RefreshCancelationTokenAndSource()
         {
-            IContainerExtension extension= container.Resolve<IContainerExtension>();
-            if ((cancellationTokenSource == null) || (cancellationTokenSource.IsCancellationRequested))
+            IContainerExtension extension= _container.Resolve<IContainerExtension>();
+            if ((_cancellationTokenSource == null) || (_cancellationTokenSource.IsCancellationRequested))
             {
-                cancellationTokenSource = container.Resolve<CancellationTokenSource>();
-                extension.RegisterInstance<CancellationTokenSource>(cancellationTokenSource, "DataCancellationSource");
-                cancellationToken = cancellationTokenSource.Token;
-                extension.RegisterInstance<CancellationToken>(cancellationToken, "DataCancellationToken");
+                _cancellationTokenSource = _container.Resolve<CancellationTokenSource>();
+                extension.RegisterInstance<CancellationTokenSource>(_cancellationTokenSource, "DataCancellationSource");
+                _cancellationToken = _cancellationTokenSource.Token;
+                extension.RegisterInstance<CancellationToken>(_cancellationToken, "DataCancellationToken");
             }
         }
     }
