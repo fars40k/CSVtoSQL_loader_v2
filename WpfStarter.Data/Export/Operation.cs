@@ -28,11 +28,17 @@ namespace WpfStarter.Data.Export
             return _description ?? "missing description";
         }
 
+        /// <summary>
+        /// Basic method for starting an operation
+        /// </summary>
         public virtual string Run()
         {   
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Basic Task wrap for operation
+        /// </summary>
         public virtual async Task<string> RunTask(IContainerProvider provider)
         {
             _cancelToken = provider.Resolve<CancellationToken>("DataCancellationToken");
