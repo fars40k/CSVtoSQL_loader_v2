@@ -73,6 +73,9 @@ namespace WpfStarter.UI.ViewModels
 
         public DelegateCommand SelectFileCommand { get; private set; }
 
+        /// <summary>
+        /// Select source file logic
+        /// </summary>
         public void SelectFile()
         {
             OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();

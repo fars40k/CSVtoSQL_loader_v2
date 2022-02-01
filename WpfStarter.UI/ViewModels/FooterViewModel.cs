@@ -27,13 +27,13 @@ namespace WpfStarter.UI.ViewModels
             _container = containerProvider;
             _model = containerProvider.Resolve<Models.Model>();
             ErrorNotify.SetUINotifyMethod(ShowError);
-            OperationLaunchCommand = new DelegateCommand(OperationLaunch);
-            OperationCancelCommand = new DelegateCommand(OperationsCancel);
+            OperationLaunchCommand = new DelegateCommand(LaunchOperation);
+            OperationCancelCommand = new DelegateCommand(CancelOperations);
             _model.AppStateChanged += ChangeUIControlStrings;
             ChangeUIControlStrings(_model.ApplicationGlobalState);
         }
 
-        private void OperationsCancel()
+        private void CancelOperations()
         {
             try
             {
@@ -46,7 +46,7 @@ namespace WpfStarter.UI.ViewModels
             }
         }
 
-        public void OperationLaunch()
+        public void LaunchOperation()
         {
             _model.BeginOperation.Invoke();
         }

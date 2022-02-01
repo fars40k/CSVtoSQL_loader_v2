@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\MessageBoxEx.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
   </ItemGroup>

@@ -97,6 +97,15 @@ namespace WpfStarter.UI.Localisation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Проверка подключения к базе данных. Ждите...
+        /// </summary>
+        public static string DbCheckAndWait {
+            get {
+                return ResourceManager.GetString("DbCheckAndWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Подключиться.
         /// </summary>
         public static string DbConnect {

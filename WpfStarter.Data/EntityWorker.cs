@@ -22,9 +22,8 @@ namespace WpfStarter.Data
 
         public List<IDatabaseAction> ActionsCollection { get; private set; } = new List<IDatabaseAction>();
         public IDatabaseAction SelectedAction { get; private set; }
-        public bool DoesDatabaseConnectionInitialized { get; private set; } = false;
-
-        public bool DoesAnyOperationSetToProcessing { get; private set; } = false;
+        public bool DoesTheDatabaseConnectionInitialized { get; private set; } = false;
+        public bool DoesAnyOperationBeenSetToProcessing { get; private set; } = false;
 
         public Action UpdateDataViews;
         public Action<bool> NotifyIsAsyncRunned;
@@ -53,7 +52,7 @@ namespace WpfStarter.Data
         }
 
         /// <summary>
-        /// Checks connection to Database and
+        /// Checks connection to Database and sets DoesDatabaseConnectionInitialized flag
         /// </summary>
         public void VerifyConnection()
         {
@@ -63,12 +62,12 @@ namespace WpfStarter.Data
                 {
                     pC.Database.Connection.Open();
                     pC.Database.Connection.Close();
-                    this.DoesDatabaseConnectionInitialized = true;
+                    this.DoesTheDatabaseConnectionInitialized = true;
                 }
             }
             catch (Exception ex)
             {
-                this.DoesDatabaseConnectionInitialized = false;
+                this.DoesTheDatabaseConnectionInitialized = false;
             }
         }
 
@@ -77,7 +76,7 @@ namespace WpfStarter.Data
         /// </summary>
         private void AddDataViewsToRegions()
         {
-            if ((SourceFile == null)&&(DoesDatabaseConnectionInitialized))
+            if ((SourceFile == null)&&(DoesTheDatabaseConnectionInitialized))
             {
                 IRegionManager regionManager = container.Resolve<IRegionManager>();
 
@@ -96,7 +95,7 @@ namespace WpfStarter.Data
         /// </summary>
         private void AddOperationsToList()
         {
-            if (DoesDatabaseConnectionInitialized)
+            if (DoesTheDatabaseConnectionInitialized)
             {
                 if (SourceFile == null)
                 {
@@ -123,10 +122,10 @@ namespace WpfStarter.Data
         public void PreprocessAndBeginOperation()
         {
             var resourceManager = container.Resolve<ResourceManager>();
-            DoesAnyOperationSetToProcessing = true;
+            DoesAnyOperationBeenSetToProcessing = true;
 
             DoPreprocessingForOperation(resourceManager);
-            if (DoesAnyOperationSetToProcessing) BeginOperationAsync(resourceManager);
+            if (DoesAnyOperationBeenSetToProcessing) BeginOperationAsync(resourceManager);
 
         }
 
@@ -244,12 +243,12 @@ namespace WpfStarter.Data
             }
             catch (ArgumentException ex)
             {
-                DoesAnyOperationSetToProcessing = false;
+                DoesAnyOperationBeenSetToProcessing = false;
                 NotifyMessageFromData.Invoke(resourceManager.GetString("OpNotSelected"));
             }
             catch (Exception ex)
             {
-                DoesAnyOperationSetToProcessing = false;
+                DoesAnyOperationBeenSetToProcessing = false;
                 NotifyMessageFromData.Invoke(ex.Message);
             }
 
@@ -288,6 +287,8 @@ namespace WpfStarter.Data
                     }
                 }).ContinueWith((t) =>
                 {
+                    // Starting this method here with the method operationItem variable
+                    // to prevent postprocessing a changed selectedAction item
                     DoPostprocessingForOperation(resourceManager,operationItem);
                 });              
             } else

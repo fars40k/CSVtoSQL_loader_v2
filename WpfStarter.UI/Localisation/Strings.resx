@@ -129,6 +129,9 @@
   <data name="DataBase" xml:space="preserve">
     <value>Введите строку подключения</value>
   </data>
+  <data name="DbCheckAndWait" xml:space="preserve">
+    <value>Проверка подключения к базе данных. Ждите..</value>
+  </data>
   <data name="DbConnect" xml:space="preserve">
     <value>Подключиться</value>
   </data>

@@ -10,21 +10,21 @@ namespace WpfStarter.UI.Views
 {
     public partial class MainWindow : Window
     {
-        private Model model;
-        private IRegionManager regionManager;
-        private IContainerExtension container;
+        private Model _model;
+        private IRegionManager _regionManager;
+        private IContainerExtension _container;
   
         public MainWindow(IContainerExtension container, IRegionManager regionManager)
         {
             InitializeComponent();
 
-            this.regionManager = regionManager;
+            this._regionManager = regionManager;
 
             regionManager.RegisterViewWithRegion("HeaderRegion", typeof(Header));
             regionManager.RegisterViewWithRegion("FooterRegion", typeof(Footer));
 
-            model = container.Resolve<Model>();
-            this.container = container;
+            _model = container.Resolve<Model>();
+            this._container = container;
             Closing += OnWindowClosing;
         }
 
@@ -32,7 +32,7 @@ namespace WpfStarter.UI.Views
         {
             try
             {
-                CancellationTokenSource source = container.Resolve<CancellationTokenSource>("DataCancellationSource");
+                CancellationTokenSource source = _container.Resolve<CancellationTokenSource>("DataCancellationSource");
                 source.Cancel();
             }
             catch (Exception ex)

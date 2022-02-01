@@ -1,6 +1,10 @@
 ﻿using Prism.Ioc;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms;
 using WpfStarter.Data;
 
 namespace WpfStarter.UI.Models
@@ -11,7 +15,6 @@ namespace WpfStarter.UI.Models
         public Action<string> AppStateChanged;
         public Action<string> FileSelected;
 
-        private GlobalState _previousApplicationGlobalState;
         private GlobalState _applicationGlobalState;
 
         public string ApplicationGlobalState
@@ -40,7 +43,7 @@ namespace WpfStarter.UI.Models
 
         public Model(IContainerProvider container)
         {
-            _containerProvider = container;
+            _containerProvider = container;  
             var dataPool = container.Resolve<DataObjectPool>();
 
             Progress<string> dataProgress = container.Resolve<Progress<string>>("DataProgress");
@@ -49,10 +52,11 @@ namespace WpfStarter.UI.Models
                ErrorNotify.NewError(e);
                await System.Threading.Tasks.Task.Delay(30);
             };
+
             ApplyDefaultEventRouting();
 
             var eWorker = container.Resolve<EntityWorker>();
-            DatabaseInitialized(eWorker.DoesDatabaseConnectionInitialized);
+            DatabaseInitialized(eWorker.DoesTheDatabaseConnectionInitialized);               
         }
 
         /// <summary>
@@ -91,6 +95,5 @@ namespace WpfStarter.UI.Models
             BeginOperation += dataWorker.PreprocessAndBeginOperation;
             //dataWorker.NotifyIsAsyncRunned += (isRunned) =>   
         }
-
     }
 }

@@ -5,25 +5,25 @@ namespace WpfStarter.UI.Models
     public class ErrorNotify
     {
         public static string AppErrorCurrrent { get; set; }
-        private static Action<string> OnAppError;
+        private static Action<string> _OnAppError;
 
         /// <summary>
         /// Accepts delegate and saves it as path to publish error strings
         /// </summary>
         public static void SetUINotifyMethod(Action<string> action)
         {
-            ErrorNotify.OnAppError = action;
+            ErrorNotify._OnAppError = action;
         }
 
         /// <summary>
-        /// Publish parametr string as new error
+        /// Publish argument string as new error
         /// </summary>
         public static void NewError(string newError)
         {
             ErrorNotify.AppErrorCurrrent = newError;
-            if (OnAppError != null)
+            if (_OnAppError != null)
             {
-                OnAppError.Invoke(newError);
+                _OnAppError.Invoke(newError);
             }
         }
 
@@ -33,9 +33,9 @@ namespace WpfStarter.UI.Models
         public static void ClearError()
         {
             ErrorNotify.AppErrorCurrrent = "";
-            if (OnAppError != null)
+            if (_OnAppError != null)
             {
-                OnAppError.Invoke("");
+                _OnAppError.Invoke("");
             }
         }
     }
