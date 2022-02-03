@@ -54,8 +54,8 @@
                     Value="0,12,0,0"/>
     </Style>
 
-    <Style TargetType="{x:Type TextBox}" x
-           :Key="TextBoxWithPlaceholder" 
+    <Style TargetType="{x:Type TextBox}"
+           x:Key="TextBoxWithPlaceholder" 
            BasedOn="{StaticResource CommonInputTextBox}">
 
         <Setter Property="Template">
