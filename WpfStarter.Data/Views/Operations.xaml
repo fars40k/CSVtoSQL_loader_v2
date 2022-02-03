@@ -7,13 +7,24 @@
              xmlns:local="clr-namespace:WpfStarter.Data.Views"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True" 
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="200" d:DesignWidth="270">
+
+    <ItemsControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/WpfStarter.Data;component/Assets/Operations.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ItemsControl.Resources>
+
     <ListBox x:Name="OperationsList" 
+             Style="{StaticResource ExcelfulListBox}"
              ItemsSource="{Binding OperationsItems}" 
              Height="150" 
              Width="256" 
              Margin="0,10,0,0">
+        
         <i:Interaction.Triggers>
         <i:EventTrigger EventName="SelectionChanged">
                 <prism:InvokeCommandAction 
@@ -21,5 +32,6 @@
                     CommandParameter="{Binding SelectedItem, ElementName=OperationsList}" />
         </i:EventTrigger>
         </i:Interaction.Triggers>
+        
     </ListBox>
 </ItemsControl>

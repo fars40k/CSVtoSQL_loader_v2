@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/WpfStarter.Data;component/Views/Assets/DataFilters.xaml"/>
+                <ResourceDictionary Source="/WpfStarter.Data;component/Assets/DataFilters.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>

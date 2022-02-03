@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Views\Assets\DataFilters.xaml" />
-    <None Remove="Views\Assets\ExcelfulListBox.xaml" />
+    <None Remove="Assets\DataFilters.xaml" />
+    <None Remove="Assets\Operations.xaml" />
     <None Remove="Views\DataFilters.xaml" />
     <None Remove="Views\Operations.xaml" />
   </ItemGroup>
@@ -33,11 +33,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Views\Assets\DataFilters.xaml">
+    <Resource Include="Assets\DataFilters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
-    <Resource Include="Views\Assets\ExcelfulListBox.xaml" />
+    <Resource Include="Assets\Operations.xaml" />
   </ItemGroup>
 
   <ItemGroup>
