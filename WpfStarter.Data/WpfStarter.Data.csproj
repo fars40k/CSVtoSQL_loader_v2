@@ -36,4 +36,11 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Views\Assets\DataFilters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
 </Project>

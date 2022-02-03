@@ -9,57 +9,11 @@
         mc:Ignorable="d"
         d:DesignHeight="390" d:DesignWidth="550">
     <UserControl.Resources>
-
-        <Style TargetType="{x:Type ComboBox}" x:Key="CommonComboBox">
-            <Setter Property="FontSize" 
-                Value="14" />
-            <Setter Property="Height"
-                Value="28"/>
-            <Setter Property="Width"
-                Value="300" />
-            <Setter Property="HorizontalAlignment"
-                Value="Left" />
-            <Setter Property="VerticalAlignment"
-                Value="Bottom" />
-            <Setter Property="Margin"
-                Value="5,0,0,0"/>
-        </Style>
-        <Style TargetType="{x:Type TextBox}" x:Key="CommonInputTextBox">
-            <Setter Property="FontSize" 
-                Value="16"/>
-            <Setter Property="Height"
-                Value="28"/>
-            <Setter Property="Width"
-                Value="225"/>
-            <Setter Property="HorizontalAlignment"
-                Value="Right"/>
-            <Setter Property="VerticalAlignment"
-                Value="Bottom"/>
-            <Setter Property="TextAlignment"
-                Value="Left" />
-            <Setter Property="IsReadOnly"
-                Value="False"/>
-            <Setter Property="Margin"
-                    Value="0,0,5,0"/>
-        </Style>
-        <Style TargetType="{x:Type TextBox}" x:Key="CommonOutputTextBox">
-            <Setter Property="FontSize" 
-                Value="14"/>
-            <Setter Property="Height"
-                Value="20"/>
-            <Setter Property="Width"
-                Value="225"/>
-            <Setter Property="HorizontalAlignment"
-                Value="Center"/>
-            <Setter Property="VerticalAlignment"
-                Value="Top"/>
-            <Setter Property="TextAlignment"
-                Value="Center" />
-            <Setter Property="IsReadOnly"
-                Value="True"/>
-            <Setter Property="Margin"
-                    Value="0,12,0,0"/>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/WpfStarter.Data;component/Views/Assets/DataFilters.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -117,11 +71,12 @@
                   />
 
         <TextBox x:Name="Row_Param_1" 
-                 Style="{StaticResource CommonInputTextBox}"
+                 Style="{StaticResource TextBoxWithPlaceholder}"
                  Grid.Row ="0"
                  Text="{Binding Path=LinqShardsToBuildExpression[0], Mode=TwoWay}"
                  Margin="0,0,30,0" 
-                 Width="200"/>
+                 Width="200"
+                 />
 
         <TextBox x:Name="Row_Param_2" 
                  Style="{StaticResource CommonInputTextBox}"
