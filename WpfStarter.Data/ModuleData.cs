@@ -20,9 +20,9 @@ namespace WpfStarter.Data
 
         void IModule.RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.Register<IDatabaseAction, CSVReader>();
-            containerRegistry.Register<IDatabaseAction, EPPLusSaver>();
-            containerRegistry.Register<IDatabaseAction, XMLSaver>();
+            containerRegistry.Register<IDatabaseAction, DefaultCsvFileReader>();
+            containerRegistry.Register<IDatabaseAction, DefaultExcelExporter>();
+            containerRegistry.Register<IDatabaseAction, DefaultXmlExporter>();
         }
 
     }

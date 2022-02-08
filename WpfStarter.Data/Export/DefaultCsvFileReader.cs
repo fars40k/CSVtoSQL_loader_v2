@@ -3,7 +3,7 @@ using System.Resources;
 
 namespace WpfStarter.Data.Export
 {
-    public class CSVReader : Operation, IRequiringSourceFileSelection, IParametrisedAction<Inference>
+    public class DefaultCsvFileReader : Operation, IRequiringSourceFileSelection, IParametrisedAction<Inference>
     {
         public int BatchLimit { get; set; }
         public string SourceFilePath { get; set; }
@@ -13,7 +13,7 @@ namespace WpfStarter.Data.Export
         private int _failedRecords;
         private string _lineFromFile;
 
-        public CSVReader(IContainerExtension container)
+        public DefaultCsvFileReader(IContainerExtension container)
         {
             var ResourceManager = container.Resolve<ResourceManager>();
             _description = ResourceManager.GetString("OpCSVtoSQLExist") ?? "missing";

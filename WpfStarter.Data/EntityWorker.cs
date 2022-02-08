@@ -99,17 +99,17 @@ namespace WpfStarter.Data
             {
                 if (SourceFile == null)
                 {
-                    ActionsCollection.Add(_container.Resolve<EPPLusSaver>());
-                    ActionsCollection.Add(_container.Resolve<XMLSaver>());
+                    ActionsCollection.Add(_container.Resolve<DefaultExcelExporter>());
+                    ActionsCollection.Add(_container.Resolve<DefaultXmlExporter>());
                 }
                 else
                 {
                     bool NotHaveItem = true;
                     foreach (IDatabaseAction action in ActionsCollection)
                     {
-                        if (action is CSVReader) NotHaveItem = false;
+                        if (action is DefaultCsvFileReader) NotHaveItem = false;
                     }
-                    if (NotHaveItem) ActionsCollection.Add(_container.Resolve<CSVReader>());
+                    if (NotHaveItem) ActionsCollection.Add(_container.Resolve<DefaultCsvFileReader>());
                 }
 
                 if (OperationsListUpdated != null) OperationsListUpdated.Invoke(ActionsCollection);

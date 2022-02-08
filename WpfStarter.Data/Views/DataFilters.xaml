@@ -9,57 +9,11 @@
         mc:Ignorable="d"
         d:DesignHeight="390" d:DesignWidth="550">
     <UserControl.Resources>
-
-        <Style TargetType="{x:Type ComboBox}" x:Key="CommonComboBox">
-            <Setter Property="FontSize" 
-                Value="14" />
-            <Setter Property="Height"
-                Value="28"/>
-            <Setter Property="Width"
-                Value="300" />
-            <Setter Property="HorizontalAlignment"
-                Value="Left" />
-            <Setter Property="VerticalAlignment"
-                Value="Bottom" />
-            <Setter Property="Margin"
-                Value="5,0,0,0"/>
-        </Style>
-        <Style TargetType="{x:Type TextBox}" x:Key="CommonInputTextBox">
-            <Setter Property="FontSize" 
-                Value="16"/>
-            <Setter Property="Height"
-                Value="28"/>
-            <Setter Property="Width"
-                Value="225"/>
-            <Setter Property="HorizontalAlignment"
-                Value="Right"/>
-            <Setter Property="VerticalAlignment"
-                Value="Bottom"/>
-            <Setter Property="TextAlignment"
-                Value="Left" />
-            <Setter Property="IsReadOnly"
-                Value="False"/>
-            <Setter Property="Margin"
-                    Value="0,0,5,0"/>
-        </Style>
-        <Style TargetType="{x:Type TextBox}" x:Key="CommonOutputTextBox">
-            <Setter Property="FontSize" 
-                Value="14"/>
-            <Setter Property="Height"
-                Value="20"/>
-            <Setter Property="Width"
-                Value="225"/>
-            <Setter Property="HorizontalAlignment"
-                Value="Center"/>
-            <Setter Property="VerticalAlignment"
-                Value="Top"/>
-            <Setter Property="TextAlignment"
-                Value="Center" />
-            <Setter Property="IsReadOnly"
-                Value="True"/>
-            <Setter Property="Margin"
-                    Value="0,12,0,0"/>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/WpfStarter.Data;component/Assets/DataFilters.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -71,44 +25,44 @@
             <RowDefinition/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
-        
-        
-        
+
+
+
         <ComboBox x:Name="Combobox_1" 
                   Style="{StaticResource CommonComboBox}"
                   Grid.Row ="0"    
                   ItemsSource="{Binding ComboboxEntries}"    
                   SelectedIndex="{Binding ComboboxSelectedIndexes[0]}"
                   />
-        
+
         <ComboBox x:Name="Combobox_2" 
                   Style="{StaticResource CommonComboBox}"
                   Grid.Row ="1"
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectedIndex="{Binding ComboboxSelectedIndexes[1]}"
                   />
-        
+
         <ComboBox x:Name="Combobox_3"
                   Style="{StaticResource CommonComboBox}"
                   Grid.Row ="2"
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectedIndex="{Binding ComboboxSelectedIndexes[2]}"
                   />
-        
+
         <ComboBox x:Name="Combobox_4" 
                   Style="{StaticResource CommonComboBox}"
                   Grid.Row ="3"
                   ItemsSource="{Binding ComboboxEntries}"    
                   SelectedIndex="{Binding ComboboxSelectedIndexes[3]}"            
                   />
-        
+
         <ComboBox x:Name="Combobox_5" 
                   Style="{StaticResource CommonComboBox}"
                   Grid.Row ="4"
                   ItemsSource="{Binding ComboboxEntries}"
                   SelectedIndex="{Binding ComboboxSelectedIndexes[4]}"
                   />
-        
+
         <ComboBox x:Name="Combobox_6" 
                   Style="{StaticResource CommonComboBox}"
                   Grid.Row ="5"
@@ -117,11 +71,11 @@
                   />
 
         <TextBox x:Name="Row_Param_1" 
-                 Style="{StaticResource CommonInputTextBox}"
+                 Style="{StaticResource TextBoxWithPlaceholder}"
                  Grid.Row ="0"
-                 Text="{Binding Path=LinqShardsToBuildExpression[0], Mode=TwoWay}"
                  Margin="0,0,30,0" 
-                 Width="200"/>
+                 Width="200"
+                 />
 
         <TextBox x:Name="Row_Param_2" 
                  Style="{StaticResource CommonInputTextBox}"
@@ -159,44 +113,36 @@
                  Margin="0,0,30,0" 
                  Width="200"
                  />
-        
+
         <TextBox x:Name="Row_1_Name" 
                  Style="{StaticResource CommonOutputTextBox}"
                  Text="{Binding Path=RowNames[0]}"
                  Grid.Row ="0"/>
-        
+
         <TextBox x:Name="Row_2_Name" 
                  Style="{StaticResource CommonOutputTextBox}"
                  Text="{Binding Path=RowNames[1]}"
                  Grid.Row ="1"/>
-        
+
         <TextBox x:Name="Row_3_Name" 
                  Style="{StaticResource CommonOutputTextBox}"
                  Text="{Binding Path=RowNames[2]}"
                  Grid.Row ="2"/>
-        
+
         <TextBox x:Name="Row_4_Name" 
                  Style="{StaticResource CommonOutputTextBox}"
                  Text="{Binding Path=RowNames[3]}"
                  Grid.Row ="3"/>
-        
+
         <TextBox x:Name="Row_5_Name" 
                  Style="{StaticResource CommonOutputTextBox}"
                  Text="{Binding Path=RowNames[4]}"
                  Grid.Row ="4"/>
-        
+
         <TextBox x:Name="Row_6_Name" 
                  Style="{StaticResource CommonOutputTextBox}"
                  Text="{Binding Path=RowNames[5]}"
                  Grid.Row ="5"/>
-        
-        <TextBlock x:Name="DateClue"
-                   HorizontalAlignment="Left" 
-                   Height="19" Margin="420,12,0,0" 
-                   TextWrapping="Wrap" 
-                   Text="YEAR-MM-DD" 
-                   VerticalAlignment="Top" 
-                   Width="100"/>
     </Grid>
 
 </UserControl>
