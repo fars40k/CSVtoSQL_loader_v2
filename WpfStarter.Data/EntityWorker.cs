@@ -265,7 +265,7 @@ namespace WpfStarter.Data
             {
                 Operation operationItem = (Operation)SelectedAction;
 
-                Task.Factory.StartNew(() =>
+                Task task = Task.Factory.StartNew(() =>
                 {
                     try
                     {
@@ -278,6 +278,8 @@ namespace WpfStarter.Data
                         // Raises exeptions from the callstack to be handled in caller code
                         if (task.IsCanceled) throw new OperationCanceledException();
                         if (task.IsFaulted) throw task.Exception.InnerException;
+
+                        DoPostprocessingForOperation(resourceManager, operationItem);
                     }
                     catch (OperationCanceledException)
                     {
@@ -287,12 +289,6 @@ namespace WpfStarter.Data
                     {
                         NotifyMessageFromData.Invoke(ex.Message);
                     }
-                }).ContinueWith((t) =>
-                {
-                    // Starting this method here with the method operationItem variable
-                    // to prevent postprocessing a changed selectedAction item
-                    DoPostprocessingForOperation(resourceManager,operationItem);
-                    if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
                 });              
             } else
             {
