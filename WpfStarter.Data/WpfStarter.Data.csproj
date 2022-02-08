@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\DataFilters.xaml" />
     <None Remove="Views\DataFilters.xaml" />
     <None Remove="Views\Operations.xaml" />
   </ItemGroup>
@@ -28,6 +29,12 @@
   <ItemGroup>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\DataFilters.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
