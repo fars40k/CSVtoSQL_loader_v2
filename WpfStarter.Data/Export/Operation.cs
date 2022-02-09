@@ -47,5 +47,13 @@ namespace WpfStarter.Data.Export
             return Run();
         }
 
+        /// <summary>
+        /// Method of asynchronously launching an operation
+        /// </summary>
+        public virtual async Task<string> RunAsync(IContainerProvider provider)
+        {
+            var result = await RunTask(provider);
+            return result;
+        }
     }
 }

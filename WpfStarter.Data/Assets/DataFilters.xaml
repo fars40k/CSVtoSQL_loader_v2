@@ -15,7 +15,7 @@
         <Setter Property="Margin"
                 Value="5,0,0,0"/>
     </Style>
-    
+
     <Style TargetType="{x:Type TextBox}" x:Key="CommonInputTextBox">
         <Setter Property="FontSize" 
                 Value="16"/>
@@ -34,8 +34,10 @@
         <Setter Property="Margin"
                     Value="0,0,5,0"/>
     </Style>
-    
+
     <Style TargetType="{x:Type TextBox}" x:Key="CommonOutputTextBox">
+        <Setter Property="BorderThickness"
+                Value="0"/>
         <Setter Property="FontSize" 
                 Value="14"/>
         <Setter Property="Height"
@@ -86,7 +88,7 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        
+
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

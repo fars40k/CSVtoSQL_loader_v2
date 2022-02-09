@@ -5,14 +5,14 @@ using Prism.Ioc;
 
 namespace WpfStarter.Data.Export
 {
-    public class EPPLusSaver : Operation, IRequiringBuildLinq, IRequiringSavepathSelection, IParametrisedAction<Inference>
+    public class DefaultExcelExporter : Operation, IRequiringBuildLinq, IRequiringSavepathSelection, IParametrisedAction<Inference>
     {
         public string FilePath { get; private set; } = "";
         public string TargetFormat { get; set; }
         public string LinqExpression { get; set; } = "";
         public Inference Settings { get; set; }
 
-        public EPPLusSaver(IContainerExtension container)
+        public DefaultExcelExporter(IContainerExtension container)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var ResourceManager = container.Resolve<ResourceManager>();

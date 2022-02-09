@@ -6,14 +6,14 @@ using Prism.Ioc;
 
 namespace WpfStarter.Data.Export
 {
-    public class XMLSaver : Operation, IRequiringBuildLinq, IRequiringSavepathSelection, IParametrisedAction<Inference>
+    public class DefaultXmlExporter : Operation, IRequiringBuildLinq, IRequiringSavepathSelection, IParametrisedAction<Inference>
     {
         public string FilePath { get; private set; } = "";
         public string TargetFormat { get; set; }
         public string LinqExpression { get; set; } = "";
         public Inference Settings { get; set; }
 
-        public XMLSaver(IContainerExtension container)
+        public DefaultXmlExporter(IContainerExtension container)
         {
             var resourceManager = container.Resolve<ResourceManager>();
             _description = resourceManager.GetString("OpConvToXML") ?? "missing";
