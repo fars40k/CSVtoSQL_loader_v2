@@ -11,7 +11,7 @@ namespace WpfStarter.Data
     /// </summary>
     public class DataObjectPool
     {
-        private EntityWorker _databaseWorker;
+        private DataAccessModel _databaseWorker;
         private ResourceManager _resourceManager;
         private Progress<string> _progress;
 
@@ -20,7 +20,7 @@ namespace WpfStarter.Data
             _resourceManager = new ResourceManager("WpfStarter.UI.Localisation.Strings", Assembly.GetEntryAssembly());
             container.RegisterInstance<ResourceManager>(_resourceManager);
 
-            _databaseWorker = container.Resolve<EntityWorker>();
+            _databaseWorker = container.Resolve<DataAccessModel>();
 
             _progress = container.Resolve<Progress<string>>();
             container.RegisterInstance<Progress<string>>(_progress, "DataProgress");

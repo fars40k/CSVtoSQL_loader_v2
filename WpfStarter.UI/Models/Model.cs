@@ -7,12 +7,9 @@ namespace WpfStarter.UI.Models
 {
     public partial class Model
     {
-        public Action BeginOperation;
-        public Action<string> ApplicationStateChanged;
-        public Action<string> FileSelected;
+        private IContainerProvider _containerProvider;
 
         private GlobalState _applicationGlobalState;
-
         public string ApplicationGlobalState
         {
             get
@@ -35,7 +32,9 @@ namespace WpfStarter.UI.Models
             }
         }
 
-        private IContainerProvider _containerProvider;
+        public Action BeginOperation;
+        public Action<string> ApplicationStateChanged;
+        public Action<string> FileSelected;
 
         public Model(IContainerProvider container)
         {
@@ -52,9 +51,9 @@ namespace WpfStarter.UI.Models
 
             ApplyDefaultEventRouting();
 
-            // Resolving Data Access model to check database connection
-            var eWorker = container.Resolve<EntityWorker>();
-            DatabaseInitialized(eWorker.DoesTheDatabaseConnectionInitialized);
+            // Resolving the Data Access model to check database connection
+            var dataAccess = container.Resolve<DataAccessModel>();
+            DatabaseInitialized(dataAccess.DoesTheDatabaseConnectionInitialized);
         }
 
         /// <summary>
@@ -77,7 +76,7 @@ namespace WpfStarter.UI.Models
 
         public void ApplyDefaultEventRouting()
         {
-            var dataWorker = _containerProvider.Resolve<EntityWorker>();
+            var dataWorker = _containerProvider.Resolve<DataAccessModel>();
 
             // Changing application state and UI if file not empty
             FileSelected += (value) =>

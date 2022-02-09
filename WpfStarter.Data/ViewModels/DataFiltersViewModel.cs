@@ -50,7 +50,7 @@ namespace WpfStarter.Data.ViewModels
         public DataFiltersViewModel(IContainerProvider container)
         {
             var resManager = container.Resolve<ResourceManager>();
-            var eWorker = container.Resolve<EntityWorker>();
+            var eWorker = container.Resolve<DataAccessModel>();
 
             #region Localisation_and_collections_filling
 

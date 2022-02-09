@@ -12,7 +12,7 @@ namespace WpfStarter.Data
     /// <summary>
     /// Data Access model class
     /// </summary>
-    public partial class EntityWorker
+    public partial class DataAccessModel
     {
         private CancellationTokenSource _cancellationTokenSource;
         private CancellationToken _cancellationToken;
@@ -32,7 +32,7 @@ namespace WpfStarter.Data
         public Action<List<IDatabaseAction>> OperationsListUpdated;
         public Func<List<string>> GetLinqShardsRequest;
 
-        public EntityWorker(IContainerProvider container)
+        public DataAccessModel(IContainerProvider container)
         {
             this._container = container;
             VerifyConnection();
@@ -104,16 +104,25 @@ namespace WpfStarter.Data
                 }
                 else
                 {
-                    bool NotHaveItem = true;
+                    bool notHaveItem = true;
                     foreach (IDatabaseAction action in ActionsCollection)
                     {
-                        if (action is DefaultCsvFileReader) NotHaveItem = false;
+                        if (action is DefaultCsvFileReader) notHaveItem = false;
                     }
-                    if (NotHaveItem) ActionsCollection.Add(_container.Resolve<DefaultCsvFileReader>());
+                    if (notHaveItem) ActionsCollection.Add(_container.Resolve<DefaultCsvFileReader>());
                 }
 
                 if (OperationsListUpdated != null) OperationsListUpdated.Invoke(ActionsCollection);
             }
+        }
+
+        /// <summary>
+        /// Launches a database operation from an argument
+        /// </summary>
+        public void PreprocessAndBeginOperation(IDatabaseAction newAction)
+        {
+            SelectedAction = newAction;
+            PreprocessAndBeginOperation();
         }
 
         /// <summary>
@@ -130,130 +139,14 @@ namespace WpfStarter.Data
         }
 
         /// <summary>
-        /// Launches a database operation from an argument
-        /// </summary>
-        public void PreprocessAndBeginOperation(IDatabaseAction newAction)
-        {
-            SelectedAction = newAction;
-            PreprocessAndBeginOperation();
-        }
-
-        /// <summary>
         /// In conformity with implemented interfaces, method doing necessary preparations before launching operation
         /// </summary>
         private void DoPreprocessingForOperation(ResourceManager resourceManager)
         {
-            try
-            {
-                if (SelectedAction == null)
-                {
-                    throw new ArgumentException();
-                }
 
-                if (SelectedAction is IRequiringBuildLinq)
-                {
-                    IRequiringBuildLinq BuildLinqService = (IRequiringBuildLinq)SelectedAction;
+                
 
-                    // Getting linq shards from Datafilters view
-                    List<string> shardsCollection = GetLinqShardsRequest.Invoke();
-
-                    if (shardsCollection != null)
-                    {
-                        List<string> ContextPropertyNames = new List<string>()
-                             {   nameof(Person.Date),
-                                 nameof(Person.FirstName),
-                                 nameof(Person.SurName),
-                                 nameof(Person.LastName),
-                                 nameof(Person.City),
-                                 nameof(Person.Country)
-                             };
-
-                        int inc = 0;
-
-                        BuildLinqService.LinqExpression = "";
-
-                        foreach (string shard in shardsCollection)
-                        {
-                            if (shard.Trim() != "")
-                            {
-                                if (BuildLinqService.LinqExpression.Length != 0)
-                                {
-                                    BuildLinqService.LinqExpression += " && ";
-                                }
-                                BuildLinqService.LinqExpression +=
-                                    ContextPropertyNames[inc] + "== \"" + shard.Trim() + "\"";
-                            }
-
-                            inc++;
-                        }
-                    }
-                }
-
-                if (SelectedAction is IRequiringSavepathSelection)
-                {
-                    IRequiringSavepathSelection savepathService = (IRequiringSavepathSelection)SelectedAction;
-                    SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
-                    Random random = new Random();
-
-                    dialog.DefaultExt = savepathService.TargetFormat;
-                    dialog.FileName = random.Next(0, 9000).ToString();
-                    dialog.Filter = "(*" + dialog.DefaultExt + ")|*" + dialog.DefaultExt;
-                    dialog.ShowDialog();
-
-                    if ((dialog.FileName != "") && (dialog.FileName.Contains("." + dialog.DefaultExt)))
-                    {
-
-                        // Checks if a file exist, then, to prevent override, set new savepath to save
-                        // extracted data in incremental marked file
-
-                        string nonDuplicatefilePath = dialog.FileName;
-                        if (File.Exists(dialog.FileName))
-                        {
-                            int increment = 0;
-
-                            while (File.Exists(dialog.FileName))
-                            {
-                                increment++;
-                                dialog.FileName = nonDuplicatefilePath
-                                                  .Replace(".", ("_" + increment.ToString() + "."));
-                            }
-                            nonDuplicatefilePath = dialog.FileName;
-                        }
-
-                        savepathService.SetSavePath(nonDuplicatefilePath);
-                    }
-                    else
-                    {
-                        throw new ArgumentException();
-                    }
-                }
-
-                if (SelectedAction is IRequiringSourceFileSelection)
-                {
-                    IRequiringSourceFileSelection sourceFileService = (IRequiringSourceFileSelection)SelectedAction;
-                    sourceFileService.SourceFilePath = SourceFile;
-                }
-
-                // Creates new instances for class fields in a selected operation
-                if ((SelectedAction is IParametrisedAction<Inference>))
-                {
-                    IParametrisedAction<Inference> action = (IParametrisedAction<Inference>)SelectedAction;
-                    Inference obj = _container.Resolve<Inference>();
-                    action.Settings = obj;
-                }
-
-            }
-            catch (ArgumentException ex)
-            {
                 DoesAnyOperationBeenSetToProcessing = false;
-                NotifyMessageFromData.Invoke(resourceManager.GetString("OpNotSelected"));
-            }
-            catch (Exception ex)
-            {
-                DoesAnyOperationBeenSetToProcessing = false;
-                NotifyMessageFromData.Invoke(ex.Message);
-            }
-
         }
 
         /// <summary>

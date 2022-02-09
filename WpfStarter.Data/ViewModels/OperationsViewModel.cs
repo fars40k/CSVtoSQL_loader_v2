@@ -12,7 +12,7 @@ namespace WpfStarter.Data.ViewModels
         public OperationsViewModel(IContainerProvider containerProvider)
         {
             OperationsItems = new ObservableCollection<Operation>();
-            var eW = containerProvider.Resolve<EntityWorker>();
+            var eW = containerProvider.Resolve<DataAccessModel>();
 
             OperationSelectedCommand = new DelegateCommand<Operation>(eW.OperationSelected);
 

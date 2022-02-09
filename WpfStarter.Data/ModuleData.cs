@@ -14,7 +14,7 @@ namespace WpfStarter.Data
         {
             // Adding views at the End of Module classes initialisation
 
-            EntityWorker eW = containerProvider.Resolve<EntityWorker>();
+            DataAccessModel eW = containerProvider.Resolve<DataAccessModel>();
             eW.UpdateDataViews.Invoke();
         }
 

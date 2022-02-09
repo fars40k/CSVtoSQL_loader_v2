@@ -22,7 +22,7 @@ namespace WpfStarter.UI.Views
         {
             containerRegistry.RegisterSingleton<Model>();
             containerRegistry.RegisterSingleton<DataObjectPool>();
-            containerRegistry.RegisterSingleton<EntityWorker>();
+            containerRegistry.RegisterSingleton<ModuleData>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
