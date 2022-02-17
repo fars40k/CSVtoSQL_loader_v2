@@ -267,19 +267,21 @@ namespace WpfStarter.Data
 
                 Task task = Task.Factory.StartNew(() =>
                 {
+                    Operation taskedOperation = operationItem;
+
                     try
                     {
                         RefreshCancelationTokenAndSource();
 
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(true);
-                        Task<string> task = operationItem.RunTask(_container);
+                        Task<string> task = taskedOperation.RunTask(_container);
                         if (NotifyIsAsyncRunned != null) NotifyIsAsyncRunned.Invoke(false);
 
                         // Raises exeptions from the callstack to be handled in caller code
                         if (task.IsCanceled) throw new OperationCanceledException();
                         if (task.IsFaulted) throw task.Exception.InnerException;
 
-                        DoPostprocessingForOperation(resourceManager, operationItem);
+                        DoPostprocessingForOperation(resourceManager, taskedOperation);
                     }
                     catch (OperationCanceledException)
                     {
@@ -297,7 +299,7 @@ namespace WpfStarter.Data
         }
 
         /// <summary>
-        /// Doing some actions after operation, derived from implemented interfaces
+        /// Doing some actions after operation, in accordance with implemented interfaces
         /// </summary>
         private void DoPostprocessingForOperation(ResourceManager resourceManager,IDatabaseAction completedAction)
         {
